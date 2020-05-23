@@ -33,13 +33,18 @@
 (defn home-page []
   stupid-simple)
 
+(defn unknown []
+  "idk man")
+
+
 
 ;; -------------------------
 ;; Translate routes -> page components
 
 (defn page-for [route]
   (case route
-    :index #'home-page))
+    :index #'home-page
+    default #'unknown))
 
 
 ;; -------------------------
