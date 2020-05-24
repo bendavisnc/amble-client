@@ -32,15 +32,23 @@
    :headers {"Content-Type" "text/html"}
    :body (loading-page)})
 
+(defn game-token []
+  "heyImmaGameToken")
+
+(defn redirect-handler
+  [_request]
+  {:status 301
+   :headers {"Location"
+             (str "/game/" 
+                  (game-token))}})
+
 (def app
   (reitit-ring/ring-handler
    (reitit-ring/router
-    [["/" {:get {:handler index-handler}}]
-     ["/items"
-      ["" {:get {:handler index-handler}}]
-      ["/:item-id" {:get {:handler index-handler
-                          :parameters {:path {:item-id int?}}}}]]
-     ["/about" {:get {:handler index-handler}}]])
+    [["/" {:get {:handler redirect-handler}}]
+     ["/game"
+      ["/:game-id" {:get {:handler index-handler
+                          :parameters {:path {:game-id int?}}}}]]])
    (reitit-ring/routes
     (reitit-ring/create-resource-handler {:path "/" :root "/public"})
     (reitit-ring/create-default-handler))
