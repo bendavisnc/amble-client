@@ -1,5 +1,6 @@
 (ns amble-client.handler
   (:require
+   [clojure.java.io :as io]
    [reitit.ring :as reitit-ring]
    [amble-client.middleware :refer [middleware]]
    [hiccup.page :refer [include-js include-css html5]]
@@ -42,10 +43,16 @@
              (str "/game/" 
                   (game-token))}})
 
+(defn openapi-handler
+  [_request]
+  {:status 200
+   :body (io/resource "json/openapi.json")})
+
 (def app
   (reitit-ring/ring-handler
    (reitit-ring/router
-    [["/" {:get {:handler redirect-handler}}]
+    [["/" {:get {:handler redirect-handler}}]]
+    [["/openapi.json" {:get {:handler openapi-handler}}]
      ["/game"
       ["/:game-id" {:get {:handler index-handler
                           :parameters {:path {:game-id int?}}}}]]])

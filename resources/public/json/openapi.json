@@ -1,0 +1,70 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "Amble",
+    "version" : "0.0.0"
+  },
+  "servers" : [ {
+    "url" : "/"
+  } ],
+  "paths" : {
+    "/game" : {
+      "post" : {
+        "responses" : {
+          "201" : {
+            "description" : "Successfully created game."
+          }
+        },
+        "summary" : "Create new game"
+      }
+    },
+    "/game/{gameId}" : {
+      "get" : {
+        "parameters" : [ {
+          "description" : "The id of the game",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Game id of game that already exists."
+          },
+          "404" : {
+            "description" : "No corresponding game found."
+          }
+        },
+        "summary" : "Get game id"
+      }
+    },
+    "/game/{gameId}/move" : {
+      "post" : {
+        "parameters" : [ {
+          "description" : "The id of the game that move takes place",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Successfully made move."
+          }
+        },
+        "summary" : "Create new move in game"
+      }
+    }
+  },
+  "components" : {
+    "schemas" : { }
+  }
+}

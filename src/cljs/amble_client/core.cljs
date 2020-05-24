@@ -13,7 +13,8 @@
   (.log js/console game-id))
 
 (defn get-or-create-game! [game-id]
-  (game-resource/get game-id))
+  nil)
+  ; (game-resource/get game-id))
 
 
 (defn game-id-from-location []
@@ -29,6 +30,7 @@
                                          (game-id-from-location))])
 
 (defn init![]
+  (.log js/console "hellllllllllo")
   (rdom/render [wut] (.getElementById js/document "app"))
   (begin-websockets!
     (get-or-create-game! game-id-from-location)))
