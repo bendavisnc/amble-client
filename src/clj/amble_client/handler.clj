@@ -45,13 +45,18 @@
 (defn openapi-handler
   [_request]
   {:status 200
-   :body (io/resource "json/openapi.json")})
+   :body (let [openapi (io/resource "public/json/openapi.json")]
+            (when (nil? openapi)
+              (throw (new Exception "No openapi made available.")))
+            (slurp openapi))})
+
+
 
 (def app
   (reitit-ring/ring-handler
    (reitit-ring/router
-    [["/" {:get {:handler redirect-handler}}]]
-    [["/openapi.json" {:get {:handler openapi-handler}}]
+    [["/" {:get {:handler redirect-handler}}],
+     ["/openapi.json" {:get {:handler openapi-handler}}],
      ["/game"
       ["/:game-id" {:get {:handler index-handler
                           :parameters {:path {:game-id int?}}}}]]])
