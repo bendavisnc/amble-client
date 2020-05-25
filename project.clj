@@ -20,7 +20,8 @@
                  [venantius/accountant "0.2.5"
                   :exclusions [org.clojure/tools.reader]]
                  [martian "0.1.12"]
-                 [martian-cljs-http "0.1.12"]]
+                 [martian-cljs-http "0.1.12"]
+                 [org.clojure/core.async "1.2.603"]]
 
 
   :plugins [[lein-environ "1.1.0"]
@@ -104,7 +105,8 @@
                                 (pjstadig.humane-test-output/activate!)]
 
                    :env {:dev true
-                         :port 3001}}
+                         :port 3001
+                         :host "localhost"}}
 
              :uberjar {:hooks [minify-assets.plugin/hooks]
                        :source-paths ["env/prod/clj"]
