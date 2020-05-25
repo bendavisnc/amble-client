@@ -10,6 +10,7 @@
   "paths" : {
     "/game" : {
       "post" : {
+        "operationId" : "createGame",
         "responses" : {
           "201" : {
             "description" : "Successfully created game."
@@ -20,6 +21,7 @@
     },
     "/game/{gameId}" : {
       "get" : {
+        "operationId" : "getGameById",
         "parameters" : [ {
           "description" : "The id of the game",
           "explode" : false,
@@ -44,6 +46,7 @@
     },
     "/game/{gameId}/move" : {
       "post" : {
+        "operationId" : "createMove",
         "parameters" : [ {
           "description" : "The id of the game that move takes place",
           "explode" : false,

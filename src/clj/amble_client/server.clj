@@ -7,4 +7,5 @@
 
 (defn -main [& args]
   (let [port (or (env :port) 3000)]
+    (println "Running amble server for client.")
     (run-jetty #'app {:port port :join? false})))

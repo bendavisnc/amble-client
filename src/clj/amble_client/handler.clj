@@ -44,6 +44,7 @@
 
 (defn openapi-handler
   [_request]
+  (println "Serving openapi.")
   {:status 200
    :body (let [openapi (io/resource "public/json/openapi.json")]
             (when (nil? openapi)
