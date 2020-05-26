@@ -3,7 +3,9 @@
    [clojure.string :as string]
    [reagent.core :as reagent :refer [atom]]  
    [reagent.dom :as rdom]
-   [amble-client.resource.game :as game-resource]))
+   [amble-client.resource.game :as game-resource])
+  (:require-macros
+   [amble-client.macros :refer [el-env]]))
 ; (let [m (martian-http/bootstrap-swagger "https://pedestal-api.herokuapp.com/swagger.json")]
 ; (martian/response-for m :create-pet {:name "Doggy McDogFace" :type "Dog" :age 3})
 ; ;; => {:status 201 :body {:id 123}}
@@ -47,10 +49,14 @@
                                          (game-id-from-location))])
 
 (defn init![]
-  (.log js/console "Starting client init.")
-  (rdom/render [wut] (.getElementById js/document "app"))
-  (begin-websockets!
-    (get-or-create-game! (game-id-from-location))))
+  (.log js/console "mercy"))
+  ; (el-env
+  ;   (fn [env]
+  ;     (.log js/console "Starting client init.")
+  ;     (.log js/console env))))
+      ; (rdom/render [wut] (.getElementById js/document "app"))
+      ; (begin-websockets!
+        ; (get-or-create-game! (game-id-from-location))))))
 
 ; (.addEventListener js/document
 ;                    "keypress"
