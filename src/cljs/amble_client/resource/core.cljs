@@ -1,27 +1,33 @@
 (ns amble-client.resource.core
   (:require
    [clojure.string :as string]
+   [cljs.js :refer  [eval]]
    [cljs.core.async :as casync]
    [martian.core :as martian]
    [martian.cljs-http :as martian-http]))
 
-(def ^:dynamic *env* nil)
-
 (defn environment [& keys]
-  (.log js/console "idk man")
-  (when (not *env*)
-    (throw (new js/Error "No env.")))
-  (.log js/console *env*)
-  (apply *env* keys))
-      
+  (let [e {:host {:client "localhost"
+                  :amble "localhost"}
+           :port {
+                  ; :client "3001"
+                  :client "3449"
+                  :amble "3000"}}
+        kv (((first keys) e)
+            (second keys))]
+    kv))
+  
+           
+(defn url-ambel []
+  (str "http://" (environment :host :amble) ":" (environment :port :amble)))
+
 (defn url-openapi []
   (str "http://" (environment :host :client) ":" (environment :port :client) "/openapi.json"))
+
 
 (def interceptor-custom {
                          :name ::interceptor
                          :leave (fn [req]
-                                  (.log js/console "hello hello")
-                                  (.log js/console (clj->js req))
                                   (assoc-in req
                                             [:request, :with-credentials?] ;; Don't be bothered by cors for now.
                                             false))})
@@ -41,10 +47,8 @@
 (defn response-promise [endpoint-key, param-map]
   (.then api-promise
     (fn [api]
-      (.log js/console "this api...")
-      (.log js/console api)
       (aset api "api_root" 
-                (str "http://" (environment :host :amble) ":" (environment .:port :amble) "/"))
+                (url-ambel))
       (new js/Promise (fn [resolve-callback, reject-callback]
                         (casync/go
                           (resolve-callback (casync/<! (martian/response-for api endpoint-key param-map))))
