@@ -10,7 +10,7 @@
   "paths" : {
     "/game" : {
       "post" : {
-        "operationId" : "createGame",
+        "operationId" : "gameCreate",
         "responses" : {
           "201" : {
             "description" : "Successfully created game."
@@ -21,7 +21,7 @@
     },
     "/game/{gameId}" : {
       "get" : {
-        "operationId" : "getGameById",
+        "operationId" : "gameGetById",
         "parameters" : [ {
           "description" : "The id of the game",
           "explode" : false,
@@ -41,12 +41,34 @@
             "description" : "No corresponding game found."
           }
         },
-        "summary" : "Get game id"
+        "summary" : "Get game by id"
+      }
+    },
+    "/game?tag={tag}" : {
+      "get" : {
+        "operationId" : "gameSearch",
+        "parameters" : [ {
+          "description" : "The tag associated with the searched for game.",
+          "explode" : true,
+          "in" : "query",
+          "name" : "tag",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "form"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "List of games that matched tag."
+          }
+        },
+        "summary" : "Search games"
       }
     },
     "/game/{gameId}/move" : {
       "post" : {
-        "operationId" : "createMove",
+        "operationId" : "moveCreate",
         "parameters" : [ {
           "description" : "The id of the game that move takes place",
           "explode" : false,
