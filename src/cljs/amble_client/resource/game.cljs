@@ -7,3 +7,8 @@
 
 (defn search! [game-tag]
   (resource-core/response-promise :game-search {:tag game-tag}))
+
+(defn create! []
+  (resource-core/response-promise :game-create {}))
+
+
