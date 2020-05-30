@@ -18,8 +18,9 @@
 
 (add-watch game-id-atom 
            ::game-id-watch-key 
-           (fn [& args]
+           (fn [& [_, _, _, game-id]]
              (.log js/console "okay boys")
+             (.log js/console game-id)
              (.log js/console (deref game-id-atom))))
 
  
@@ -50,9 +51,15 @@
       (throw (new js/Error "No game id found in browser url.")))
     game-id))
 
-(defn init-game-id! []
+(defn init-game-id!
+  "Infer a game id.
+   First, see if find by tag returns anything.
+   If not, post, and try one more time."
+  []
   (.then (game-resource/search! (game-tag-from-location))
          (fn [games-found]
+           (.log js/console "hi")
+           (.log js/console (clj->js games-found))
            (let [game-id
                  (first (:body games-found))]
              (reset! game-id-atom game-id)))))               
@@ -62,8 +69,8 @@
   [:div {:class "neat" :id "neato"} (str "This game is named "
                                          (game-tag-from-location))])
 
-(defn init-ui! [])
-  (rdom/render [wut] (.getElementById js/document "app"))
+(defn init-ui! []
+  (rdom/render [wut] (.getElementById js/document "app")))
 
 (defn init! []
   (.log js/console "Starting client init.")
