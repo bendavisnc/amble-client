@@ -1,55 +1,39 @@
 (ns amble-client.core
   (:require
     [clojure.string :as string]
-    [reagent.core :as reagent :refer [atom]]  
+    [reagent.core :as reagent]
     [reagent.dom :as rdom]
-    [amble-client.resource.game :as game-resource]))
+    [amble-client.resource.game :as game-resource]
+    [amble-client.utils :as utils]))
 
-(defn game-tag-from-location []
-  (let [game-id
-        (-> js/window
-            (aget "location")
-            (aget "pathname")
-            (string/split "/") 
-            last)]
-    (when (not game-id)
-      (throw (new js/Error "No game id found in browser url.")))
-    game-id))
+(def atomic-state (reagent/atom {}))
 
 (defn init!*
-  "Infer a game id.
-   First, see if find by tag returns anything.
-   If not, post, and try one more time."
   []
-  (.then (game-resource/search! (game-tag-from-location))
+  (.then (game-resource/get! (utils/game-id-from-window))
          (fn [search-result]
-           (.log js/console "hi")
+           (.log js/console "hi hi hello sir")
            (.log js/console (clj->js search-result)))))
 
+(defn app-markup-error []
+  "bad news")
 
-(defn wut []
-  [:div {:class "neat" :id "neato"} (str "This game is named "
-                                         (game-tag-from-location))])
+(defn app-container []
+  (if (-> atomic-state deref :errors first)
+    (app-markup-error)
+    [:div {:class "neat" :id "neato"} (str "This game is named "
+                                           (utils/game-id-from-window))]))
 
 (defn init-ui! []
-  (rdom/render [wut] (.getElementById js/document "app")))
-
-(defn init-secret-post-game! []
-  (let [post-fn
-        (fn []
-          (.then (game-resource/create!)
-                 (fn [response-result]
-                   (.log js/console "Requested new game.")
-                   (.log js/console response-result))))]
-    (aset js/window "amble" (clj->js {:game-create
-                                      post-fn}))))
-
+  (let [ui-atom (reagent/atom {})]
+    (rdom/render [app-container] (.getElementById js/document "app"))
+    ui-atom))
 
 (defn init! []
   (.log js/console "Starting client init.")
   (init!*)
   (init-ui!)
-  (init-secret-post-game!))
+  (utils/init-secret-post-game!))
 
 ; (.addEventListener js/document
 ;                    "keypress"
