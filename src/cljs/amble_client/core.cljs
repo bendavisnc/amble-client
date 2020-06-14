@@ -11,11 +11,14 @@
 (defn update-app-state! [& args]
   (cond (= 2 (count args))
         (let [[k, v] args]
-          (swap! atomic-state update-in [k] conj v))
+          (swap! atomic-state assoc k v))
         :else
         (throw (new js/Error (str "Don't know how to update app state with args, \""
                                   args
                                   "\".")))))
+
+(defn get-app-state [k]
+  (k (deref atomic-state)))
 
 (defn print-app-state! []
   (.log js/console (clj->js (deref atomic-state))))
@@ -35,24 +38,38 @@
         (.then (fn [game-placement]
                  (update-app-state! :game-placement game-placement)))
         (.catch (fn [err]
-                  (update-app-state! :errors err)
+                  (update-app-state! :errors [err])
                   (throw err))))
     (println "alright?")))
 
-
 (defn app-markup-error []
   [:div {:title (-> atomic-state deref :errors first)}
-        "bad news"])
+   "bad news"])
 
-(defn app-container []
+(defn board-markup []
+  (aset js/window "wut"
+                  (clj->js
+                    (get-app-state :game-placement)))
+  [:svg {:id "board"}
+    (map
+      (fn [[x, y]]
+        (println "wut")
+        [:circle {:cx x,
+                  :cy y}])
+      (get-app-state :game-placement))])
+
+(defn app-markup []
+  [:div (board-markup)])
+
+(defn app-markup-error-checked []
   (if (-> atomic-state deref :errors first)
-    (app-markup-error)
-    [:div {:class "neat" :id "neato"} (str "This game is named "
-                                           (utils/game-id-from-window))]))
+    [app-markup-error]
+    [app-markup]))
+
 
 (defn init-ui! []
   (let [ui-atom (reagent/atom {})]
-    (rdom/render [app-container] (.getElementById js/document "app"))
+    (rdom/render [app-markup-error-checked] (.getElementById js/document "app"))
     ui-atom))
 
 (defn init! []
