@@ -6,17 +6,43 @@
     [amble-client.resource.game :as game-resource]
     [amble-client.utils :as utils]))
 
-(def atomic-state (reagent/atom {}))
+(def atomic-state (reagent/atom {:errors []}))
+
+(defn update-app-state! [& args]
+  (cond (= 2 (count args))
+        (let [[k, v] args]
+          (swap! atomic-state update-in [k] conj v))
+        :else
+        (throw (new js/Error (str "Don't know how to update app state with args, \""
+                                  args
+                                  "\".")))))
+
+(defn print-app-state! []
+  (.log js/console (clj->js (deref atomic-state))))
 
 (defn init!*
   []
-  (.then (game-resource/get! (utils/game-id-from-window))
-         (fn [search-result]
-           (.log js/console "hi hi hello sir")
-           (.log js/console (clj->js search-result)))))
+  (let [
+        game-id (utils/game-id-from-window)
+        game-promise (game-resource/get! game-id)
+        on-successful-response (fn [game-response]
+                                 (if (not (:success game-response))
+                                   (throw (new js/Error (str "Game not found (" game-id ")."))))
+                                 (js->clj (.parse js/JSON (:body game-response))))]
+
+    (-> game-promise
+        (.then on-successful-response)
+        (.then (fn [game-placement]
+                 (update-app-state! :game-placement game-placement)))
+        (.catch (fn [err]
+                  (update-app-state! :errors err)
+                  (throw err))))
+    (println "alright?")))
+
 
 (defn app-markup-error []
-  "bad news")
+  [:div {:title (-> atomic-state deref :errors first)}
+        "bad news"])
 
 (defn app-container []
   (if (-> atomic-state deref :errors first)
@@ -34,6 +60,7 @@
   (init!*)
   (init-ui!)
   (utils/init-secret-post-game!))
+
 
 ; (.addEventListener js/document
 ;                    "keypress"
