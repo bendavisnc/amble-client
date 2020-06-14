@@ -4,24 +4,10 @@
     [reagent.core :as reagent]
     [reagent.dom :as rdom]
     [amble-client.resource.game :as game-resource]
-    [amble-client.utils :as utils]))
+    [amble-client.markup.core :as markup]
+    [amble-client.utils :as utils]
+    [amble-client.markup.state :as markup-state]))
 
-(def atomic-state (reagent/atom {:errors []}))
-
-(defn update-app-state! [& args]
-  (cond (= 2 (count args))
-        (let [[k, v] args]
-          (swap! atomic-state assoc k v))
-        :else
-        (throw (new js/Error (str "Don't know how to update app state with args, \""
-                                  args
-                                  "\".")))))
-
-(defn get-app-state [k]
-  (k (deref atomic-state)))
-
-(defn print-app-state! []
-  (.log js/console (clj->js (deref atomic-state))))
 
 (defn init!*
   []
@@ -36,40 +22,17 @@
     (-> game-promise
         (.then on-successful-response)
         (.then (fn [game-placement]
-                 (update-app-state! :game-placement game-placement)))
+                 (markup-state/update! :game-placement game-placement)))
         (.catch (fn [err]
-                  (update-app-state! :errors [err])
+                  (markup-state/update! :errors [err])
                   (throw err))))
     (println "alright?")))
 
-(defn app-markup-error []
-  [:div {:title (-> atomic-state deref :errors first)}
-   "bad news"])
-
-(defn board-markup []
-  (aset js/window "wut"
-                  (clj->js
-                    (get-app-state :game-placement)))
-  [:svg {:id "board"}
-    (map
-      (fn [[x, y]]
-        (println "wut")
-        [:circle {:cx x,
-                  :cy y}])
-      (get-app-state :game-placement))])
-
-(defn app-markup []
-  [:div (board-markup)])
-
-(defn app-markup-error-checked []
-  (if (-> atomic-state deref :errors first)
-    [app-markup-error]
-    [app-markup]))
 
 
 (defn init-ui! []
   (let [ui-atom (reagent/atom {})]
-    (rdom/render [app-markup-error-checked] (.getElementById js/document "app"))
+    (rdom/render [markup/app-markup-error-checked] (.getElementById js/document "app"))
     ui-atom))
 
 (defn init! []
