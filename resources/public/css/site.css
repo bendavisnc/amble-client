@@ -4,19 +4,27 @@
   -webkit-font-smoothing: antialiased;
 }
 
+body {
+  background: black;
+}
+
+#app {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
 
 #amble {
   background-color: black;
-  height: 100vh;
-  width: auto;
-  display: flex;
-
+  width: 1200px;
+  height: 1200px;
 }
 
 #amble svg#board {
-  flex: auto;
 }
 
 #amble svg#board circle {
-  fill: blue;
+  fill: purple;
 }
