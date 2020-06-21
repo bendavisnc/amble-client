@@ -4,16 +4,17 @@
 (def atomic-state (reagent/atom {:errors []}))
 
 (defn update! [& args]
-  (cond (= 2 (count args))
-        (let [[k, v] args]
-          (swap! atomic-state assoc k v))
-        :else
-        (throw (new js/Error (str "Don't know how to update app state with args, \""
-                                  args
-                                  "\".")))))
+  (let [update-val (last args)
+        assoc-keys (filter #(not (= update-val %))
+                           args)]
+    (cond (empty? assoc-keys)
+          (throw (new js/Error (str "Invalid arguments provided, " args ".")))
+          :else
+          (swap! atomic-state assoc-in assoc-keys update-val))))
 
-(defn get [k]
-  (k (deref atomic-state)))
+(defn get [& keys]
+  (get-in (deref atomic-state)
+          keys))
 
 (defn print! []
   (.log js/console (clj->js (deref atomic-state))))

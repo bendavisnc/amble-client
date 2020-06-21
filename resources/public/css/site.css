@@ -42,27 +42,27 @@ body {
   background-color: black;
 }
 
-#amble svg#board circle.firstgroup {
+#amble svg#board circle.player-one {
   fill: lime;
 }
 
-#amble svg#board circle.secondgroup {
+#amble svg#board circle.player-two {
   fill: #ffaa01;
 }
 
-#amble svg#board circle.thirdgroup {
+#amble svg#board circle.player-three {
     fill: #ff00aa;
 }
 
-#amble svg#board circle.fourthgroup {
+#amble svg#board circle.player-four {
     fill: #ab00ff;
 }
 
-#amble svg#board circle.fifthgroup {
+#amble svg#board circle.player-five {
     fill: white;
 }
 
-#amble svg#board circle.sixthgroup {
+#amble svg#board circle.player-six {
     fill: #00aaff;
 }
 

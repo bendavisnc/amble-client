@@ -5,23 +5,47 @@
   [:div {:id "badnews" :title (first (markup-state/get :errors))}
    "bad news"])
 
-(defn init-player-pieces![init-coord]
-  nil)
-  ; (player-key init-coord))
+(defn piece-markup [& {:keys [x, y, size, class] :as piece}]
+  [:circle {:cx x,
+            :cy y
+            :r size
+            :key (str class
+                      [x, y])
+            :class class
+            :on-click (fn []
+                        (println "come back to")
+                        (println piece))}])
+
+(def player-classes
+  ["player-one"
+   "player-two"
+   "player-three"
+   "player-four"
+   "player-five"
+   "player-six"])
+
 
 (defn board-markup []
   [:svg {:id "board" "viewBox" "0 0 1 1"}
    (map
      (fn [[x, y]]
-       [:circle {:cx x,
-                 :cy y
-                 :r 0.02
-                 :key (str "designatee_"
-                           [x, y])
-                 :class "designatee"
-                 :on-click (fn [] (init-player-pieces!
-                                   [x, y]))}])
-     (markup-state/get :game-placement))])
+       (piece-markup :x x :y y :size 0.02 :class "designatee"))
+     (markup-state/get :placement :designatee))
+   (apply concat
+          (map-indexed
+            (fn [i, player-class]
+              (let [player-index (inc i)
+                    player-coords
+                    (markup-state/get :placement :player player-index)]
+
+                (map
+                  (fn [[x, y]]
+                    (piece-markup :x x :y y :size 0.02 :class player-class))
+                  player-coords)))
+            player-classes))])
+
+
+
 
 (defn app-markup []
   [:div {:id "amble"} (board-markup)])
