@@ -14,14 +14,3 @@
     (when (not game-id)
       (throw (new js/Error "No game id found in browser url.")))
     game-id))
-
-(defn init-secret-post-game! []
-  (let [post-fn
-        (fn []
-          (.then (game-resource/create!)
-                 (fn [response-result]
-                   (.log js/console "Requested new game.")
-                   (.log js/console response-result))))]
-    (aset js/window "amble" (clj->js {:game-create
-                                      post-fn}))))
-
