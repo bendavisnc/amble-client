@@ -5,26 +5,67 @@
 }
 
 body {
-  background: black;
+  background: white;
 }
 
 #app {
+  /* display: flex; */
+  /* width: 100vw; */
+  /* height: 100vh; */
+  /* justify-content: center; */
+  /* align-items: center; */
+}
+#badnews {
   display: flex;
-  width: 100vw;
-  height: 100vh;
   justify-content: center;
   align-items: center;
+  width: 100vw;
+  height: 100vh;
 }
 
 #amble {
   background-color: black;
-  width: 1200px;
-  height: 1200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* width: 100%; */
+  /* height: 100%; */
+  width: 100vw;
+  height: 100vh;
+ 
 }
 
 #amble svg#board {
+  width: 800px;
+  height: 800px;
+ 
+  background-color: black;
 }
 
-#amble svg#board circle {
-  fill: purple;
+#amble svg#board circle.firstgroup {
+  fill: lime;
+}
+
+#amble svg#board circle.secondgroup {
+  fill: #ffaa01;
+}
+
+#amble svg#board circle.thirdgroup {
+    fill: #ff00aa;
+}
+
+#amble svg#board circle.fourthgroup {
+    fill: #ab00ff;
+}
+
+#amble svg#board circle.fifthgroup {
+    fill: white;
+}
+
+#amble svg#board circle.sixthgroup {
+    fill: #00aaff;
+}
+
+#amble svg#board circle.stationarygroup {
+    fill: #1f1f1f;
 }

@@ -2,8 +2,11 @@
   (:require [amble-client.markup.state :as markup-state]))
 
 (defn app-markup-error []
-  [:div {:title (first (markup-state/get :errors))}
+  [:div {:id "badnews" :title (first (markup-state/get :errors))}
    "bad news"])
+
+(defn init-player-pieces![init-coord]
+  (player-key init-coord))
 
 (defn board-markup []
   (aset js/window "wut"
@@ -16,7 +19,10 @@
        (println "wut")
        [:circle {:cx x,
                  :cy y
-                 :r 0.02}])
+                 :r 0.02
+                 :class "stationarygroup"
+                 :on-click (fn [] (init-player-pieces!
+                                   [x, y]))}])
      (markup-state/get :game-placement))])
 
 (defn app-markup []
