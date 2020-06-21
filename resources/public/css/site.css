@@ -36,8 +36,8 @@ body {
 }
 
 #amble svg#board {
-  width: 800px;
-  height: 800px;
+  width: auto;
+  height: 100vh;
  
   background-color: black;
 }
@@ -66,6 +66,6 @@ body {
     fill: #00aaff;
 }
 
-#amble svg#board circle.stationarygroup {
+#amble svg#board circle.designatee {
     fill: #1f1f1f;
 }

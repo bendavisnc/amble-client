@@ -6,21 +6,19 @@
    "bad news"])
 
 (defn init-player-pieces![init-coord]
-  (player-key init-coord))
+  nil)
+  ; (player-key init-coord))
 
 (defn board-markup []
-  (aset js/window "wut"
-        (clj->js
-          (markup-state/get :game-placement)))
-
   [:svg {:id "board" "viewBox" "0 0 1 1"}
    (map
      (fn [[x, y]]
-       (println "wut")
        [:circle {:cx x,
                  :cy y
                  :r 0.02
-                 :class "stationarygroup"
+                 :key (str "designatee_"
+                           [x, y])
+                 :class "designatee"
                  :on-click (fn [] (init-player-pieces!
                                    [x, y]))}])
      (markup-state/get :game-placement))])

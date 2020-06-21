@@ -26,7 +26,9 @@
         (.catch (fn [err]
                   (markup-state/update! :errors [err])
                   (throw err))))
-    (println "alright?")))
+    (println (str "Finished initializing game, "
+                  game-id
+                  "."))))
 
 
 
