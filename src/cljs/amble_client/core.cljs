@@ -10,8 +10,9 @@
 
 (defn pieces [& {:keys [designatee-coords, piece-indexes]}]
   (map (fn [i]
-         (or (get designatee-coords i)
-             (throw (new js/Error (str "Invalid piece index, " i ".")))))
+         {:index i
+          :coord (or (get designatee-coords i)
+                     (throw (new js/Error (str "Invalid piece index, " i "."))))})
        piece-indexes))
 
 (defn init!*

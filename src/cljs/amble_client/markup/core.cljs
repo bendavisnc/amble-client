@@ -5,13 +5,14 @@
   [:div {:id "badnews" :title (first (markup-state/get :errors))}
    "bad news"])
 
-(defn piece-markup [& {:keys [x, y, size, class] :as piece}]
+(defn piece-markup [& {:keys [x, y, size, class, index] :as piece}]
   [:circle {:cx x,
             :cy y
             :r size
             :key (str class
                       [x, y])
             :class class
+            :xboardindex index
             :on-click (fn []
                         (println "come back to")
                         (println piece))}])
@@ -26,23 +27,26 @@
 
 
 (defn board-markup []
-  [:svg {:id "board" "viewBox" "0 0 1 1"}
-   (map
-     (fn [[x, y]]
-       (piece-markup :x x :y y :size 0.02 :class "designatee"))
-     (markup-state/get :placement :designatee))
-   (apply concat
-          (map-indexed
-            (fn [i, player-class]
-              (let [player-index (inc i)
-                    player-coords
-                    (markup-state/get :placement :player player-index)]
+  (let [piece-size
+        0.023]
+    [:svg {:id "board" "viewBox" "0 0 1 1"}
+     (map-indexed
+       (fn [i, [x, y]]
+         (piece-markup :x x :y y :size piece-size :class "designatee" :index i))
+       (markup-state/get :placement :designatee))
+     (apply concat
+            (map-indexed
+              (fn [i, player-class]
+                (let [player-index (inc i)
+                      player-coords
+                      (markup-state/get :placement :player player-index)]
 
-                (map
-                  (fn [[x, y]]
-                    (piece-markup :x x :y y :size 0.02 :class player-class))
-                  player-coords)))
-            player-classes))])
+                  (map
+                    (fn [{:keys [index, coord]}]
+                      (let [[x, y] coord]
+                        (piece-markup :x x :y y :size piece-size :class player-class :index index)))
+                    player-coords)))
+              player-classes))]))
 
 
 
