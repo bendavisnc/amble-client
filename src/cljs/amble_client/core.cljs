@@ -1,7 +1,5 @@
 (ns amble-client.core
   (:require
-    [clojure.string :as string]
-    [reagent.core :as reagent]
     [reagent.dom :as rdom]
     [amble-client.resource.game :as game-resource]
     [amble-client.markup.core :as markup]
@@ -10,9 +8,8 @@
 
 (defn pieces [& {:keys [designatee-coords, piece-indexes]}]
   (map (fn [i]
-         {:index i
-          :coord (or (get designatee-coords i)
-                     (throw (new js/Error (str "Invalid piece index, " i "."))))})
+         (or (get designatee-coords i)
+             (throw (new js/Error (str "Invalid piece index, " i ".")))))
        piece-indexes))
 
 (defn init!*
@@ -22,7 +19,7 @@
          game-promise (game-resource/get! game-id)
          on-successful-response (fn [game-response]
                                   (if (not (:success game-response))
-                                    (throw (new js/Error (str "Game not found (" game-id ")."))))
+                                    (throw (new js/Error (:error-text game-response))))
                                   (init!*
                                          (:body game-response)))]
 
@@ -47,9 +44,7 @@
    nil))
 
 (defn init-ui! []
-  (let [ui-atom (reagent/atom {})]
-    (rdom/render [markup/app-markup-error-checked] (.getElementById js/document "app"))
-    ui-atom))
+  (rdom/render [markup/app-markup-error-checked] (.getElementById js/document "app")))
 
 (defn init! []
   (.log js/console "Starting client init.")
@@ -62,13 +57,3 @@
            (.log js/console "Requested new game.")
            (.log js/console response-result))))
 
-
-; (.addEventListener js/document
-;                    "keypress"
-;                    (fn [e]
-;                      (.log js/console "meh.")
-;                      (.log js/console (clj->js (martian/explore m)))))
-
-; (.addEventListener js/document)
-    
-    
