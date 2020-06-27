@@ -34,7 +34,11 @@
            (concat
                    (map-indexed
                      (fn [i, [x, y]]
-                       (piece-markup :x x :y y :size piece-size :class "designatee" :index i))
+                       (piece-markup :x x
+                                     :y y
+                                     :size (* 0.98 piece-size) ;; Cheap way to prevent seeing a placeholder piece when a normal piece is sitting above.
+                                     :class "designatee"
+                                     :index i))
                      (markup-state/get :placement :designatee))
                    (apply concat
                           (map-indexed
