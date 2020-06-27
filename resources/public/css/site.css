@@ -67,6 +67,14 @@ body {
     fill: #00aaff;
 }
 
+#amble svg#board circle {
+    opacity: 0;
+}
+
 #amble svg#board circle.designatee {
-    fill: #1f1f1f;
+  /* fill: #999; */
+    opacity: 1;
+    stroke: gray;
+    stroke-width: 0.002px;
+    r: 9%; /* This is just so the piece isn't shown when a normal piece is on top. */
 }

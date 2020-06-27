@@ -30,23 +30,25 @@
   (let [piece-size
         0.023]
     [:svg {:id "board" "viewBox" "0 0 1 1"}
-     (map-indexed
-       (fn [i, [x, y]]
-         (piece-markup :x x :y y :size piece-size :class "designatee" :index i))
-       (markup-state/get :placement :designatee))
-     (apply concat
-            (map-indexed
-              (fn [i, player-class]
-                (let [player-index (inc i)
-                      player-coords
-                      (markup-state/get :placement :player player-index)]
+     (doall
+           (concat
+                   (map-indexed
+                     (fn [i, [x, y]]
+                       (piece-markup :x x :y y :size piece-size :class "designatee" :index i))
+                     (markup-state/get :placement :designatee))
+                   (apply concat
+                          (map-indexed
+                            (fn [i, player-class]
+                              (let [player-index (inc i)
+                                    player-coords
+                                    (markup-state/get :placement :player player-index)]
 
-                  (map
-                    (fn [{:keys [index, coord]}]
-                      (let [[x, y] coord]
-                        (piece-markup :x x :y y :size piece-size :class player-class :index index)))
-                    player-coords)))
-              player-classes))]))
+                                (map
+                                  (fn [{:keys [index, coord]}]
+                                    (let [[x, y] coord]
+                                      (piece-markup :x x :y y :size piece-size :class player-class :index index)))
+                                  player-coords)))
+                            player-classes))))]))
 
 
 
