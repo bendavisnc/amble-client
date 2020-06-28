@@ -31,7 +31,7 @@
     (assert (some #(= match-value
                       %)
                   index-listing)
-            (str "Hacky element to player index value had proven not so good. \n Can't find match value, \"" match-value "\"."))
+            (str "Hacky element to player index value has proven not so good. \n Can't find match value, \"" match-value "\"."))
     (.indexOf index-listing match-value)))
 
 
@@ -57,13 +57,13 @@
       (do
         (aset pt "x" (or (aget e "clientX")
                          (-> e
-                             (aget "originalEvent")
+                             ;(aget "originalEvent")
                              (aget "touches")
                              (aget 0)
                              (aget "clientX"))))
         (aset pt "y" (or (aget e "clientY")
                          (-> e
-                             (aget "originalEvent")
+                             ;(aget "originalEvent")
                              (aget "touches")
                              (aget 0)
                              (aget "clientY"))))

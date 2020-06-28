@@ -6,59 +6,67 @@
 
 (def atom-event-to-coord (atom nil))
 
-(defn on-drag-start! [& args]
+(defn on-drag-start! [e]
   (println "on drag start")
-  (if (not (:player-index (deref atom-contemporary-move)))
-    (let [player-index (utils/player-index (-> args
-                                               first
-                                               (aget "srcElement")))]
-      (assert (number? player-index)
-              "Problem encountered while starting new piece drag, no index.")
-      (swap! atom-contemporary-move assoc :player-index player-index))))
+  (if (not (:player-being-dragged (deref atom-contemporary-move)))
+    (let [player-elem (aget e
+                            "srcElement")]
+      (assert player-elem)
+      (swap! atom-contemporary-move assoc :player-being-dragged player-elem))))
 
 (defn on-drag! [e]
-  (println "on drag")
-  (let [player-elem (-> e
-                        (aget "srcElement"))
-        player-index (utils/player-index player-elem)
-        ;is-correct-piece (= player-index (:player-index (deref atom-contemporary-move)))]
-        is-correct-piece true]
-    (if is-correct-piece
-      (let [
-            ;[x* (aget (first args) "x")
-            ; y* (aget (first args) "y")
-            ; [x, y] (map (comp
-            ;                   (partial * 1)
-            ;                   #(/ % 1000)
-            ;             [x*, y*]
-            [x, y] ((deref atom-event-to-coord)
-                    e)
-            player-piece-index (js/parseInt (.getAttribute player-elem "data-i"))]
-        (.preventDefault e)
-        (amble-client-state/update! :placement :player player-index player-piece-index 0 x)
-        (amble-client-state/update! :placement :player player-index player-piece-index 1 y)
-        (.log js/console (clj->js [x y]))
-        (.log js/console player-elem)
-        false))))
+  (let [
+        player-elem ((deref atom-contemporary-move)
+                     :player-being-dragged)]
+    (if player-elem
+      (do
+        ;(println "on drag")
+        (let [
+              player-index (utils/player-index player-elem)
+              ;[x* (aget (first args) "x")
+              ; y* (aget (first args) "y")
+              ; [x, y] (map (comp
+              ;                   (partial * 1)
+              ;                   #(/ % 1000)
+              ;             [x*, y*]
+              [x, y] ((deref atom-event-to-coord)
+                      e)
+              player-piece-index (js/parseInt (.getAttribute player-elem "data-i"))]
+          (.preventDefault e)
+          (amble-client-state/update! :placement :player player-index player-piece-index 0 x)
+          (amble-client-state/update! :placement :player player-index player-piece-index 1 y)
+          ;(.log js/console (clj->js [x y]))
+          ;(.log js/console player-elem)
+          true)))))
 
 (defn on-drag-end! [& args]
-  (println "on drag end"))
-  ;(swap! atom-contemporary-move assoc :player-index nil))
+  (println "on drag end")
+  (swap! atom-contemporary-move assoc :player-being-dragged nil))
 
 (defn init! []
   (reset! atom-event-to-coord (utils/event-to-coord))
-  (let [board-selection (.querySelector js/document "svg#board")
-        player-selection (.querySelectorAll board-selection "circle.player")]
+  (let [board-elem (.querySelector js/document "svg#board")
+        player-selection (.querySelectorAll board-elem "circle.player")]
     (.forEach player-selection
               (fn [player-piece-elem]
                 (.addEventListener player-piece-elem
                                    "mousedown"
                                    on-drag-start!)
-                (.addEventListener player-piece-elem
+                (.addEventListener board-elem
                                    "mousemove"
                                    on-drag!)
                 (.addEventListener player-piece-elem
                                    "mouseup"
+                                   on-drag-end!)
+                (.addEventListener player-piece-elem
+                                   "touchstart"
+                                   on-drag-start!)
+                (.addEventListener board-elem
+                                   "touchmove"
+                                   on-drag!)
+                (.addEventListener player-piece-elem
+                                   "touchend"
                                    on-drag-end!)))
-    (.addEventListener board-selection "mouseup" on-drag-end!)))
+    (.addEventListener board-elem "mouseup" on-drag-end!)
+    (.addEventListener board-elem "touchend" on-drag-end!)))
 
