@@ -20,18 +20,10 @@
    "bad news"])
 
 (defn piece-markup [& {:keys [x, y, size, class, i] :as piece}]
-  (let [key-base (str x
-                      y)
-
-        unique-key
-        (s/join
-          (concat
-            (filter (comp not js/isNaN js/parseInt)
-                    key-base)
-            (if (= placeholder-class
-                   class)
-              ["d"])))]
-
+  (let [
+        unique-key (str class
+                        (or i
+                            [x, y]))]
     [:circle {:cx       x,
               :cy       y
               :r        size

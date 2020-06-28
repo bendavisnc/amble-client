@@ -21,7 +21,8 @@
   (let [player-elem (-> e
                         (aget "srcElement"))
         player-index (utils/player-index player-elem)
-        is-correct-piece (= player-index (:player-index (deref atom-contemporary-move)))]
+        ;is-correct-piece (= player-index (:player-index (deref atom-contemporary-move)))]
+        is-correct-piece true]
     (if is-correct-piece
       (let [
             ;[x* (aget (first args) "x")
@@ -33,15 +34,16 @@
             [x, y] ((deref atom-event-to-coord)
                     e)
             player-piece-index (js/parseInt (.getAttribute player-elem "data-i"))]
+        (.preventDefault e)
         (amble-client-state/update! :placement :player player-index player-piece-index 0 x)
         (amble-client-state/update! :placement :player player-index player-piece-index 1 y)
         (.log js/console (clj->js [x y]))
         (.log js/console player-elem)
-        true))))
+        false))))
 
 (defn on-drag-end! [& args]
-  (println "on drag end")
-  (swap! atom-contemporary-move assoc :player-index nil))
+  (println "on drag end"))
+  ;(swap! atom-contemporary-move assoc :player-index nil))
 
 (defn init! []
   (reset! atom-event-to-coord (utils/event-to-coord))
