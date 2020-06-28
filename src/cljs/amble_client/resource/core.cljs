@@ -7,8 +7,8 @@
    [martian.cljs-http :as martian-http]))
 
 (defn environment [& keys]
-  (let [e {:host {:client "localhost"
-                  :amble "localhost"}
+  (let [e {:host {:client "192.168.50.77"
+                  :amble "192.168.50.77"}
            :port {
                   ; :client "3001"
                   :client "3449"
