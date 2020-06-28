@@ -28,7 +28,8 @@
                    (throw err))))))
 
   ([& {:keys [game-id, designatee-coords, piece-indexes]}]
-   (amble-client-state/init! :designatee-coords designatee-coords
+   (amble-client-state/init! :game-id game-id
+                             :designatee-coords designatee-coords
                              :piece-indexes piece-indexes)
    (.setTimeout js/window
                 amble-client-interaction/init!

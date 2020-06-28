@@ -2,7 +2,7 @@
   (:require [amble-client.state :as amble-client-state]
             [amble-client.utils :as utils]))
 
-(def atom-contemporary-move (atom {}))
+(def atom-contemporary-move (atom nil))
 
 (def atom-event-to-coord (atom nil))
 
@@ -14,12 +14,16 @@
       (assert player-elem)
       (swap! atom-contemporary-move assoc :player-being-dragged player-elem))))
 
+(defn update-contemporary-move! [[x, y]]
+  (swap! atom-contemporary-move update :move #(conj % [x, y])))
+
 (defn on-drag! [e]
   (let [
         player-elem ((deref atom-contemporary-move)
                      :player-being-dragged)]
     (if player-elem
       (do
+        (.preventDefault e)
         ;(println "on drag")
         (let [
               player-index (utils/player-index player-elem)
@@ -32,18 +36,27 @@
               [x, y] ((deref atom-event-to-coord)
                       e)
               player-piece-index (js/parseInt (.getAttribute player-elem "data-i"))]
-          (.preventDefault e)
           (amble-client-state/update! :placement :player player-index player-piece-index 0 x)
           (amble-client-state/update! :placement :player player-index player-piece-index 1 y)
+          (update-contemporary-move! [x, y])
           ;(.log js/console (clj->js [x y]))
           ;(.log js/console player-elem)
           true)))))
 
 (defn on-drag-end! [& args]
   (println "on drag end")
-  (swap! atom-contemporary-move assoc :player-being-dragged nil))
+  (swap! atom-contemporary-move assoc :player-being-dragged nil)
+  (println (deref atom-contemporary-move)))
+
+
+(defn atom-contemporary-move-init! []
+  (reset! atom-contemporary-move
+          {:game-id (or (amble-client-state/get :game-id)
+                        (throw (new js/Error "No game id set.")))
+           :move []}))
 
 (defn init! []
+  (atom-contemporary-move-init!)
   (reset! atom-event-to-coord (utils/event-to-coord))
   (let [board-elem (.querySelector js/document "svg#board")
         player-selection (.querySelectorAll board-elem "circle.player")]

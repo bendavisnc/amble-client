@@ -1,4 +1,7 @@
 (ns amble-client.state
+  "An api for all state getting and setting.
+   Encapsulates reagent's atom to affect ui markup.
+   Pretty much anything in this code base that has an exclamation point uses this dep."
   (:refer-clojure :exclude [get])
   (:require [reagent.core :as reagent]
             [amble-client.utils :as utils]))
@@ -18,7 +21,8 @@
           :else
           (swap! atomic-state assoc-in assoc-keys update-val))))
 
-(defn init! [& {:keys [designatee-coords, piece-indexes]}]
+(defn init! [& {:keys [game-id, designatee-coords, piece-indexes]}]
+  (update! :game-id game-id)
   (update! :placement :designatee designatee-coords)
   (doseq [i (range (count piece-indexes))]
     (let [player-index i
