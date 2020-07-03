@@ -1,6 +1,7 @@
 (ns amble-client.interaction.core
   (:require [amble-client.state :as amble-client-state]
-            [amble-client.utils :as utils]))
+            [amble-client.utils :as utils]
+            [amble-client.resource.move :as move-resource]))
 
 (def atom-contemporary-move (atom nil))
 
@@ -43,17 +44,29 @@
           ;(.log js/console player-elem)
           true)))))
 
-(defn on-drag-end! [& args]
+(defn on-drag-end! [& _]
   (println "on drag end")
-  (swap! atom-contemporary-move assoc :player-being-dragged nil)
-  (println (deref atom-contemporary-move)))
+  (let [{:keys [game-id, move]} (deref atom-contemporary-move)
+        move-add-promise (move-resource/add! :game-id game-id
+                                             :move move)
+        on-successful-response (fn [move-response]
+                                 (println "Posted successful move.")
+                                 (println move-response)
+                                 (swap! atom-contemporary-move assoc :player-being-dragged nil))]
+    (-> move-add-promise
+        (.then on-successful-response)
+        (.catch (fn [err]
+                  (amble-client-state/update! :errors [err])
+                  (throw err))))))
+
+
 
 
 (defn atom-contemporary-move-init! []
   (reset! atom-contemporary-move
           {:game-id (or (amble-client-state/get :game-id)
                         (throw (new js/Error "No game id set.")))
-           :move []}))
+           :move    []}))
 
 (defn init! []
   (atom-contemporary-move-init!)

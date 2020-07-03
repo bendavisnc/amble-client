@@ -1,23 +1,23 @@
 (ns amble-client.resource.core
   (:require
-   [clojure.string :as string]
-   [cljs.js :refer  [eval]]
-   [cljs.core.async :as casync]
-   [martian.core :as martian]
-   [martian.cljs-http :as martian-http]))
+    [clojure.string :as string]
+    [cljs.js :refer [eval]]
+    [cljs.core.async :as casync]
+    [martian.core :as martian]
+    [martian.cljs-http :as martian-http]))
 
 (defn environment [& keys]
   (let [e {:host {:client "192.168.50.77"
-                  :amble "192.168.50.77"}
+                  :amble  "192.168.50.77"}
            :port {
                   ; :client "3001"
                   :client "3449"
-                  :amble "3000"}}
+                  :amble  "3000"}}
         kv (((first keys) e)
             (second keys))]
     kv))
-  
-           
+
+
 (defn url-ambel []
   (str "http://" (environment :host :amble) ":" (environment :port :amble)))
 

@@ -43,8 +43,8 @@
 
 (defn init! []
   (.log js/console "Starting client init.")
-  (init!*)
-  (init-ui!))
+  (init-ui!)
+  (init!*))
 
 (defn post-game! []
   (.then (game-resource/create!)
