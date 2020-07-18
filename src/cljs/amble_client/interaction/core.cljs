@@ -89,10 +89,10 @@
                                    on-drag-start!)
                 (.addEventListener board-elem
                                    "touchmove"
-                                   on-drag!)
-                (.addEventListener player-piece-elem
-                                   "touchend"
-                                   on-drag-end!)))
+                                   on-drag!)))
+                ;(.addEventListener player-piece-elem
+                ;                   "touchend"
+                ;                   on-drag-end!)))
     (.addEventListener board-elem "mouseup" on-drag-end!)
     (.addEventListener board-elem "touchend" on-drag-end!)))
 

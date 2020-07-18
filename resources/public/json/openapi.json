@@ -19,14 +19,14 @@
         "summary" : "Create new game"
       }
     },
-    "/game/{gameId}" : {
+    "/game/{id}" : {
       "get" : {
         "operationId" : "gameGetById",
         "parameters" : [ {
           "description" : "The id of the game",
           "explode" : false,
           "in" : "path",
-          "name" : "gameId",
+          "name" : "id",
           "required" : true,
           "schema" : {
             "type" : "string"
@@ -44,33 +44,11 @@
         "summary" : "Get game by id"
       }
     },
-    "/game?tag={tag}" : {
-      "get" : {
-        "operationId" : "gameSearch",
-        "parameters" : [ {
-          "description" : "The tag associated with the searched for game.",
-          "explode" : true,
-          "in" : "query",
-          "name" : "tag",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          },
-          "style" : "form"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "List of games that matched tag."
-          }
-        },
-        "summary" : "Search games"
-      }
-    },
     "/game/{gameId}/move" : {
       "post" : {
-        "operationId" : "moveCreate",
+        "operationId" : "moveAdd",
         "parameters" : [ {
-          "description" : "The id of the game that move takes place",
+          "description" : "The id of the game that the move takes place",
           "explode" : false,
           "in" : "path",
           "name" : "gameId",
