@@ -7,15 +7,6 @@
     [amble-client.state :as amble-client-state]
     [amble-client.interaction.core :as amble-client-interaction]))
 
-(defn init-ui-promise! []
-  (new js/Promise (fn [resolve, reject]
-                    (rdom/render
-                      [markup/app-markup-error-checked]
-                      (.getElementById js/document "app")
-                      (fn [& _]
-                        (resolve nil))))))
-
-
 (defn init!*
   ([]
    (let [game-id (utils/game-id-from-window)
@@ -35,21 +26,16 @@
                    (throw err))))))
 
   ([& {:keys [game-id, designatee-coords, piece-indexes]}]
-   (let [state-init-promise
-         (amble-client-state/init-promise! :game-id game-id
-                                           :designatee-coords designatee-coords
-                                           :piece-indexes piece-indexes)
-         ui-init-promise (init-ui-promise!)
-         on-after-ui-init
-         (fn [_]
-           (amble-client-interaction/init!)
-           (println (str "Finished initializing game, "))
-           game-id)]
-     (-> state-init-promise
-         (.then ui-init-promise)
-         (.then on-after-ui-init)))))
-
-
+   (let [on-after-ui-init (fn [_]
+                            (amble-client-interaction/init!)
+                            (println (str "Finished initializing game, ")))]
+     (amble-client-state/init! :game-id game-id
+                               :designatee-coords designatee-coords
+                               :piece-indexes piece-indexes)
+     (rdom/render
+       [markup/app-markup-error-checked]
+       (.getElementById js/document "app")
+       on-after-ui-init))))
 
 (defn init! []
   (println "Starting client init.")
@@ -60,7 +46,3 @@
          (fn [response-result]
            (println "Requested new game.")
            (println js/console response-result))))
-
-
-
-
