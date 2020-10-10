@@ -1,0 +1,4 @@
+
+- style
+  - improve colors
+  - i'd like to do something idk...
