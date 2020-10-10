@@ -28,7 +28,8 @@
   ([& {:keys [game-id, designatee-coords, piece-indexes]}]
    (let [on-after-ui-init (fn [_]
                             (amble-client-interaction/init!)
-                            (println (str "Finished initializing game, ")))]
+                            (println (str "Finished initializing game, "
+                                           game-id)))]
      (amble-client-state/init! :game-id game-id
                                :designatee-coords designatee-coords
                                :piece-indexes piece-indexes)
