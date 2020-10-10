@@ -39,16 +39,15 @@
          (amble-client-state/init-promise! :game-id game-id
                                            :designatee-coords designatee-coords
                                            :piece-indexes piece-indexes)
-         ui-init-promise (init-ui-promise!)]
-     (.then
-       (.then
-         (.then state-init-promise)
-         ui-init-promise)
-       (fn []
-         (amble-client-interaction/init!)
-         (println (str "Finished initializing game, "
-                       game-id)))))))
-
+         ui-init-promise (init-ui-promise!)
+         on-after-ui-init
+         (fn [_]
+           (amble-client-interaction/init!)
+           (println (str "Finished initializing game, "))
+           game-id)]
+     (-> state-init-promise
+         (.then ui-init-promise)
+         (.then on-after-ui-init)))))
 
 
 
