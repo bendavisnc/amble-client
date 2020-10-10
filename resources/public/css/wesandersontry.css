@@ -6,11 +6,13 @@ body {
 }
 
 #amble {
-  background-color: black;
+  /* background-color: white; */
+  background-color: lightgrey;
 }
 
 #amble svg#board {
-  background-color: #666666ff;
+  /* background-color: #666666ff; */
+  background-color: lightgrey;
 }
 
 #amble svg#board circle.player-one {
