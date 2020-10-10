@@ -21,19 +21,25 @@
           :else
           (swap! atomic-state assoc-in assoc-keys update-val))))
 
-(defn init! [& {:keys [game-id, designatee-coords, piece-indexes]}]
-  (update! :game-id game-id)
-  (update! :placement :designatee designatee-coords)
-  (doseq [i (range (count piece-indexes))]
-    (let [player-index i
-          indexes (nth piece-indexes i)]
-      (update! :placement
-               :player
-               player-index
-               (vec
-                   (map vec
-                        (utils/pieces-inferred-by-index :designatee-coords designatee-coords
-                                                        :piece-indexes indexes)))))))
+(defn init-promise! [& {:keys [game-id, designatee-coords, piece-indexes]}]
+  (new js/Promise (fn [resolve, reject]
+                    (update! :game-id game-id)
+                    (update! :placement :designatee designatee-coords)
+                    (dorun
+                      (doseq [i (range (count piece-indexes))]
+                        (println (str "making piece "
+                                      i))
+                        (let [player-index i
+                              indexes (nth piece-indexes i)]
+                          (update! :placement
+                                  :player
+                                  player-index
+                                  (vec
+                                    (map vec
+                                        (utils/pieces-inferred-by-index :designatee-coords designatee-coords
+                                                                        :piece-indexes indexes)))))))
+                    (println "dunzo (state)")
+                    (resolve nil))))
 
 (defn print! []
   (.log js/console (clj->js (deref atomic-state))))

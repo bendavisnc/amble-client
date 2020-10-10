@@ -77,10 +77,14 @@
            :move    []}))
 
 (defn init! []
+  (println "dunzo (start, interaction)") 
   (atom-contemporary-move-init!)
   (let [board-elem (.querySelector js/document "svg#board")
+        _ (assert board-elem)
         _ (reset! atom-event-to-coord (utils/coord-conv board-elem))
-        player-selection (.querySelectorAll board-elem "circle.player")]
+        player-selection (.querySelectorAll board-elem "circle.player")
+        _ (assert (< 0 (.-length player-selection)))]
+        
     (.forEach player-selection
               (fn [player-piece-elem]
                 (.addEventListener player-piece-elem

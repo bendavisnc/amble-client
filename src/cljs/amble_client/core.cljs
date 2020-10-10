@@ -7,11 +7,18 @@
     [amble-client.state :as amble-client-state]
     [amble-client.interaction.core :as amble-client-interaction]))
 
+(defn init-ui-promise! []
+  (new js/Promise (fn [resolve, reject]
+                    (rdom/render
+                      [markup/app-markup-error-checked]
+                      (.getElementById js/document "app")
+                      (fn [& _]
+                        (resolve nil))))))
+
 
 (defn init!*
   ([]
-   (let [
-         game-id (utils/game-id-from-window)
+   (let [game-id (utils/game-id-from-window)
          game-promise (game-resource/get! game-id)
          on-successful-response (fn [game-response]
                                   (if (not (:success game-response))
@@ -28,22 +35,25 @@
                    (throw err))))))
 
   ([& {:keys [game-id, designatee-coords, piece-indexes]}]
-   (amble-client-state/init! :game-id game-id
-                             :designatee-coords designatee-coords
-                             :piece-indexes piece-indexes)
-   (.setTimeout js/window
-                amble-client-interaction/init!
-                200)
-   (println (str "Finished initializing game, "
-                 game-id
-                 "."))))
+   (let [state-init-promise
+         (amble-client-state/init-promise! :game-id game-id
+                                           :designatee-coords designatee-coords
+                                           :piece-indexes piece-indexes)
+         ui-init-promise (init-ui-promise!)]
+     (.then
+       (.then
+         (.then state-init-promise)
+         ui-init-promise)
+       (fn []
+         (amble-client-interaction/init!)
+         (println (str "Finished initializing game, "
+                       game-id)))))))
 
-(defn init-ui! []
-  (rdom/render [markup/app-markup-error-checked] (.getElementById js/document "app")))
+
+
 
 (defn init! []
   (.log js/console "Starting client init.")
-  (init-ui!)
   (init!*))
 
 (defn post-game! []
@@ -51,4 +61,7 @@
          (fn [response-result]
            (.log js/console "Requested new game.")
            (.log js/console response-result))))
+
+
+
 
