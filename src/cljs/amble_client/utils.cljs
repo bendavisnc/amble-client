@@ -70,14 +70,3 @@
         (let [cursor-pt (.matrixTransform pt (.inverse (.getScreenCTM svg-element)))]
           [(aget cursor-pt "x")
            (aget cursor-pt "y")])))))
-
-(defn event-to-coord []
-  (let [board-elem (.querySelector js/document "svg#board")]
-    (assert board-elem "No board found in dom markup.")
-    (coord-conv board-elem)))
-
-
-
-
-
-
