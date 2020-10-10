@@ -16,58 +16,57 @@
       (swap! atom-contemporary-move assoc :player-being-dragged player-elem))))
 
 (defn update-contemporary-move! [[x, y]]
-  (println "nice?"))
-  ; (swap! atom-contemporary-move update :move #(conj % [x, y])))
+  (swap! atom-contemporary-move update :move #(conj % [x, y])))
 
 (defn on-drag! [e]
-  (println "fo real?"))
-  ; (let [player-elem ((deref atom-contemporary-move)
-  ;                    :player-being-dragged)]
-  ;   (if player-elem
-  ;     (do
-  ;       (.preventDefault e)
-  ;       ;(println "on drag")
-  ;       (let [player-index (utils/player-index player-elem)
-  ;             ;[x* (aget (first args) "x")
-  ;             ; y* (aget (first args) "y")
-  ;             ; [x, y] (map (comp
-  ;             ;                   (partial * 1)
-  ;             ;                   #(/ % 1000)
-  ;             ;             [x*, y*]
-  ;             [x, y] ((deref atom-event-to-coord)
-  ;                     e)
-  ;             player-piece-index (js/parseInt (.getAttribute player-elem "data-i"))]
-  ;         ; (amble-client-state/update! :placement :player player-index player-piece-index 0 x)
-  ;         ; (amble-client-state/update! :placement :player player-index player-piece-index 1 y)
-  ;         (update-contemporary-move! [x, y])
-  ;         ;(.log js/console (clj->js [x y]))
-  ;         ;(.log js/console player-elem)
-  ;         true)))))
+  (let [
+        player-elem ((deref atom-contemporary-move)
+                     :player-being-dragged)]
+    (if player-elem
+      (do
+        (.preventDefault e)
+        ;(println "on drag")
+        (let [
+              player-index (utils/player-index player-elem)
+              ;[x* (aget (first args) "x")
+              ; y* (aget (first args) "y")
+              ; [x, y] (map (comp
+              ;                   (partial * 1)
+              ;                   #(/ % 1000)
+              ;             [x*, y*]
+              [x, y] ((deref atom-event-to-coord)
+                      e)
+              player-piece-index (js/parseInt (.getAttribute player-elem "data-i"))]
+          (amble-client-state/update! :placement :player player-index player-piece-index 0 x)
+          (amble-client-state/update! :placement :player player-index player-piece-index 1 y)
+          (update-contemporary-move! [x, y])
+          ;(.log js/console (clj->js [x y]))
+          ;(.log js/console player-elem)
+          true)))))
 
 (defn on-drag-end! [& _]
-  (println "on drag end"))
-  ; (let [
-        ; {:keys [game-id, move]} (deref atom-contemporary-move)
-        ; move-add-promise (move-resource/add! :game-id game-id
-                                            ;  :move move)
-        ; on-successful-response (fn [move-response]
-                                ;  (println "Posted successful move.")
-                                ;  (println move-response)
-                                ;  (swap! atom-contemporary-move assoc :player-being-dragged nil))]
-    ; (swap! atom-contemporary-move assoc :player-being-dragged nil)
-    
-    ; (-> move-add-promise
-    ;     (.then on-successful-response)
-    ;     (.catch (fn [err]
-    ;               (amble-client-state/update! :errors [err])
-    ;               (throw err))))))
+  (println "on drag end")
+  (let [{:keys [game-id, move]} (deref atom-contemporary-move)
+        move-add-promise (move-resource/add! :game-id game-id
+                                             :move move)
+        on-successful-response (fn [move-response]
+                                 (println "Posted successful move.")
+                                 (println move-response)
+                                 (swap! atom-contemporary-move assoc :player-being-dragged nil))]
+    (-> move-add-promise
+        (.then on-successful-response)
+        (.catch (fn [err]
+                  (amble-client-state/update! :errors [err])
+                  (throw err))))))
+
+
+
 
 (defn atom-contemporary-move-init! []
   (reset! atom-contemporary-move
           {:game-id (or (amble-client-state/get :game-id)
                         (throw (new js/Error "No game id set.")))
-           :move    []
-           :player-being-dragged nil}))
+           :move    []}))
 
 (defn init! []
   (atom-contemporary-move-init!)
