@@ -24,9 +24,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.94732515"
-     inkscape:cx="469.36116"
-     inkscape:cy="478.79733"
+     inkscape:zoom="1.3397201"
+     inkscape:cx="454.97045"
+     inkscape:cy="466.47984"
      inkscape:document-units="mm"
      inkscape:current-layer="g379"
      inkscape:document-rotation="0"
@@ -61,7 +61,7 @@
          height="1.0778242"
          width="1.1055199"
          id="rect1135"
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#ccddec;fill-opacity:1;stroke-width:0.999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#666666;fill-opacity:1;stroke-width:0.999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
       <circle
          class="designatee"
          id="designatee[0.5 0.1536]"
@@ -1220,15 +1220,15 @@
          r="0.023"
          cy="0.32679999"
          cx="0.64999998"
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#97adc2;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
       <circle
+         r="0.023"
          class="player-five player"
          data-i="1"
          id="player-five1"
-         r="0.023"
          cy="0.32679999"
          cx="0.69999999"
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#97adc2;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
       <circle
          class="player-five player"
          data-i="2"
@@ -1236,7 +1236,7 @@
          r="0.023"
          cy="0.32679999"
          cx="0.75"
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#97adc2;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
       <circle
          class="player-five player"
          data-i="3"
@@ -1244,7 +1244,7 @@
          r="0.023"
          cy="0.32679999"
          cx="0.80000001"
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#97adc2;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
       <circle
          class="player-five player"
          data-i="4"
@@ -1252,11 +1252,11 @@
          r="0.023"
          cy="0.37009999"
          cx="0.67500001"
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#97adc2;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
       <path
          transform="matrix(0.00154602,0,0,0.00154602,-0.06544274,-0.17062555)"
          d="M 511.27539 334.875 A 14.876876 14.876876 0 0 0 496.39844 349.75195 A 14.876876 14.876876 0 0 0 511.27539 364.62891 A 14.876876 14.876876 0 0 0 526.15234 349.75195 A 14.876876 14.876876 0 0 0 511.27539 334.875 z "
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke-width:646.82;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#97adc2;fill-opacity:1;stroke-width:646.82216271;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1;anonymous:0"
          id="player-five5" />
       <circle
          class="player-five player"
@@ -1265,7 +1265,7 @@
          r="0.023"
          cy="0.37009999"
          cx="0.77499998"
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#97adc2;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
       <circle
          class="player-five player"
          data-i="7"
@@ -1273,7 +1273,7 @@
          r="0.023"
          cy="0.41339999"
          cx="0.69999999"
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#97adc2;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
       <circle
          class="player-five player"
          data-i="8"
@@ -1281,7 +1281,7 @@
          r="0.023"
          cy="0.41339999"
          cx="0.75"
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#97adc2;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
       <circle
          class="player-five player"
          data-i="9"
@@ -1289,7 +1289,7 @@
          r="0.023"
          cy="0.4567"
          cx="0.72500002"
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#97adc2;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;anonymous:0;stop-color:#000000;stop-opacity:1" />
       <circle
          class="player-six player"
          data-i="0"
