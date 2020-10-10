@@ -1,4 +1,8 @@
 
 - style
-  - improve colors
+  - improve colors                           ✅
   - i'd like to do something idk...
+
+- interaction src
+  - improve impl
+    - get rid of atoms
