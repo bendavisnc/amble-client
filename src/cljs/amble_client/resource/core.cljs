@@ -36,22 +36,18 @@
 (def interceptors-custom (-> martian-http/default-interceptors
                              (concat [interceptor-custom])))
 
-(defn damnit []
-  (try
-    (martian-http/bootstrap-swagger (url-openapi)
-                                    {:interceptors interceptors-custom})
-    (catch js/Object e
-      (println "heck year"))))
+(defn load-openapi! []
+  (martian-http/bootstrap-swagger (url-openapi)
+                                  {:interceptors interceptors-custom}))
 
 
 (def api-promise
   (new js/Promise (fn [resolve-callback, reject-callback]
                     (try
-                      (casync/take! (damnit)
+                      (casync/take! (load-openapi!)
                                     resolve-callback)
-                      ;(throw (new js/Error "just checking"))
                       (catch :default err
-                        (println "thank you jessu")
+                        (println "Problem with getting resource api based on openapi url.")
                         (reject-callback err))))))
 
 (defn response-promise [{:keys [endpoint-key, param-map, request-body]}]
