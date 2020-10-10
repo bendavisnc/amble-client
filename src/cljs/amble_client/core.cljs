@@ -52,14 +52,14 @@
 
 
 (defn init! []
-  (.log js/console "Starting client init.")
+  (println "Starting client init.")
   (init!*))
 
 (defn post-game! []
   (.then (game-resource/create!)
          (fn [response-result]
-           (.log js/console "Requested new game.")
-           (.log js/console response-result))))
+           (println "Requested new game.")
+           (println js/console response-result))))
 
 
 

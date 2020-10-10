@@ -27,8 +27,6 @@
                     (update! :placement :designatee designatee-coords)
                     (dorun
                       (doseq [i (range (count piece-indexes))]
-                        (println (str "making piece "
-                                      i))
                         (let [player-index i
                               indexes (nth piece-indexes i)]
                           (update! :placement
@@ -38,7 +36,6 @@
                                     (map vec
                                         (utils/pieces-inferred-by-index :designatee-coords designatee-coords
                                                                         :piece-indexes indexes)))))))
-                    (println "dunzo (state)")
                     (resolve nil))))
 
 (defn print! []

@@ -46,10 +46,7 @@
 
 (defn on-drag-end! [& _]
   (println "on drag end")
-  (let [{:keys [game-id, move]} (deref atom-contemporary-move)
-        _ (println "hi")
-        _ (println game-id)
-        _ (println move)]
+  (let [{:keys [game-id, move]} (deref atom-contemporary-move)]
         ; move-add-promise (move-resource/add! :game-id game-id
         ;                                      :move move)
         ; on-successful-response (fn [move-response]
@@ -57,7 +54,6 @@
         ;                          (println move-response)
         ;                          (swap! atom-contemporary-move assoc :player-being-dragged nil))
                                  
-    (.log js/console "whatevs")
     (swap! atom-contemporary-move assoc :player-being-dragged nil)))
 
 
@@ -77,7 +73,6 @@
            :move    []}))
 
 (defn init! []
-  (println "dunzo (start, interaction)") 
   (atom-contemporary-move-init!)
   (let [board-elem (.querySelector js/document "svg#board")
         _ (assert board-elem)

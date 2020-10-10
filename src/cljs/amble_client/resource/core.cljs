@@ -59,7 +59,6 @@
     (fn [api]
       (let [all-params (if request-body (assoc param-map ::martian/request request-body)
                            param-map)]
-        (println all-params)
         (aset api "api_root"
                   (url-ambel))
         (new js/Promise (fn [resolve-callback, reject-callback]
