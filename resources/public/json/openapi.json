@@ -58,6 +58,18 @@
           },
           "style" : "simple"
         } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "items" : {
+                  "type" : "string"
+                },
+                "type" : "array"
+              }
+            }
+          }
+        },
         "responses" : {
           "201" : {
             "description" : "Successfully made move."
