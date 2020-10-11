@@ -29,7 +29,7 @@
        (casync/chan)
        (map on-successful-response)
        game-chan
-       false
+       true
        (fn [err]
          (println "helllllllllllllllllllllllllo")
          (amble-client-state/update! :errors [err])
@@ -37,11 +37,11 @@
 
   ([& {:keys [game-id, designatee-coords, piece-indexes]}]
    (do
-     ;(amble-client-state/init! :game-id game-id
-     ;                          :designatee-coords designatee-coords
-     ;                          :piece-indexes piece-indexes)
+     (amble-client-state/init! :game-id game-id
+                               :designatee-coords designatee-coords
+                               :piece-indexes piece-indexes)
 
-     ;(amble-client-interaction/init!)
+     (js/setTimeout amble-client-interaction/init! 200)
      (println (str "Finished initializing game, "
                    game-id)))))
 
