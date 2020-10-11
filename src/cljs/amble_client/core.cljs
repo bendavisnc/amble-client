@@ -13,6 +13,9 @@
    (let [game-id (utils/game-id-from-window)
          game-chan (game-resource/get! game-id)
          on-successful-response (fn [game-response]
+                                  (println "fuck")
+                                  (println game-response)
+                                  (throw (new js/Error "dag nab it"))
                                   (if (not (:success game-response))
                                     (throw (new js/Error (:error-text game-response))))
                                   (let [{:keys [designatee-coords, piece-indexes]}
@@ -20,12 +23,17 @@
                                     (init!* :game-id game-id
                                             :designatee-coords designatee-coords
                                             :piece-indexes piece-indexes)))]
-     (casync/pipe
+     ;; ([n to xf from close? ex-handler]
+     (casync/pipeline
+       1
+       (casync/chan)
+       (map on-successful-response)
        game-chan
-       (casync/chan (map on-successful-response)
-                    (fn [err]
-                      (amble-client-state/update! :errors [err])
-                      (throw err))))))
+       false
+       (fn [err]
+         (println "helllllllllllllllllllllllllo")
+         (amble-client-state/update! :errors [err])
+         (throw err)))))
 
   ([& {:keys [game-id, designatee-coords, piece-indexes]}]
    (let [on-after-ui-init (fn [_]
