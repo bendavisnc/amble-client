@@ -4,7 +4,9 @@
     [cljs.js :refer [eval]]
     [cljs.core.async :as casync]
     [martian.core :as martian]
-    [martian.cljs-http :as martian-http]))
+    [martian.cljs-http :as martian-http])
+  (:require-macros
+    [cljs.core.async :refer [go go-loop]]))
 
 (defn environment [& keys]
   (let [e {:host {:client "localhost"
@@ -41,16 +43,22 @@
                                   {:interceptors interceptors-custom}))
 
 (defn response-chan [{:keys [endpoint-key, param-map, request-body]}]
-  (casync/pipeline-async 1
-                         (api-chan)
-                         (fn [api, response-chan]
-                           (let [all-params (if request-body (assoc param-map ::martian/request request-body)
-                                                             param-map)]
-                             (aset api "api_root" url-ambel)
-                             (assert (martian/explore api endpoint-key)
-                                     (str "No api defined endpoint, \""
-                                          (name endpoint-key)
-                                          "\"."))
-                             (casync/pipe (martian/response-for api endpoint-key all-params)
-                                          response-chan)))
-                         (casync/chan)))
+  (let [c (casync/chan)]
+    (go
+      (let [api (casync/<! (api-chan))
+            _ (println "what")
+            _ (println endpoint-key)
+            _ (println param-map)
+            all-params (if request-body (assoc param-map ::martian/request request-body)
+                                        param-map)
+            _ (println all-params)
+            _ (aset api "api_root" url-ambel)
+            _ (assert (martian/explore api endpoint-key)
+                      (str "No api defined endpoint, \""
+                           (name endpoint-key)
+                           "\"."))
+            response (casync/<! (martian/response-for api endpoint-key all-params))]
+        (println "whatck")
+        (println response)
+        (casync/>! c response)))
+    c))

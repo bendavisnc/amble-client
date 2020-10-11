@@ -48,7 +48,7 @@
   (init!*))
 
 (defn post-game! []
-  (.then (game-resource/create!)
-         (fn [response-result]
-           (println "Requested new game.")
-           (println js/console response-result))))
+  (casync/take! (game-resource/create!)
+                (fn [game-create-response]
+                  (println "Requested new game.")
+                  (println js/console game-create-response))))
