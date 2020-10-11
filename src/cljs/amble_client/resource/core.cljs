@@ -38,9 +38,18 @@
 (def interceptors-custom (-> martian-http/default-interceptors
                              (concat [interceptor-custom])))
 
-(defn api-chan []
-  (martian-http/bootstrap-swagger (url-openapi)
-                                  {:interceptors interceptors-custom}))
+(defn api-chan* []
+  (let [c (casync/chan)]
+    (go
+      (let [api
+            (casync/<! (martian-http/bootstrap-swagger (url-openapi)
+                                                {:interceptors interceptors-custom}))]
+        (loop []
+          (casync/>! c api)
+          (recur))))
+    c))
+
+(def api-chan (memoize api-chan*))
 
 (defn response-chan [{:keys [endpoint-key, param-map, request-body]}]
   (go
