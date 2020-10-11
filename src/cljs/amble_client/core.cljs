@@ -15,44 +15,45 @@
 (defn init!* []
   (go
     (let [game-id (utils/game-id-from-window)
-          board  (:body (casync/<! (board-resource/get! game-id)))]
+          board (:body (casync/<! (board-resource/get! game-id)))
+          players (:body (casync/<! (player-resource/get! game-id)))]
       (amble-client-state/init! :game-id game-id
                                 :designatee-coords board
                                 :piece-indexes [])
       (println "nice")
       (println board))))
 
-  ;([]
-  ; (let [game-id (utils/game-id-from-window)
-  ;       game-chan (game-resource/get! game-id)
-  ;       on-successful-response (fn [game-response]
-  ;                                (if (not (:success game-response))
-  ;                                  (throw (new js/Error (:error-text game-response))))
-  ;                                (let [{:keys [designatee-coords, piece-indexes]}
-  ;                                      (:body game-response)]
-  ;                                  (init!* :game-id game-id
-  ;                                          :designatee-coords designatee-coords
-  ;                                          :piece-indexes piece-indexes)
-  ;                                  true))]
-  ;   (casync/pipeline
-  ;     1
-  ;     (casync/chan)
-  ;     (map on-successful-response)
-  ;     game-chan
-  ;     true
-  ;     (fn [err]
-  ;       (amble-client-state/update! :errors [err])
-  ;       (throw err)))))
-  ;
-  ;([& {:keys [game-id, designatee-coords, piece-indexes]}]
-  ; (do
-  ;   (amble-client-state/init! :game-id game-id
-  ;                             :designatee-coords designatee-coords
-  ;                             :piece-indexes piece-indexes)
-  ;
-  ;   (js/setTimeout amble-client-interaction/init! 200)
-  ;   (println (str "Finished initializing game, "
-  ;                 game-id)))))
+;([]
+; (let [game-id (utils/game-id-from-window)
+;       game-chan (game-resource/get! game-id)
+;       on-successful-response (fn [game-response]
+;                                (if (not (:success game-response))
+;                                  (throw (new js/Error (:error-text game-response))))
+;                                (let [{:keys [designatee-coords, piece-indexes]}
+;                                      (:body game-response)]
+;                                  (init!* :game-id game-id
+;                                          :designatee-coords designatee-coords
+;                                          :piece-indexes piece-indexes)
+;                                  true))]
+;   (casync/pipeline
+;     1
+;     (casync/chan)
+;     (map on-successful-response)
+;     game-chan
+;     true
+;     (fn [err]
+;       (amble-client-state/update! :errors [err])
+;       (throw err)))))
+;
+;([& {:keys [game-id, designatee-coords, piece-indexes]}]
+; (do
+;   (amble-client-state/init! :game-id game-id
+;                             :designatee-coords designatee-coords
+;                             :piece-indexes piece-indexes)
+;
+;   (js/setTimeout amble-client-interaction/init! 200)
+;   (println (str "Finished initializing game, "
+;                 game-id)))))
 
 (defn init! []
   (println "Starting client init.")
