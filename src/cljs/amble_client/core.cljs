@@ -20,13 +20,18 @@
                                     (init!* :game-id game-id
                                             :designatee-coords designatee-coords
                                             :piece-indexes piece-indexes)))]
-     (casync/take! game-chan on-successful-response)))
+     (casync/pipe
+       game-chan
+       (casync/chan (map on-successful-response)
+                    (fn [err]
+                      (amble-client-state/update! :errors [err])
+                      (throw err))))))
 
   ([& {:keys [game-id, designatee-coords, piece-indexes]}]
    (let [on-after-ui-init (fn [_]
                             (amble-client-interaction/init!)
                             (println (str "Finished initializing game, "
-                                           game-id)))]
+                                          game-id)))]
      (amble-client-state/init! :game-id game-id
                                :designatee-coords designatee-coords
                                :piece-indexes piece-indexes)
