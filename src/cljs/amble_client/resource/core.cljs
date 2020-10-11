@@ -52,7 +52,7 @@
             all-params (if request-body (assoc param-map ::martian/request request-body)
                                         param-map)
             _ (println all-params)
-            _ (aset api "api_root" url-ambel)
+            _ (aset api "api_root" (url-ambel))
             _ (assert (martian/explore api endpoint-key)
                       (str "No api defined endpoint, \""
                            (name endpoint-key)
