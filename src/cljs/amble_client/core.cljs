@@ -15,14 +15,14 @@
          on-successful-response (fn [game-response]
                                   (println "fuck")
                                   (println game-response)
-                                  (throw (new js/Error "dag nab it"))
                                   (if (not (:success game-response))
                                     (throw (new js/Error (:error-text game-response))))
                                   (let [{:keys [designatee-coords, piece-indexes]}
                                         (:body game-response)]
                                     (init!* :game-id game-id
                                             :designatee-coords designatee-coords
-                                            :piece-indexes piece-indexes)))]
+                                            :piece-indexes piece-indexes)
+                                    true))]
      ;; ([n to xf from close? ex-handler]
      (casync/pipeline
        1
@@ -36,21 +36,22 @@
          (throw err)))))
 
   ([& {:keys [game-id, designatee-coords, piece-indexes]}]
-   (let [on-after-ui-init (fn [_]
-                            (amble-client-interaction/init!)
-                            (println (str "Finished initializing game, "
-                                          game-id)))]
-     (amble-client-state/init! :game-id game-id
-                               :designatee-coords designatee-coords
-                               :piece-indexes piece-indexes)
-     (rdom/render
-       [markup/app-markup-error-checked]
-       (.getElementById js/document "app")
-       on-after-ui-init))))
+   (do
+     ;(amble-client-state/init! :game-id game-id
+     ;                          :designatee-coords designatee-coords
+     ;                          :piece-indexes piece-indexes)
+
+     ;(amble-client-interaction/init!)
+     (println (str "Finished initializing game, "
+                   game-id)))))
+
 
 (defn init! []
   (println "Starting client init.")
-  (init!*))
+  (rdom/render
+    [markup/app-markup-error-checked]
+    (.getElementById js/document "app")
+    init!*))
 
 (defn post-game! []
   (casync/take! (game-resource/create!)
