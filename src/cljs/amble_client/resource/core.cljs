@@ -36,19 +36,21 @@
 (def interceptors-custom (-> martian-http/default-interceptors
                              (concat [interceptor-custom])))
 
-(def api-chan
+(defn api-chan []
   (martian-http/bootstrap-swagger (url-openapi)
                                   {:interceptors interceptors-custom}))
 
 (defn response-chan [{:keys [endpoint-key, param-map, request-body]}]
-  (let [api-response-fn (fn [api]
-                          (let [all-params (if request-body (assoc param-map ::martian/request request-body)
-                                                            param-map)]
-                            (aset api "api_root" url-ambel)
-                            (assert (martian/explore api endpoint-key)
-                                    (str "No api defined endpoint, \""
-                                         (name endpoint-key)
-                                         "\"."))
-                            (martian/response-for api endpoint-key all-params)))]
-    (casync/pipe (api-chan)
-                 (casync/chan nil api-response-fn))))
+  (casync/pipeline-async 1
+                         (api-chan)
+                         (fn [api, response-chan]
+                           (let [all-params (if request-body (assoc param-map ::martian/request request-body)
+                                                             param-map)]
+                             (aset api "api_root" url-ambel)
+                             (assert (martian/explore api endpoint-key)
+                                     (str "No api defined endpoint, \""
+                                          (name endpoint-key)
+                                          "\"."))
+                             (casync/pipe (martian/response-for api endpoint-key all-params)
+                                          response-chan)))
+                         (casync/chan)))
