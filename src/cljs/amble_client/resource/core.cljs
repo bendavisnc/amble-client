@@ -26,7 +26,7 @@
 
 
 (def interceptor-custom {
-                         :name ::interceptor
+                         :name  ::interceptor
                          :leave (fn [req]
                                   (assoc-in req
                                             [:request, :with-credentials?] ;; Don't be bothered by cors for now.
@@ -36,36 +36,19 @@
 (def interceptors-custom (-> martian-http/default-interceptors
                              (concat [interceptor-custom])))
 
-(defn load-openapi! []
+(def api-chan
   (martian-http/bootstrap-swagger (url-openapi)
                                   {:interceptors interceptors-custom}))
 
-
-(def api-promise
-  (new js/Promise (fn [resolve-callback, reject-callback]
-                    (try
-                      (casync/take! (load-openapi!)
-                                    resolve-callback)
-                      (catch :default err
-                        (println "Problem with getting resource api based on openapi url.")
-                        (reject-callback err))))))
-
-(defn response-promise [{:keys [endpoint-key, param-map, request-body]}]
-  (.then api-promise
-    (fn [api]
-      (let [all-params (if request-body (assoc param-map ::martian/request request-body)
-                           param-map)]
-        (aset api "api_root"
-                  (url-ambel))
-        (new js/Promise (fn [resolve-callback, reject-callback]
-                          (try
+(defn response-chan [{:keys [endpoint-key, param-map, request-body]}]
+  (let [api-response-fn (fn [api]
+                          (let [all-params (if request-body (assoc param-map ::martian/request request-body)
+                                                            param-map)]
+                            (aset api "api_root" url-ambel)
                             (assert (martian/explore api endpoint-key)
                                     (str "No api defined endpoint, \""
-                                          (name endpoint-key)
-                                          "\"."))
-                            (casync/take! (martian/response-for api endpoint-key all-params)
-                                          resolve-callback)
-                            (catch js/Error err
-                              (reject-callback err)
-                              (println "not wrong")
-                              (println err)))))))))
+                                         (name endpoint-key)
+                                         "\"."))
+                            (martian/response-for api endpoint-key all-params)))]
+    (casync/pipe (api-chan)
+                 (casync/chan nil api-response-fn))))
