@@ -13,8 +13,6 @@
    (let [game-id (utils/game-id-from-window)
          game-chan (game-resource/get! game-id)
          on-successful-response (fn [game-response]
-                                  (println "fuck")
-                                  (println game-response)
                                   (if (not (:success game-response))
                                     (throw (new js/Error (:error-text game-response))))
                                   (let [{:keys [designatee-coords, piece-indexes]}
@@ -23,7 +21,6 @@
                                             :designatee-coords designatee-coords
                                             :piece-indexes piece-indexes)
                                     true))]
-     ;; ([n to xf from close? ex-handler]
      (casync/pipeline
        1
        (casync/chan)
@@ -31,7 +28,6 @@
        game-chan
        true
        (fn [err]
-         (println "helllllllllllllllllllllllllo")
          (amble-client-state/update! :errors [err])
          (throw err)))))
 
@@ -44,7 +40,6 @@
      (js/setTimeout amble-client-interaction/init! 200)
      (println (str "Finished initializing game, "
                    game-id)))))
-
 
 (defn init! []
   (println "Starting client init.")

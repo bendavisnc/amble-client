@@ -43,17 +43,16 @@
                                   {:interceptors interceptors-custom}))
 
 (defn response-chan [{:keys [endpoint-key, param-map, request-body]}]
-  (casync/pipeline-async
-    1
-    (casync/chan)
-    (fn [api response-chan]
-      (let [
-            all-params (if request-body (assoc param-map ::martian/request request-body))
+  (let [c (casync/chan)]
+    (go
+      (let [api (casync/<! (api-chan))
+            all-params (if request-body (assoc param-map ::martian/request request-body)
+                                        param-map)
+            _ (aset api "api_root" (url-ambel))
             _ (assert (martian/explore api endpoint-key)
                       (str "No api defined endpoint, \""
                            (name endpoint-key)
-                           "\"."))]
-        (casync/pipe
-          (martian/response-for api endpoint-key all-params)
-          response-chan)))
-    (api-chan)))
+                           "\"."))
+            response (casync/<! (martian/response-for api endpoint-key all-params))]
+        (casync/>! c response)))
+    c))
