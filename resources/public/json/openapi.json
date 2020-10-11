@@ -77,6 +77,31 @@
         },
         "summary" : "Create new move in game"
       }
+    },
+    "/game/{gameId}/board" : {
+      "get" : {
+        "operationId" : "boardGetByGameId",
+        "parameters" : [ {
+          "description" : "The id of the game the board belongs to",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Coordinates that represent a game board."
+          },
+          "404" : {
+            "description" : "No corresponding game found."
+          }
+        },
+        "summary" : "Get board by game id"
+      }
     }
   },
   "components" : {
