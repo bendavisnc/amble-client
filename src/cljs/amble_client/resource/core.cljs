@@ -1,24 +1,22 @@
 (ns amble-client.resource.core
   (:require
-    [clojure.string :as string]
-    [cljs.js :refer [eval]]
-    [cljs.core.async :as casync]
-    [martian.core :as martian]
-    [martian.cljs-http :as martian-http])
+   [clojure.string :as string]
+   [cljs.js :refer [eval]]
+   [cljs.core.async :as casync]
+   [martian.core :as martian]
+   [martian.cljs-http :as martian-http])
   (:require-macros
-    [cljs.core.async :refer [go go-loop]]))
+   [cljs.core.async :refer [go go-loop]]))
 
 (defn environment [& keys]
   (let [e {:host {:client "localhost"
                   :amble  "localhost"}
-           :port {
-                  ; :client "3001"
+           :port {; :client "3001"
                   :client "3449"
                   :amble  "3000"}}
         kv (((first keys) e)
             (second keys))]
     kv))
-
 
 (defn url-ambel []
   (str "http://" (environment :host :amble) ":" (environment :port :amble)))
@@ -26,34 +24,24 @@
 (defn url-openapi []
   (str "http://" (environment :host :client) ":" (environment :port :client) "/openapi.json"))
 
-
-(def interceptor-coors-dont-bother-me {
-                                       :name  ::interceptor-coors-dont-bother-me
+(def interceptor-coors-dont-bother-me {:name  ::interceptor-coors-dont-bother-me
                                        :leave (fn [req]
                                                 (assoc-in req
                                                           [:request, :with-credentials?] ;; Don't be bothered by cors for now.
                                                           false))})
 
 (defn interceptor-errors-thrown [c]
-  {
-   :name  ::interceptor-errors-handled
+  {:name  ::interceptor-errors-handled
    :leave (fn [req]
             (let [response
                   (:response req)
                   error-text (first (filter (fn [x]
-                                              (println "damn")
-                                              (println x)
-                                              (println (< 0 (count x)))
                                               (< 0 (count x)))
-                                            [(:error-text response)]))
-                  _ (println "wha")
-                  _ (println error-text)]
+                                            [(:error-text response)]))]
               (when error-text
                 (casync/put! c
                              (new js/Error (str "Error while making backend service api request.\n" error-text))))
               req))})
-
-
 
 (defn api-chan* []
   (let [c (casync/chan)]
@@ -81,14 +69,9 @@
                          (name endpoint-key)
                          "\"."))
           all-params (if request-body (assoc param-map ::martian/request request-body)
-                                      param-map)
+                         param-map)
           error-chan (casync/chan)
           api-with-errors-thrown (update api :interceptors conj (interceptor-errors-thrown error-chan))
-          _ (println "neatish?")
           response-chan (martian/response-for api-with-errors-thrown endpoint-key all-params)
-          neatooo (casync/<! (casync/merge [error-chan, response-chan]))
-          _ (println "neatooo?")
-          _ (println neatooo)]
-      (when (instance? js/Error neatooo)
-        (println "we've got an error"))
-      neatooo)))
+          response-or-error (casync/<! (casync/merge [error-chan, response-chan]))]
+      response-or-error)))
