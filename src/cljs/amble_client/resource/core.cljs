@@ -27,23 +27,42 @@
   (str "http://" (environment :host :client) ":" (environment :port :client) "/openapi.json"))
 
 
-(def interceptor-custom {
-                         :name  ::interceptor
-                         :leave (fn [req]
-                                  (assoc-in req
-                                            [:request, :with-credentials?] ;; Don't be bothered by cors for now.
-                                            false))})
+(def interceptor-coors-dont-bother-me {
+                                       :name  ::interceptor-coors-dont-bother-me
+                                       :leave (fn [req]
+                                                (assoc-in req
+                                                          [:request, :with-credentials?] ;; Don't be bothered by cors for now.
+                                                          false))})
+
+(defn interceptor-errors-thrown [c]
+  {
+   :name  ::interceptor-errors-handled
+   :leave (fn [req]
+            (let [response
+                  (:response req)
+                  error-text (first (filter (fn [x]
+                                              (println "damn")
+                                              (println x)
+                                              (println (< 0 (count x)))
+                                              (< 0 (count x)))
+                                            [(:error-text response)]))
+                  _ (println "wha")
+                  _ (println error-text)]
+              (when error-text
+                (casync/put! c
+                             (new js/Error (str "Error while making backend service api request.\n" error-text))))
+              req))})
 
 
-(def interceptors-custom (-> martian-http/default-interceptors
-                             (concat [interceptor-custom])))
 
 (defn api-chan* []
   (let [c (casync/chan)]
     (go
       (let [api
             (casync/<! (martian-http/bootstrap-swagger (url-openapi)
-                                                {:interceptors interceptors-custom}))]
+                                                       {:interceptors
+                                                        (concat martian-http/default-interceptors
+                                                                [interceptor-coors-dont-bother-me])}))]
         (loop []
           (casync/>! c api)
           (recur))))
@@ -54,11 +73,22 @@
 (defn response-chan [{:keys [endpoint-key, param-map, request-body]}]
   (go
     (let [api (casync/<! (api-chan))
-          _ (aset api "api_root" (url-ambel))
+          _ (aset api                                       ;; I'm unsure why this can't be done with assoc.
+                  "api_root"
+                  (url-ambel))
           _ (assert (martian/explore api endpoint-key)
                     (str "No api defined endpoint, \""
                          (name endpoint-key)
                          "\"."))
           all-params (if request-body (assoc param-map ::martian/request request-body)
-                                      param-map)]
-      (casync/<! (martian/response-for api endpoint-key all-params)))))
+                                      param-map)
+          error-chan (casync/chan)
+          api-with-errors-thrown (update api :interceptors conj (interceptor-errors-thrown error-chan))
+          _ (println "neatish?")
+          response-chan (martian/response-for api-with-errors-thrown endpoint-key all-params)
+          neatooo (casync/<! (casync/merge [error-chan, response-chan]))
+          _ (println "neatooo?")
+          _ (println neatooo)]
+      (when (instance? js/Error neatooo)
+        (println "we've got an error"))
+      neatooo)))

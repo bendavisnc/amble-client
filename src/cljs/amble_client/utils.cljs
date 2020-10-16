@@ -1,7 +1,7 @@
 (ns amble-client.utils
   (:require
-    [clojure.string :as string]
-    [clojure.string :as s]))
+   [clojure.string :as string]
+   [clojure.string :as s]))
 
 (defn game-id-from-window
   "Returns the game id from the browser window."
@@ -22,9 +22,8 @@
              (throw (new js/Error (str "Invalid piece index, " i ".")))))
        piece-indexes))
 
-
 (defn player-index [piece-elem]
-  (let [index-listing ["one","two","three","four","five","six"]
+  (let [index-listing ["one", "two", "three", "four", "five", "six"]
         classname (first (s/split (.getAttribute piece-elem "class")
                                   #" "))
         match-value (s/replace classname "player-" "")]
@@ -34,6 +33,10 @@
             (str "Hacky element to player index value has proven not so good. \n Can't find match value, \"" match-value "\"."))
     (.indexOf index-listing match-value)))
 
+(defn error-checked [e]
+  (if (instance? js/Error e)
+    (throw e)
+    e))
 
 ;https://stackoverflow.com/questions/29261304/how-to-get-the-click-coordinates-relative-to-svg-element-holding-the-onclick-lis
 
