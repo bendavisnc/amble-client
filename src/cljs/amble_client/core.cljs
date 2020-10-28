@@ -17,25 +17,23 @@
     (try
       (let [game-id (utils/game-id-from-window)
             board-coords (:body (utils/error-checked (casync/<! (board-resource/get! game-id))))
-            players (:body (utils/error-checked (casync/<! (player-resource/get! game-id))))
+            players (map keyword (:body (utils/error-checked (casync/<! (player-resource/get! game-id)))))
             _ (assert (< 0
                          (count players))
                       "Game has no players. What a sad day.")
-            player-coords (casync/<! (casync/merge
-                                       (for [player-id players]
-                                         (casync/pipe
-                                                      (player-resource/get! game-id player-id)
-                                                      (casync/chan 2 (map :body))))))]
+            player-coords (casync/<! (casync/into {}
+                                                  (casync/merge
+                                                    (for [player-id players]
+                                                      (casync/pipe
+                                                                   (player-resource/get! game-id (name player-id))
+                                                                   (casync/chan 1 (map (fn [response] [player-id (-> response :body)]))))))))]
 
         (println "hey neat")
         (println players)
         (println player-coords)
-        (println (count player-coords))
-        (println (first player-coords))
-        (println (second player-coords))
         (amble-client-state/init! :game-id game-id
                                   :designatee-coords board-coords
-                                  :piece-indexes []))
+                                  :player-coords player-coords))
       (catch js/Error error
         (amble-client-state/update! :errors [error])))))
 
