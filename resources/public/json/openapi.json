@@ -127,6 +127,41 @@
         },
         "summary" : "Get player by game id"
       }
+    },
+    "/game/{gameId}/player/{id}" : {
+      "get" : {
+        "operationId" : "playerGet",
+        "parameters" : [ {
+          "description" : "The id of the game the players belong to",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        }, {
+          "description" : "The id of the player",
+          "explode" : false,
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Coordinates that represent the player's current state."
+          },
+          "404" : {
+            "description" : "No corresponding game found."
+          }
+        },
+        "summary" : "Get player"
+      }
     }
   },
   "components" : {

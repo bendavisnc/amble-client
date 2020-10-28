@@ -73,5 +73,5 @@
           error-chan (casync/chan)
           api-with-errors-thrown (update api :interceptors conj (interceptor-errors-thrown error-chan))
           response-chan (martian/response-for api-with-errors-thrown endpoint-key all-params)
-          response-or-error (casync/<! (casync/merge [error-chan, response-chan]))]
+          [response-or-error, _] (casync/alts! [error-chan, response-chan])]
       response-or-error)))

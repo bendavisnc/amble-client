@@ -20,11 +20,19 @@
             players (:body (utils/error-checked (casync/<! (player-resource/get! game-id))))
             _ (assert (< 0
                          (count players))
-                      "Game has no players. What a sad day.")]
-            ;player-coords (casync/merge
-            ;                (for [player-id players]
-            ;                  (player-resource/get! game-id player-id)))]
+                      "Game has no players. What a sad day.")
+            player-coords (casync/<! (casync/merge
+                                       (for [player-id players]
+                                         (casync/pipe
+                                                      (player-resource/get! game-id player-id)
+                                                      (casync/chan 2 (map :body))))))]
 
+        (println "hey neat")
+        (println players)
+        (println player-coords)
+        (println (count player-coords))
+        (println (first player-coords))
+        (println (second player-coords))
         (amble-client-state/init! :game-id game-id
                                   :designatee-coords board-coords
                                   :piece-indexes []))
