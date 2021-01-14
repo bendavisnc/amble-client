@@ -19,15 +19,13 @@
   (swap! atom-contemporary-move update :move #(conj % [x, y])))
 
 (defn on-drag! [e]
-  (let [
-        player-elem ((deref atom-contemporary-move)
+  (let [player-elem ((deref atom-contemporary-move)
                      :player-being-dragged)]
     (if player-elem
       (do
         (.preventDefault e)
         ;(println "on drag")
-        (let [
-              player-index (utils/player-index player-elem)
+        (let [player-index (utils/player-index player-elem)
               ;[x* (aget (first args) "x")
               ; y* (aget (first args) "y")
               ; [x, y] (map (comp
@@ -53,7 +51,7 @@
         ;                          (println "Posted successful move.")
         ;                          (println move-response)
         ;                          (swap! atom-contemporary-move assoc :player-being-dragged nil))
-                                 
+
     (swap! atom-contemporary-move assoc :player-being-dragged nil)))
 
 
@@ -62,8 +60,6 @@
     ;     (.catch (fn [err]
     ;               (amble-client-state/update! :errors [err])
     ;               (throw err)))))
-
-
 
 
 (defn atom-contemporary-move-init! []
@@ -79,7 +75,7 @@
         _ (reset! atom-event-to-coord (utils/coord-conv board-elem))
         player-selection (.querySelectorAll board-elem "circle.player")
         _ (assert (< 0 (.-length player-selection)))]
-        
+
     (.forEach player-selection
               (fn [player-piece-elem]
                 (.addEventListener player-piece-elem

@@ -17,7 +17,7 @@
    [:meta {:charset "utf-8"}]
    [:meta {:name "viewport"
            :content "width=device-width, initial-scale=1"}]
-   (include-css 
+   (include-css
     (if (env :dev) "/css/site.css" "/css/site.min.css"))
    (include-css "/css/wesandersontry.css")])
 
@@ -49,11 +49,9 @@
   (println "Serving openapi.")
   {:status 200
    :body (let [openapi (io/resource "public/json/openapi.json")]
-            (when (nil? openapi)
-              (throw (new Exception "No openapi made available.")))
-            (slurp openapi))})
-
-
+           (when (nil? openapi)
+             (throw (new Exception "No openapi made available.")))
+           (slurp openapi))})
 
 (def app
   (reitit-ring/ring-handler

@@ -25,12 +25,12 @@
   (update! :game-id game-id)
   (update! :placement :designatee designatee-coords)
   (dorun
-    (doseq [[player-id, coords] player-coords]
-      (update! :placement
-               :player
-               (.indexOf [:player-one, :player-two, :player-three, :player-four, :player-five, :player-six]
-                         player-id)
-               coords))))
+   (doseq [[player-id, coords] player-coords]
+     (update! :placement
+              :player
+              (.indexOf [:player-one, :player-two, :player-three, :player-four, :player-five, :player-six]
+                        player-id)
+              coords))))
 
 (defn print! []
   (.log js/console (clj->js (deref atomic-state))))

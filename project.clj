@@ -21,13 +21,15 @@
                   :exclusions [org.clojure/tools.reader]]
                  [martian "0.1.12"]
                  [martian-cljs-http "0.1.12"]
-                 [org.clojure/core.async "1.2.603"]]
+                 [org.clojure/core.async "1.2.603"]
+                 [integrant "0.8.0"]]
 
 
   :plugins [[lein-environ "1.1.0"]
             [lein-cljsbuild "1.1.7"]
             [lein-asset-minifier "0.4.6"
-             :exclusions [org.clojure/clojure]]]
+             :exclusions [org.clojure/clojure]]
+            [lein-cljfmt "0.7.0"]]
 
   :ring {:handler amble-client.handler/app
          :uberwar-name "amble-client.war"}
