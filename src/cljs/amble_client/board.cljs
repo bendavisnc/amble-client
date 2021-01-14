@@ -6,7 +6,8 @@
 
 (def board [:svg {:id "board" "viewBox" "0 0 1 1"}])
 
-(defmethod ig/init-key :amble/board [_ {:keys [board-pieces]}]
+(defmethod ig/init-key :amble/board [_ {:keys [board-pieces, player-pieces]}]
   (go
     (conj board
-          (async/<! board-pieces))))
+          (concat (async/<! board-pieces)
+                  (async/<! player-pieces)))))

@@ -7,7 +7,7 @@
 (def classname "designatee")
 (def piece-size 0.023)
 
-(defn piece-markup [& {:keys [x, y, size, class, i]}]
+(defn piece [& {:keys [x, y, size, class, i]}]
   (let [unique-key (str class
                         (or i
                             [x, y]))]
@@ -21,11 +21,11 @@
 
 (defmethod ig/init-key :amble/board-pieces [_ {:keys [game-id, resource-chan-fn]}]
   (go
-    (let [coordinates (:body (async/<! (resource-chan-fn game-id)))]
+    (let [coordinates (async/<! (resource-chan-fn game-id))]
       (for [[i, [x, y]] (map-indexed vector coordinates)]
-        (piece-markup :x x
-                      :y y
-                      :size (* 0.98 piece-size)             ;; Cheap way to prevent seeing a placeholder piece when a normal piece is sitting above.
-                      :class classname
-                      :index i)))))
+        (piece :x x
+               :y y
+               :size (* 0.98 piece-size)             ;; Cheap way to prevent seeing a placeholder piece when a normal piece is sitting above.
+               :class classname
+               :index i)))))
 

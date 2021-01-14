@@ -7,8 +7,6 @@
    (resource-core/response-chan {:endpoint-key :player-get-all-by-game-id
                                  :param-map {:game-id game-id}}))
   ([game-id id]
-   (println "helllllllo")
-   (println id)
    (resource-core/response-chan {:endpoint-key :player-get
                                  :param-map {:game-id game-id
                                              :id id}})))

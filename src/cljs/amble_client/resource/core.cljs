@@ -39,8 +39,9 @@
                                               (< 0 (count x)))
                                             [(:error-text response)]))]
               (when error-text
-                (casync/put! c
-                             (new js/Error (str "Error while making backend service api request.\n" error-text))))
+                (do (casync/put! c
+                                 (new js/Error (str "Error while making backend service api request.\n" error-text)))
+                    (throw error-text)))
               req))})
 
 (defn api-chan* []
@@ -73,5 +74,7 @@
           error-chan (casync/chan)
           api-with-errors-thrown (update api :interceptors conj (interceptor-errors-thrown error-chan))
           response-chan (martian/response-for api-with-errors-thrown endpoint-key all-params)
-          [response-or-error, _] (casync/alts! [error-chan, response-chan])]
-      response-or-error)))
+          [response-or-error, _] (casync/alts! [error-chan, response-chan])
+          body-maybe-lifted (or (:body response-or-error)
+                                response-or-error)]
+      body-maybe-lifted)))
