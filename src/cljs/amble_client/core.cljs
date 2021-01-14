@@ -13,25 +13,26 @@
   (:require-macros
    [cljs.core.async :refer [go go-loop]]))
 
+(defn  ig-amble-config [game-id]
+  {:amble/board   {:board-pieces (ig/ref :amble/board-pieces)
+                   :player-pieces (ig/ref :amble/player-pieces)}
+   :amble/board-pieces {:game-id          game-id
+                        :resource-chan-fn board-resource/get!}
+   :amble/player-pieces {:game-id          game-id
+                         :resource-chan-fn player-resource/get!}})
+
 (defn app [board]
   [:div {:id "amble"} board])
 
 (defn init! []
   (println "Starting client init!")
-  (let [game-id (utils/game-id-from-window)
-        ig-config {:amble/board {:board-pieces (ig/ref :amble/board-pieces)
-                                 :player-pieces (ig/ref :amble/player-pieces)}
-                   :amble/board-pieces {:game-id game-id
-                                        :resource-chan-fn board-resource/get!}
-                   :amble/player-pieces {:game-id game-id
-                                         :resource-chan-fn player-resource/get!}}
-
-        ig-amble (ig/init ig-config)]
-    (go (let [board (async/<! (:amble/board ig-amble))]
-          (println "Invoking reagent.")
-          (reagent-dom/render (app board)
-                              (.getElementById js/document "app"))))
-    nil))
+  (go (let [game-id (utils/game-id-from-window)
+            ig-amble (ig/init (ig-amble-config game-id))
+            board (async/<! (:amble/board ig-amble))]
+        (println "Invoking reagent.")
+        (reagent-dom/render (app board)
+                            (.getElementById js/document "app"))
+        nil)))
 
 (defn post-game! []
   (async/take! (game-resource/create!)
