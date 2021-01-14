@@ -16,27 +16,6 @@
       (throw (new js/Error "No game id found in browser url.")))
     game-id))
 
-(defn pieces-inferred-by-index [& {:keys [designatee-coords, piece-indexes]}]
-  (map (fn [i]
-         (or (get designatee-coords i)
-             (throw (new js/Error (str "Invalid piece index, " i ".")))))
-       piece-indexes))
-
-(defn player-index [piece-elem]
-  (let [index-listing ["one", "two", "three", "four", "five", "six"]
-        classname (first (s/split (.getAttribute piece-elem "class")
-                                  #" "))
-        match-value (s/replace classname "player-" "")]
-    (assert (some #(= match-value
-                      %)
-                  index-listing)
-            (str "Hacky element to player index value has proven not so good. \n Can't find match value, \"" match-value "\"."))
-    (.indexOf index-listing match-value)))
-
-(defn error-checked [e]
-  (if (instance? js/Error e)
-    (throw e)
-    e))
 
 ;https://stackoverflow.com/questions/29261304/how-to-get-the-click-coordinates-relative-to-svg-element-holding-the-onclick-lis
 

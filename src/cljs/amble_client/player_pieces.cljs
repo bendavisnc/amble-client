@@ -7,13 +7,13 @@
 (def classname "player")
 (def piece-size 0.023)
 
-(defn piece [& {:keys [x, y, size, class, id, i]}]
+(defn piece [& {:keys [x, y, size, class, id, index]}]
   [:circle {:cx     x,
             :cy     y
             :r      size
             :key    id
             :id     id
-            :data-i i
+            :data-i index
             :class class}])
 
 (defmethod ig/init-key :amble/player-pieces [_ {:keys [game-id, resource-chan-fn]}]
@@ -24,8 +24,8 @@
                                                     (for [player-id players]
                                                       (async/pipe (resource-chan-fn game-id (name player-id))
                                                                   (async/chan 1
-                                                                              (map (fn [response]
-                                                                                     [player-id response]))))))))]
+                                                                              (map (fn [coordinates]
+                                                                                     [player-id coordinates]))))))))]
 
       (for [[player-name coordinates] player-coordinates]
         (for [[i, [x, y]] (map-indexed vector coordinates)]

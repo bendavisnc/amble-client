@@ -1,17 +1,15 @@
 (ns amble-client.core
-  (:require
-   [amble-client.resource.game :as game-resource]
-   [amble-client.resource.player :as player-resource]
-   [amble-client.resource.board :as board-resource]
-   [amble-client.board]
-   [amble-client.board-pieces]
-   [amble-client.player-pieces]
-   [reagent.dom :as reagent-dom]
-   [amble-client.utils :as utils]
-   [cljs.core.async :as async]
-   [integrant.core :as ig])
-  (:require-macros
-   [cljs.core.async :refer [go go-loop]]))
+  (:require [cljs.core.async :as async]
+            [integrant.core :as ig]
+            [reagent.dom :as reagent-dom]
+            [amble-client.board-pieces]
+            [amble-client.board]
+            [amble-client.player-pieces]
+            [amble-client.resource.board :as board-resource]
+            [amble-client.resource.game :as game-resource]
+            [amble-client.resource.player :as player-resource]
+            [amble-client.utils :as utils])
+  (:require-macros [cljs.core.async :refer [go]]))
 
 (defn  ig-amble-config [game-id]
   {:amble/board   {:board-pieces (ig/ref :amble/board-pieces)

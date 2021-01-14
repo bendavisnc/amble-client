@@ -2,21 +2,20 @@
   (:require [integrant.core :as ig]
             [cljs.core.async :as async])
   (:require-macros
-   [cljs.core.async :refer [go go-loop]]))
+   [cljs.core.async :refer [go]]))
 
 (def classname "designatee")
 (def piece-size 0.023)
 
-(defn piece [& {:keys [x, y, size, class, i]}]
+(defn piece [& {:keys [x, y, size, class, index]}]
   (let [unique-key (str class
-                        (or i
-                            [x, y]))]
+                        index)]
     [:circle {:cx     x,
               :cy     y
               :r      size
               :key    unique-key
               :id     unique-key
-              :data-i i
+              :data-i index
               :class class}]))
 
 (defmethod ig/init-key :amble/board-pieces [_ {:keys [game-id, resource-chan-fn]}]
