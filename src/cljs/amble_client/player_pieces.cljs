@@ -7,17 +7,14 @@
 (def classname "player")
 (def piece-size 0.023)
 
-(defn piece [& {:keys [x, y, size, class, i]}]
-  (let [unique-key (str class
-                        (or i
-                            [x, y]))]
-    [:circle {:cx     x,
-              :cy     y
-              :r      size
-              :key    unique-key
-              :id     unique-key
-              :data-i i
-              :class class}]))
+(defn piece [& {:keys [x, y, size, class, id, i]}]
+  [:circle {:cx     x,
+            :cy     y
+            :r      size
+            :key    id
+            :id     id
+            :data-i i
+            :class class}])
 
 (defmethod ig/init-key :amble/player-pieces [_ {:keys [game-id, resource-chan-fn]}]
   (go
@@ -38,4 +35,6 @@
                  :class (str classname
                              " "
                              player-name)
+                 :id (str player-name
+                          [x, y])
                  :index i))))))
