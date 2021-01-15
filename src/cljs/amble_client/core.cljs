@@ -19,16 +19,16 @@
    :amble/player-pieces {:game-id          game-id
                          :resource-chan-fn player-resource/get!}})
 
-(defn app [board]
-  [:div {:id "amble"} board])
+(defn app [board-fn]
+  [:div {:id "amble"} [board-fn]])
 
 (defn init! []
   (println "Starting client init!")
   (go (let [game-id (utils/game-id-from-window)
             ig-amble (ig/init (ig-amble-config game-id))
-            board (async/<! (:amble/board ig-amble))]
+            board-fn (async/<! (:amble/board ig-amble))]
         (println "Invoking reagent.")
-        (reagent-dom/render (app board)
+        (reagent-dom/render (app board-fn)
                             (.getElementById js/document "app"))
         nil)))
 

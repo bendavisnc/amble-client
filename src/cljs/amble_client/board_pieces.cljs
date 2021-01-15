@@ -18,13 +18,16 @@
               :data-i index
               :class class}]))
 
-(defmethod ig/init-key :amble/board-pieces [_ {:keys [game-id, resource-chan-fn]}]
-  (go
-    (let [coordinates (async/<! (resource-chan-fn game-id))]
-      (for [[i, [x, y]] (map-indexed vector coordinates)]
-        (piece :x x
-               :y y
-               :size (* 0.98 piece-size)             ;; Cheap way to prevent seeing a placeholder piece when a normal piece is sitting above.
-               :class classname
-               :index i)))))
+(defn board-pieces-fn [board-piece-coordinates]
+  (fn []
+    (into [:g]
+          (for [[i, [x, y]] (map-indexed vector board-piece-coordinates)]
+            (piece :x x
+                   :y y
+                   :size (* 0.98 piece-size)             ;; Cheap way to prevent seeing a placeholder piece when a normal piece is sitting above.
+                   :class classname
+                   :index i)))))
 
+(defmethod ig/init-key :amble/board-pieces [_ {:keys [game-id, resource-chan-fn]}]
+  (go (let [board-piece-coordinates (async/<! (resource-chan-fn game-id))]
+        (board-pieces-fn board-piece-coordinates))))
