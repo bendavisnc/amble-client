@@ -34,6 +34,7 @@
 
 
 (defn coord-conv [svg-element]
+  (assert svg-element "No svg element provided to \"coord-conv\" util.")
   (let [pt (.createSVGPoint svg-element)]
     (fn [e]
       (do
