@@ -9,9 +9,9 @@
 (def classname "player")
 (def piece-size 0.023)
 
-(def mouse-chans {:on-mouse-down (async/chan)
-                  :on-mouse-up (async/chan)
-                  :on-mouse-move (async/chan)})
+(def mouse-chans {:on-mouse-down (async/chan 1)
+                  :on-mouse-up (async/chan 1)
+                  :on-mouse-move (async/chan 1)})
 
 (def coord-conv-fn-atom (atom (fn [_]
                                 (throw "The function \"coord-conv\" isn't set."))))
@@ -22,7 +22,12 @@
   (println "Sending move.")
   (println mouse-drag-coords))
 
-(defn init-mouse-chans! []
+(defn init-mouse-chans! [svg-board-elem]
+  (.addEventListener svg-board-elem
+                     "mousemove"
+                     (fn [e]
+                       (async/put! (:on-mouse-move mouse-chans)
+                                   e)))
   (go-loop []
     (let [mouse-down-event (async/<! (:on-mouse-down mouse-chans))
           piece-id (-> mouse-down-event
@@ -55,11 +60,7 @@
                              (.persist e)
                              (async/put! (:on-mouse-down mouse-chans) e))
             :on-mouse-up (fn [e]
-                           (async/put! (:on-mouse-up mouse-chans) e))
-            :on-mouse-move (fn [e]
-                             (.persist e)
-                             (async/offer! (:on-mouse-move mouse-chans)
-                                           e))}])
+                           (async/put! (:on-mouse-up mouse-chans) e))}])
 
 (defn piece-id [player-id, [x, y]]
   (keyword (str (name player-id)
@@ -87,7 +88,7 @@
                                                          (name player-id))
                                              :id piece-id*)))))))))
 
-(defmethod ig/init-key :amble/player-pieces [_ {:keys [game-id, resource-chan-fn]}]
+(defmethod ig/init-key :amble/player-pieces [_ {:keys [game-id, resource-chan-fn, on-after-render-chan-fn]}]
   (go
     (let [players (async/<! (resource-chan-fn game-id))
           player-coordinates (async/<! (async/into {}
@@ -97,11 +98,14 @@
                                                                   (async/chan 1
                                                                               (map (fn [coordinates]
                                                                                      [(keyword player-id) coordinates]))))))))
-          piece-coordinates (piece-coordinates player-coordinates)]
-      (js/setTimeout (fn [_] ;; devnote - This is a little sad and hacky. Maybe come back to.
-                       (reset! coord-conv-fn-atom (utils/coord-conv (.querySelector js/document "svg#board"))))
-                     100)
+          piece-coordinates (piece-coordinates player-coordinates)
+          on-after-render (fn [_]
+                            (let [svg-board-elem
+                                  (.querySelector js/document "svg#board")]
+                              (reset! coord-conv-fn-atom (utils/coord-conv svg-board-elem))
+                              (init-mouse-chans! svg-board-elem)))]
       (reset! piece-coordinates-atom piece-coordinates)
-      (init-mouse-chans!)
+      (async/take! (on-after-render-chan-fn)
+                   on-after-render)
       (player-pieces-fn player-coordinates))))
 

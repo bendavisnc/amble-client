@@ -11,13 +11,17 @@
             [amble-client.utils :as utils])
   (:require-macros [cljs.core.async :refer [go]]))
 
+(def on-after-render-chan (async/chan 1))
+
 (defn  ig-amble-config [game-id]
   {:amble/board   {:board-pieces (ig/ref :amble/board-pieces)
                    :player-pieces (ig/ref :amble/player-pieces)}
    :amble/board-pieces {:game-id          game-id
                         :resource-chan-fn board-resource/get!}
    :amble/player-pieces {:game-id          game-id
-                         :resource-chan-fn player-resource/get!}})
+                         :resource-chan-fn player-resource/get!
+                         :on-after-render-chan-fn (fn []
+                                                    on-after-render-chan)}})
 
 (defn app [board-fn]
   [:div {:id "amble"} [board-fn]])
@@ -29,7 +33,9 @@
             board-fn (async/<! (:amble/board ig-amble))]
         (println "Invoking reagent.")
         (reagent-dom/render (app board-fn)
-                            (.getElementById js/document "app"))
+                            (.getElementById js/document "app")
+                            (fn []
+                              (async/put! on-after-render-chan true)))
         nil)))
 
 (defn post-game! []
