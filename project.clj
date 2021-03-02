@@ -19,10 +19,11 @@
                  [pez/clerk "1.0.0"]
                  [venantius/accountant "0.2.5"
                   :exclusions [org.clojure/tools.reader]]
-                 [martian "0.1.12"]
+                 [martian "0.1.15"]
                  [martian-cljs-http "0.1.12"]
                  [org.clojure/core.async "1.2.603"]
-                 [integrant "0.8.0"]]
+                 [integrant "0.8.0"]
+                 [haslett "0.1.6"]]
 
 
   :plugins [[lein-environ "1.1.0"]

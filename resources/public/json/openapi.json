@@ -16,7 +16,8 @@
             "description" : "Successfully created game."
           }
         },
-        "summary" : "Create new game"
+        "summary" : "Create new game",
+        "tags" : [ "game" ]
       }
     },
     "/game/{id}" : {
@@ -41,10 +42,11 @@
             "description" : "No corresponding game found."
           }
         },
-        "summary" : "Get game by id"
+        "summary" : "Get game by id",
+        "tags" : [ "game" ]
       }
     },
-    "/game/{gameId}/move" : {
+    "/game/{gameId}/player/{playerId}/move" : {
       "post" : {
         "operationId" : "moveAdd",
         "parameters" : [ {
@@ -57,25 +59,35 @@
             "type" : "string"
           },
           "style" : "simple"
+        }, {
+          "description" : "The id of the game player that makes the move",
+          "explode" : false,
+          "in" : "path",
+          "name" : "playerId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
         } ],
         "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
-                "items" : {
-                  "type" : "string"
-                },
-                "type" : "array"
+                "$ref" : "#/components/schemas/Move"
               }
             }
-          }
+          },
+          "description" : "The move the player makes.",
+          "required" : true
         },
         "responses" : {
           "201" : {
             "description" : "Successfully made move."
           }
         },
-        "summary" : "Create new move in game"
+        "summary" : "Adds player move to a game.",
+        "tags" : [ "game" ]
       }
     },
     "/game/{gameId}/board" : {
@@ -100,7 +112,8 @@
             "description" : "No corresponding game found."
           }
         },
-        "summary" : "Get board by game id"
+        "summary" : "Get board by game id",
+        "tags" : [ "game" ]
       }
     },
     "/game/{gameId}/player" : {
@@ -125,7 +138,8 @@
             "description" : "No corresponding game found."
           }
         },
-        "summary" : "Get player by game id"
+        "summary" : "Get player by game id",
+        "tags" : [ "game" ]
       }
     },
     "/game/{gameId}/player/{id}" : {
@@ -160,11 +174,30 @@
             "description" : "No corresponding game found."
           }
         },
-        "summary" : "Get player"
+        "summary" : "Get player",
+        "tags" : [ "game" ]
       }
     }
   },
   "components" : {
-    "schemas" : { }
+    "schemas" : {
+      "Coord" : {
+        "items" : {
+          "type" : "number"
+        },
+        "type" : "array"
+      },
+      "Move" : {
+        "properties" : {
+          "move" : {
+            "items" : {
+              "$ref" : "#/components/schemas/Coord"
+            },
+            "type" : "array"
+          }
+        },
+        "type" : "object"
+      }
+    }
   }
 }

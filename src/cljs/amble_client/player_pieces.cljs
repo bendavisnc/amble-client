@@ -1,4 +1,5 @@
 (ns amble-client.player-pieces
+  "Draws pieces on the board and captures interaction (mouse) input."
   (:require [integrant.core :as ig]
             [cljs.core.async :as async]
             [reagent.core :as reagent]
@@ -13,16 +14,30 @@
                   :on-mouse-up (async/chan 1)
                   :on-mouse-move (async/chan 1)})
 
+(def draw-chan (async/chan 1))
+
 (def coord-conv-fn-atom (atom (fn [_]
                                 (throw "The function \"coord-conv\" isn't set."))))
 
 (def piece-coordinates-atom (reagent/atom nil))
+(def resource-chan-fn-add-atom (reagent/atom nil))
 
-(defn send-move! [mouse-drag-coords]
+(defn send-move! [game-id, player-id, mouse-drag-coords]
   (println "Sending move.")
-  (println mouse-drag-coords))
+  (let [move-add! (deref resource-chan-fn-add-atom)
+        _ (assert (not (nil? move-add!))
+                  "Resource for adding moves is not set for some reason.")]
+    (move-add! game-id,
+               player-id,
+               mouse-drag-coords)))
 
-(defn init-mouse-chans! [svg-board-elem]
+(defn init-mouse-chans!
+  "Adds an event listener that updates a chan set in an infinite go loop.
+   Inside the go loop, mouse move events between down and up events are
+   accumulated and sent to `send-move!`.
+   Each discreet move event will also cause the move element's coord in
+   `piece-coordinate-atom` to update."
+  [game-id, svg-board-elem]
   (.addEventListener svg-board-elem
                      "mousemove"
                      (fn [e]
@@ -32,29 +47,40 @@
     (let [mouse-down-event (async/<! (:on-mouse-down mouse-chans))
           piece-id (-> mouse-down-event
                        (aget "target")
-                       (aget "id"))]
+                       (aget "id"))
+          player-id (-> mouse-down-event
+                        (aget "target")
+                        (.getAttribute "data-player-id"))]
       (loop [mouse-drag-coords []]
         (if (async/poll! (:on-mouse-up mouse-chans))
-          (do (send-move! mouse-drag-coords)
+          (do (send-move! game-id, player-id, mouse-drag-coords)
               nil)
+          ;; else
           (let [mouse-move-event (async/<! (:on-mouse-move mouse-chans))
                 mouse-drag-coord ((deref coord-conv-fn-atom)
                                   mouse-move-event)]
-            (swap! piece-coordinates-atom
-                   assoc
-                   (keyword piece-id)
-                   mouse-drag-coord)
+            (async/put! draw-chan {:piece-id piece-id, :draw-coord mouse-drag-coord})
             (recur (conj mouse-drag-coords
                          mouse-drag-coord))))))
     (recur))
   nil)
 
-(defn piece [& {:keys [x, y, size, class, id]}]
+(defn init-drawing! []
+  (go-loop []
+    (let [{:keys [piece-id, draw-coord]} (async/<! draw-chan)]
+      (swap! piece-coordinates-atom
+             assoc
+             (keyword piece-id)
+             draw-coord)
+      (recur))))
+
+(defn piece [& {:keys [x, y, size, class, id, player-id]}]
   [:circle {:cx     x
             :cy     y
             :r      size
             :key    id
             :id     id
+            :data-player-id player-id
             :class class
             :on-mouse-down (fn [e]
                              (.persist e)
@@ -67,6 +93,7 @@
                 [x, y])))
 
 (defn piece-coordinates [player-coordinates]
+  "Converts a map with `player id` keys to a map with `piece id` keys."
   (into {}
         (mapcat identity (for [[player-id player-coordinates-seq] player-coordinates]
                            (for [[x, y] player-coordinates-seq]
@@ -86,26 +113,36 @@
                                              :class (str classname
                                                          " "
                                                          (name player-id))
-                                             :id piece-id*)))))))))
+                                             :id piece-id*
+                                             :player-id player-id)))))))))
 
-(defmethod ig/init-key :amble/player-pieces [_ {:keys [game-id, resource-chan-fn, on-after-render-chan-fn]}]
+;;
+(defmethod ig/init-key :amble/player-pieces [_ {:keys [game-id, resource-chan-fns, remote-control, on-after-render-chan-fn]}]
   (go
-    (let [players (async/<! (resource-chan-fn game-id))
+    (let [resource-chan-fn-get (:get resource-chan-fns)
+          resource-chan-fn-add (:add resource-chan-fns)
+          players (async/<! (resource-chan-fn-get game-id))
           player-coordinates (async/<! (async/into {}
                                                    (async/merge
                                                     (for [player-id players]
-                                                      (async/pipe (resource-chan-fn game-id player-id)
+                                                      (async/pipe (resource-chan-fn-get game-id player-id)
                                                                   (async/chan 1
                                                                               (map (fn [coordinates]
                                                                                      [(keyword player-id) coordinates]))))))))
           piece-coordinates (piece-coordinates player-coordinates)
           on-after-render (fn [_]
-                            (let [svg-board-elem
+                            (let [svg-board-elem ;; A bit unsure if this should be handled as a dep
                                   (.querySelector js/document "svg#board")]
                               (reset! coord-conv-fn-atom (utils/coord-conv svg-board-elem))
-                              (init-mouse-chans! svg-board-elem)))]
+                              (init-mouse-chans! game-id
+                                                 svg-board-elem)
+                              (init-drawing!)))]
       (reset! piece-coordinates-atom piece-coordinates)
+      (reset! resource-chan-fn-add-atom resource-chan-fn-add)
       (async/take! (on-after-render-chan-fn)
                    on-after-render)
+      ;(remote-tracking/start!)
       (player-pieces-fn player-coordinates))))
+
+
 
