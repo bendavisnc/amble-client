@@ -9,7 +9,7 @@
             [amble-client.resource.game :as game-resource]
             [amble-client.resource.player :as player-resource]
             [amble-client.async-resource.base]
-            [amble-client.async-resource.move]
+            [amble-client.async-resource.move :as async-move-resource]
             [amble-client.resource.move :as move-resource]
             [amble-client.utils :as utils])
   (:require-macros [cljs.core.async :refer [go]]))
@@ -20,12 +20,13 @@
    :amble/board-pieces {:game-id          game-id
                         :resource-chan-fn board-resource/get!}
    :amble/async-resource-base {:game-id game-id}
-   :amble/async-resource-move {:async-resource-base (ig/ref :amble/async-resource-base)}
+   :amble/async-resource-move {:async-resource-base (ig/ref :amble/async-resource-base)
+                               :resource-chan-move-get move-resource/get!}
 
    :amble/player-pieces {:game-id          game-id
-                         :resource-chan-fns {:get player-resource/get!
-                                             :add move-resource/add!}
-                         :remote-control nil
+                         :resource-chan-player-get player-resource/get!
+                         :resource-chan-move-add move-resource/add!
+                         :async-resource-move-chan (ig/ref :amble/async-resource-move)
                          :post-init-chan (async/tap on-after-render-chan-multap (async/chan 1))}})
 
 (defn app [board-fn]

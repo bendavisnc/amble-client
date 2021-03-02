@@ -14,7 +14,6 @@
 ;(defmulti amble-async-request first)
 (defmulti amble-async-request-response (fn [& args]
                                          (first args)))
-
 (spec/def ::resource
   (spec/cat :game-id string?, :player-id string?, :id string?))
 

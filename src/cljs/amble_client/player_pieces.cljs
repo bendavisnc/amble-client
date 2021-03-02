@@ -20,11 +20,11 @@
                                 (throw "The function \"coord-conv\" isn't set."))))
 
 (def piece-coordinates-atom (reagent/atom nil))
-(def resource-chan-fn-add-atom (reagent/atom nil))
+(def resource-chan-move-add-atom (reagent/atom nil))
 
 (defn send-move! [game-id, player-id, mouse-drag-coords]
   (println "Sending move.")
-  (let [move-add! (deref resource-chan-fn-add-atom)
+  (let [move-add! (deref resource-chan-move-add-atom)
         _ (assert (not (nil? move-add!))
                   "Resource for adding moves is not set for some reason.")]
     (move-add! game-id,
@@ -117,15 +117,14 @@
                                              :player-id player-id)))))))))
 
 ;;
-(defmethod ig/init-key :amble/player-pieces [_ {:keys [game-id, resource-chan-fns, post-init-chan]}]
+(defmethod ig/init-key :amble/player-pieces [_ {:keys [game-id, resource-chan-player-get, resource-chan-move-add, async-resource-move-chan,  post-init-chan]}]
   (go
-    (let [resource-chan-fn-get (:get resource-chan-fns)
-          resource-chan-fn-add (:add resource-chan-fns)
-          players (async/<! (resource-chan-fn-get game-id))
+    (let [
+          players (async/<! (resource-chan-player-get game-id))
           player-coordinates (async/<! (async/into {}
                                                    (async/merge
                                                     (for [player-id players]
-                                                      (async/pipe (resource-chan-fn-get game-id player-id)
+                                                      (async/pipe (resource-chan-player-get game-id player-id)
                                                                   (async/chan 1
                                                                               (map (fn [coordinates]
                                                                                      [(keyword player-id) coordinates]))))))))
@@ -136,11 +135,18 @@
                               (reset! coord-conv-fn-atom (utils/coord-conv svg-board-elem))
                               (init-mouse-chans! game-id
                                                  svg-board-elem)
-                              (init-drawing!)))]
+                              (init-drawing!)))
+          on-remote-move (fn [move]
+                           (println "secondary fuck yeah?")
+                           (println move))]
+
       (reset! piece-coordinates-atom piece-coordinates)
-      (reset! resource-chan-fn-add-atom resource-chan-fn-add)
+      (reset! resource-chan-move-add-atom
+              resource-chan-move-add)
       (async/take! post-init-chan
                    on-after-render)
+      (async/take! async-resource-move-chan
+                   on-remote-move)
       ;(remote-tracking/start!)
       (player-pieces-fn player-coordinates))))
 

@@ -46,50 +46,6 @@
         "tags" : [ "game" ]
       }
     },
-    "/game/{gameId}/player/{playerId}/move" : {
-      "post" : {
-        "operationId" : "moveAdd",
-        "parameters" : [ {
-          "description" : "The id of the game that the move takes place",
-          "explode" : false,
-          "in" : "path",
-          "name" : "gameId",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          },
-          "style" : "simple"
-        }, {
-          "description" : "The id of the game player that makes the move",
-          "explode" : false,
-          "in" : "path",
-          "name" : "playerId",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          },
-          "style" : "simple"
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/Move"
-              }
-            }
-          },
-          "description" : "The move the player makes.",
-          "required" : true
-        },
-        "responses" : {
-          "201" : {
-            "description" : "Successfully made move."
-          }
-        },
-        "summary" : "Adds player move to a game.",
-        "tags" : [ "game" ]
-      }
-    },
     "/game/{gameId}/board" : {
       "get" : {
         "operationId" : "boardGetByGameId",
@@ -175,6 +131,96 @@
           }
         },
         "summary" : "Get player",
+        "tags" : [ "game" ]
+      }
+    },
+    "/game/{gameId}/player/{playerId}/move" : {
+      "post" : {
+        "operationId" : "moveAdd",
+        "parameters" : [ {
+          "description" : "The id of the game that the move takes place",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        }, {
+          "description" : "The id of the game player that makes the move",
+          "explode" : false,
+          "in" : "path",
+          "name" : "playerId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Move"
+              }
+            }
+          },
+          "description" : "The move the player makes.",
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Successfully made move."
+          }
+        },
+        "summary" : "Adds player move to a game.",
+        "tags" : [ "game" ]
+      }
+    },
+    "/game/{gameId}/player/{playerId}/move/{id}" : {
+      "get" : {
+        "operationId" : "moveGetById",
+        "parameters" : [ {
+          "description" : "The id of the game the player belongs to",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        }, {
+          "description" : "The id of the game player who makes the move.",
+          "explode" : false,
+          "in" : "path",
+          "name" : "playerId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        }, {
+          "description" : "The id of the move",
+          "explode" : false,
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Provided move coordinate information."
+          },
+          "404" : {
+            "description" : "No corresponding move found."
+          }
+        },
+        "summary" : "Get player move",
         "tags" : [ "game" ]
       }
     }
