@@ -117,7 +117,7 @@
                                              :player-id player-id)))))))))
 
 ;;
-(defmethod ig/init-key :amble/player-pieces [_ {:keys [game-id, resource-chan-fns, remote-control, on-after-render-chan-fn]}]
+(defmethod ig/init-key :amble/player-pieces [_ {:keys [game-id, resource-chan-fns, post-init-chan]}]
   (go
     (let [resource-chan-fn-get (:get resource-chan-fns)
           resource-chan-fn-add (:add resource-chan-fns)
@@ -139,7 +139,7 @@
                               (init-drawing!)))]
       (reset! piece-coordinates-atom piece-coordinates)
       (reset! resource-chan-fn-add-atom resource-chan-fn-add)
-      (async/take! (on-after-render-chan-fn)
+      (async/take! post-init-chan
                    on-after-render)
       ;(remote-tracking/start!)
       (player-pieces-fn player-coordinates))))

@@ -10,11 +10,10 @@
 
 (defn websockets-url [game-id]
   (str "ws://" (environment :host :amble) ":" (environment :port :amble) "/game/" "async/" "?game-id=" game-id))
-
 ;; Devnote, I want this to be the key `:resource-type`.
 ;(defmulti amble-async-request first)
-(defmulti amble-async-request (fn [& args]
-                                (first args)))
+(defmulti amble-async-request-response (fn [& args]
+                                         (first args)))
 
 (spec/def ::resource
   (spec/cat :game-id string?, :player-id string?, :id string?))
@@ -44,5 +43,5 @@
                       [async-message
                        resource-type
                        message]))
-        (amble-async-request resource-type, game-id, player-id, id)
+        (amble-async-request-response resource-type, game-id, player-id, id)
         (recur)))))

@@ -26,8 +26,7 @@
                          :resource-chan-fns {:get player-resource/get!
                                              :add move-resource/add!}
                          :remote-control nil
-                         :on-after-render-chan-fn (fn []
-                                                    (async/tap on-after-render-chan-multap (async/chan 1)))}})
+                         :post-init-chan (async/tap on-after-render-chan-multap (async/chan 1))}})
 
 (defn app [board-fn]
   [:div {:id "amble"} [board-fn]])
