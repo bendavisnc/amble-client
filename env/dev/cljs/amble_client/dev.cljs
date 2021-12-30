@@ -1,6 +1,6 @@
 (ns ^:figwheel-no-load amble-client.dev
   (:require
-    [amble-client.core :as core]
+    [amble-client.v3.core :as core]
     [devtools.core :as devtools]))
 
 (extend-protocol IPrintWithWriter

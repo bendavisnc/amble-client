@@ -9,14 +9,38 @@
   } ],
   "paths" : {
     "/game" : {
-      "post" : {
-        "operationId" : "gameCreate",
+      "get" : {
+        "operationId" : "gameGetDefaultId",
         "responses" : {
-          "201" : {
-            "description" : "Successfully created game."
+          "200" : {
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "description" : "Game id of default game."
           }
         },
-        "summary" : "Create new game",
+        "summary" : "Get default game id",
+        "tags" : [ "game" ]
+      },
+      "post" : {
+        "operationId" : "gameAdd",
+        "responses" : {
+          "201" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GameAdd"
+                }
+              }
+            },
+            "description" : "Successfully added game."
+          }
+        },
+        "summary" : "Add new game",
         "tags" : [ "game" ]
       }
     },
@@ -36,6 +60,13 @@
         } ],
         "responses" : {
           "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GameGet"
+                }
+              }
+            },
             "description" : "Game id of game that already exists."
           },
           "404" : {
@@ -43,94 +74,6 @@
           }
         },
         "summary" : "Get game by id",
-        "tags" : [ "game" ]
-      }
-    },
-    "/game/{gameId}/board" : {
-      "get" : {
-        "operationId" : "boardGetByGameId",
-        "parameters" : [ {
-          "description" : "The id of the game the board belongs to",
-          "explode" : false,
-          "in" : "path",
-          "name" : "gameId",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          },
-          "style" : "simple"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Coordinates that represent a game board."
-          },
-          "404" : {
-            "description" : "No corresponding game found."
-          }
-        },
-        "summary" : "Get board by game id",
-        "tags" : [ "game" ]
-      }
-    },
-    "/game/{gameId}/player" : {
-      "get" : {
-        "operationId" : "playerGetAllByGameId",
-        "parameters" : [ {
-          "description" : "The id of the game the players belong to",
-          "explode" : false,
-          "in" : "path",
-          "name" : "gameId",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          },
-          "style" : "simple"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Coordinates that represent a game board."
-          },
-          "404" : {
-            "description" : "No corresponding game found."
-          }
-        },
-        "summary" : "Get player by game id",
-        "tags" : [ "game" ]
-      }
-    },
-    "/game/{gameId}/player/{id}" : {
-      "get" : {
-        "operationId" : "playerGet",
-        "parameters" : [ {
-          "description" : "The id of the game the players belong to",
-          "explode" : false,
-          "in" : "path",
-          "name" : "gameId",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          },
-          "style" : "simple"
-        }, {
-          "description" : "The id of the player",
-          "explode" : false,
-          "in" : "path",
-          "name" : "id",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          },
-          "style" : "simple"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Coordinates that represent the player's current state."
-          },
-          "404" : {
-            "description" : "No corresponding game found."
-          }
-        },
-        "summary" : "Get player",
         "tags" : [ "game" ]
       }
     },
@@ -178,11 +121,63 @@
         "tags" : [ "game" ]
       }
     },
-    "/game/{gameId}/player/{playerId}/move/{id}" : {
+    "/game/{gameId}/board" : {
       "get" : {
-        "operationId" : "moveGetById",
+        "operationId" : "boardGetByGameId",
         "parameters" : [ {
-          "description" : "The id of the game the player belongs to",
+          "description" : "The id of the game the board belongs to",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Coordinates that represent a game board."
+          },
+          "404" : {
+            "description" : "No corresponding game found."
+          }
+        },
+        "summary" : "Get board by game id",
+        "tags" : [ "game" ]
+      }
+    },
+    "/game/{gameId}/player" : {
+      "get" : {
+        "operationId" : "playerGetAllByGameId",
+        "parameters" : [ {
+          "description" : "The id of the game the players belong to",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "All players associated with game with game id."
+          },
+          "404" : {
+            "description" : "No corresponding game or player found."
+          }
+        },
+        "summary" : "Get player by game id",
+        "tags" : [ "game" ]
+      }
+    },
+    "/game/{gameId}/player/{id}" : {
+      "get" : {
+        "operationId" : "playerGet",
+        "parameters" : [ {
+          "description" : "The id of the game the players belong to",
           "explode" : false,
           "in" : "path",
           "name" : "gameId",
@@ -192,17 +187,7 @@
           },
           "style" : "simple"
         }, {
-          "description" : "The id of the game player who makes the move.",
-          "explode" : false,
-          "in" : "path",
-          "name" : "playerId",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          },
-          "style" : "simple"
-        }, {
-          "description" : "The id of the move",
+          "description" : "The id of the player",
           "explode" : false,
           "in" : "path",
           "name" : "id",
@@ -214,19 +199,33 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "Provided move coordinate information."
+            "description" : "Coordinates that represent the player's current state."
           },
           "404" : {
-            "description" : "No corresponding move found."
+            "description" : "No corresponding game found."
           }
         },
-        "summary" : "Get player move",
+        "summary" : "Get player",
         "tags" : [ "game" ]
       }
     }
   },
   "components" : {
     "schemas" : {
+      "GameAdd" : {
+        "$ref" : "#/components/schemas/GameId"
+      },
+      "GameGet" : {
+        "$ref" : "#/components/schemas/GameId"
+      },
+      "GameId" : {
+        "properties" : {
+          "game-id" : {
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
       "Coord" : {
         "items" : {
           "type" : "number"

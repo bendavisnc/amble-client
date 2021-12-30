@@ -7,7 +7,7 @@
                                 :param-map {:id id}}))
 
 (defn create! []
-  (resource-core/response-chan {:endpoint-key :game-create
+  (resource-core/response-chan {:endpoint-key :game-add
                                 :param-map {}}))
 
 

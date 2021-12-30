@@ -62,7 +62,7 @@
               :pretty-print  false}}
             :app
             {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
-             :figwheel {:on-jsload "amble-client.core/mount-root"}
+             :figwheel {:on-jsload "amble-client.v3.core/mount-root"}
              :compiler
              {:main "amble-client.dev"
               :asset-path "/js/out"
