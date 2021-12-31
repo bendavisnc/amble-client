@@ -1,4 +1,5 @@
 (ns amble-client.v3.board
+  "Draws pieces on a board, according to state under a particular game id."
   (:require [amble-client.v3.piece :as piece]
             [amble-client.v3.global-state :as gs]))
 

@@ -67,9 +67,9 @@ body {
     fill: #00aaff;
 }
 
-#amble svg#board circle.designatee {
-  /* fill: #999; */
-    stroke: gray;
-    opacity: 22%;
-    stroke-width: 0.002px;
+#amble svg#board circle.landing {
+  fill: #999;
+    /* stroke: gray; */
+    /* opacity: 22%; */
+    /* stroke-width: 0.002px; */
 }
