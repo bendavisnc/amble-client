@@ -12,16 +12,17 @@
 (defmethod piece-type-key piece-type-landing [_] :landing)
 
 
-
-
 (defn piece [s piece-type, index, mouse-event-fns]
-  (let [game-id (gs/get s :current)]
-    [:circle {:cx     (gs/get s game-id :pieces (piece-type-key piece-type) index :position :x)
-              :cy     (gs/get s game-id :pieces (piece-type-key piece-type) index :position :y)
-              :r      0.023
-              :key    (str piece-type index)
-              :id     (str piece-type index)
-              :what "wut"
+  (let [game-id (gs/get s :current)
+        d (nth (gs/get s game-id :pieces (piece-type-key piece-type))
+               index)
+        {:keys [x, y]} (:position d)
+        {:keys [radius]} (:size d)]
+    [:circle {:cx     x
+              :cy     y
+              :r      radius
+              :key    (str (piece-type-key piece-type) "-" index)
+              :id     (str (piece-type-key piece-type) "-" index)
               :data-i index
               :class  (piece-type-class piece-type)
               :on-mouse-down (:on-mouse-down mouse-event-fns)
