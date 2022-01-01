@@ -1,31 +1,45 @@
 (ns amble-client.v3.piece
-  (:require [amble-client.v3.global-state :as gs]))
+  (:require [amble-client.v3.global-state :as gs]
+            [amble-client.utils :as utils]))
 
 (def piece-type-player :piece-type-player)
 (def piece-type-landing :piece-type-landing)
 
-(defmulti piece-type-class (fn [x] x))
-(defmethod piece-type-class piece-type-player [_] "player")
-(defmethod piece-type-class piece-type-landing [_] "landing")
-(defmulti piece-type-key (fn [x] x))
-(defmethod piece-type-key piece-type-player [_] :player)
-(defmethod piece-type-key piece-type-landing [_] :landing)
+(defn is-landing-piece? [piece-type]
+  (= piece-type-landing piece-type))
 
-
-(defn piece [s piece-type, index, mouse-event-fns]
+(defn landing-piece [s index, mouse-event-fns]
   (let [game-id (gs/get s :current)
-        d (nth (gs/get s game-id :pieces (piece-type-key piece-type))
+        d (nth (gs/get s game-id :pieces :landing)
                index)
         {:keys [x, y]} (:position d)
         {:keys [radius]} (:size d)]
     [:circle {:cx     x
               :cy     y
               :r      radius
-              :key    (str (piece-type-key piece-type) "-" index)
-              :id     (str (piece-type-key piece-type) "-" index)
+              :key    (str :landing "-" index)
+              :id    (str :landing "-" index)
               :data-i index
-              :class  (piece-type-class piece-type)
+              :class "landing"
               :on-mouse-down (:on-mouse-down mouse-event-fns)
               :on-mouse-up (:on-mouse-up mouse-event-fns)}]))
 
+(defn player-piece [s player-id, index, mouse-event-fns]
+  (let [game-id (gs/get s :current)
+        player-id-name (name player-id)
+        d (nth (gs/get s game-id :pieces :player player-id)
+               index)
+        _ (println "wut")
+        _ (println d)
+        {:keys [x, y]} (:position d)
+        {:keys [radius]} (:size d)]
+    [:circle {:cx     x
+              :cy     y
+              :r      radius
+              :key    (str :player "-" player-id-name "-" index)
+              :id    (str :player "-" player-id-name "-" index)
+              :data-i index
+              :class (str "player" " " player-id-name)
+              :on-mouse-down (:on-mouse-down mouse-event-fns)
+              :on-mouse-up (:on-mouse-up mouse-event-fns)}]))
 

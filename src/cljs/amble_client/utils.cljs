@@ -53,3 +53,12 @@
         (let [cursor-pt (.matrixTransform pt (.inverse (.getScreenCTM svg-element)))]
           [(aget cursor-pt "x")
            (aget cursor-pt "y")])))))
+
+(defn num-to-word [i]
+  (get {0 "one"
+        1 "two"
+        2 "three"
+        3 "four"
+        4 "five"
+        5 "six"}
+       i))

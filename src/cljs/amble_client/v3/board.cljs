@@ -8,6 +8,12 @@
 
 (defn board [s, game-id]
   [:svg {:id "board" "viewBox" "0 0 1 1"}
+    ;; Draw board landing pieces (the svg circles that designate where player pieces can "land").
     (for [i (range (count (gs/get s game-id :pieces :landing)))]
-      [piece/piece s piece/piece-type-landing i {:on-mouse-down on-mouse-down
-                                                 :on-mouse-up on-mouse-down}])])
+      [piece/landing-piece s  i {:on-mouse-down on-mouse-down}])
+    ;; Draw player pieces.
+    (for [player-id (keys (gs/get s game-id :pieces :player))]
+      (for [i (range (count (gs/get s game-id :pieces :player player-id)))]
+        [piece/player-piece s player-id i {:on-mouse-down on-mouse-down
+                                           :on-mouse-up on-mouse-down}]))])
+ 
