@@ -30,15 +30,28 @@
         ;; This is the game state that drives the whole client ui with react.
         reagent-atom-gs (reagent/atom (game-state-at-start game-id))]
     ;; Set up things like board coordinates asynchronously, once request resources are successfully made.
-    (go (let [board-coords (async/<! (board-resource/get! game-id))
-              player-ids (async/<! (player-resource/get! game-id))]
+    (go (let [board-coords (async/<! (async/pipe (board-resource/get! game-id)
+                                                 (async/chan 1
+                                                             (map (fn [coordinates]
+                                                                    (for [[x, y] coordinates]
+                                                                     {:position {:x x, :y y}  
+                                                                      :size {:radius 0.023}}))))))
+              player-ids (async/<! (player-resource/get! game-id))
+              player-coords (async/<! (async/into {}
+                                                  (async/merge (for [player-id player-ids]
+                                                                 (async/pipe (player-resource/get! game-id player-id)
+                                                                             (async/chan 1
+                                                                                         (map (fn [{:keys [player-id, coordinates]}]
+                                                                                                [(keyword player-id) (for [[x, y] coordinates]
+                                                                                                                      {:position {:x x, :y y}  
+                                                                                                                       :size {:radius 0.023}})]))))))))]
+    
           (println "Setting up board...")
           ;; (println (gstring/format "... using coords, %s." board-coords))
-          (println board-coords)
-          (println player-ids) 
-          (gs/set! reagent-atom-gs [game-id :pieces :landing] (for [[x, y] board-coords]      
-                                                                {:position {:x x, :y y}
-                                                                 :size {:radius 0.023}}))))
+          ;; (println player-ids) 
+          ;; (println player-coords) 
+          (gs/set! reagent-atom-gs [game-id :pieces :landing] board-coords) 
+          (gs/set! reagent-atom-gs [game-id :pieces :player] player-coords))) 
     (fn []
       (let [game-state (deref reagent-atom-gs)]
         [:div {:id "amble"}
