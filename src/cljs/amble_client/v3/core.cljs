@@ -17,11 +17,12 @@
   {:current game-id
    game-id {:pieces {:landing [{:position {:x 0.5, :y 0.5}
                                 :size {:radius 0.023}}]
-                     :player {:player-one [{:position {:x 0.4, :y 0.5}
-                                            :size {:radius 0.023}}]
-                              :player-two [{:position {:x 0.4, :y 0.2}
+                     :player {:player-one [{:position {:x 0.5, :y 0.5}
                                             :size {:radius 0.023}}]}}}})
 
+(defn on-mouse-event [& args]
+  (println "hey neat")
+  (println args))
 
 
 
@@ -45,17 +46,15 @@
                                                                                                 [(keyword player-id) (for [[x, y] coordinates]
                                                                                                                       {:position {:x x, :y y}  
                                                                                                                        :size {:radius 0.023}})]))))))))]
-    
           (println "Setting up board...")
-          ;; (println (gstring/format "... using coords, %s." board-coords))
-          ;; (println player-ids) 
-          ;; (println player-coords) 
           (gs/set! reagent-atom-gs [game-id :pieces :landing] board-coords) 
           (gs/set! reagent-atom-gs [game-id :pieces :player] player-coords))) 
     (fn []
       (let [game-state (deref reagent-atom-gs)]
         [:div {:id "amble"}
-         [board/board game-state game-id]]))))
+         [board/board game-state 
+                      game-id
+                      on-mouse-event]])))) 
 
 (defn mount-root []
   (reagent.dom/render [(game-fn)] 
