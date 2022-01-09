@@ -10,7 +10,7 @@
             [goog.string.format]
             [reagent.dom]
             [reagent.core :as reagent])
-  (:require-macros [cljs.core.async :refer [go]]))
+  (:require-macros [cljs.core.async :refer [go, go-loop]]))
 
 
 (defn game-state-at-start [game-id]
@@ -20,12 +20,63 @@
                      :player {:player-one [{:position {:x 0.5, :y 0.5}
                                             :size {:radius 0.023}}]}}}})
 
-(defn on-mouse-event [& args]
-  (println "hey neat")
-  (println args))
+(def async-chan-mousedown (async/chan))
+(def async-chan-mouseup (async/chan))
+(def async-chan-mousemove (async/chan))
+(def async-chan-mousedrag (async/chan 1 (fn [e]
+                                          (println "wuaat")))) 
+
+(def async-chan-ready (async/chan 1))
+
+(go-loop []
+  (let [_ (async/<! async-chan-mousedown)]
+    (loop []
+      (if (async/poll! async-chan-mouseup)
+        nil
+        (do
+          (async/>! async-chan-mousedrag
+                    (async/<! async-chan-mousemove))
+          (recur))))
+    (recur)))
+
+(go
+  (async/<! async-chan-ready)
+  (let [svg-target
+        (.querySelector js/document 
+                        "#app svg")]
+    (assert (= "board" (.-id svg-target)))
+    (.addEventListener svg-target
+                       "mousemove"
+                       (fn [e]
+                         (async/put! async-chan-mousemove 
+                                     e)))))
 
 
+(defmulti on-mouse-event (fn [lookup-vals, e]
+                           (let [k
+                                 (-> lookup-vals
+                                     vec
+                                     (subvec 1 3)
+                                     (conj (keyword (.-type e))))]
+                             (println k)
+                             k)))
 
+(defmethod on-mouse-event [:pieces :player :mousedown] 
+  [lookup-vals, _]
+  (async/put! async-chan-mousedown
+              lookup-vals))
+
+(defmethod on-mouse-event [:pieces :player :mouseup] 
+  [lookup-vals, _]
+  (async/put! async-chan-mouseup
+              lookup-vals))
+
+
+(defmethod on-mouse-event :default
+  [lookup-vals, e]
+  (println "No impl for mouse event")
+  (println (clj->js [lookup-vals, e])))
+                                              
 (defn game-fn []
   (let [game-id (utils/game-id-from-window)
         ;; This is the game state that drives the whole client ui with react.
@@ -58,7 +109,9 @@
 
 (defn mount-root []
   (reagent.dom/render [(game-fn)] 
-                      (.getElementById js/document "app")))
+                      (.getElementById js/document "app")
+                      (fn [] 
+                        (async/put! async-chan-ready true))))
                        
 
 (defn init! []
