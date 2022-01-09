@@ -8,7 +8,8 @@
     ;; Draw board landing pieces (the svg circles that designate where player pieces can "land").
     (for [i (range (count (gs/get s game-id :pieces :landing)))]
       ^{:key (str "landing" "-" "-" i)}
-      [piece/landing-piece s  i {:on-mouse-down on-mouse-event}])
+      [piece/landing-piece s  i {:on-mouse-down on-mouse-event
+                                 :on-mouse-up on-mouse-event}])
     ;; Draw player pieces.
     (for [player-id (keys (gs/get s game-id :pieces :player))]
       (for [i (range (count (gs/get s game-id :pieces :player player-id)))]

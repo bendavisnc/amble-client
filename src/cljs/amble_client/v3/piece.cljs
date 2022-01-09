@@ -7,26 +7,18 @@
         {:keys [x, y]} (:position d)
         {:keys [radius]} (:size d)
         ;; piece-key (concat lookup-vals [index])
-        ;; _ (println "cooool")
-        ;; _ (println piece-key)]
-        _ (println add-on-attributes)]
+        on-mouse-event-fn (fn [mouse-event-key]
+                            (fn [e]
+                              (apply (mouse-event-key mouse-event-fns)
+                                     [(concat lookup-vals
+                                             [index]) 
+                                      e])))]
     [:circle (merge {:cx     x
                      :cy     y
                      :r      radius
-                     :key (str "wut" (:key add-on-attributes))
-                     :data-x-key (:key add-on-attributes)
-                    ;; :r      7
-                    ;; :key piece-key
-                     :on-mouse-down (fn [& args]
-                                      (apply (:on-mouse-down mouse-event-fns)
-                                             (concat [index] 
-                                                     lookup-vals
-                                                     args)))
-                     :on-mouse-up (fn [& args]
-                                      (apply (:on-mouse-up mouse-event-fns)
-                                             (concat [index] 
-                                                     lookup-vals
-                                                     args)))}
+                     :on-mouse-down (on-mouse-event-fn :on-mouse-down) 
+                     :on-mouse-up (on-mouse-event-fn :on-mouse-up)} 
+                                      
                     add-on-attributes)]))
 
 
