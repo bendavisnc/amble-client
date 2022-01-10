@@ -20,24 +20,48 @@
                      :player {:player-one [{:position {:x 0.5, :y 0.5}
                                             :size {:radius 0.023}}]}}}})
 
-(def async-chan-mousedown (async/chan))
-(def async-chan-mouseup (async/chan))
-(def async-chan-mousemove (async/chan))
-(def async-chan-mousedrag (async/chan 1 (fn [e]
-                                          (println "wuaat")))) 
+(def coord-conv-fn-atom (atom nil))
+
+(def async-chan-mousedown (async/chan 1))
+(def async-chan-mouseup (async/chan 1))
+(def async-chan-mousemove (async/chan 1))
+;; (def async-chan-mousemove (async/chan (async/sliding-buffer 1)
+;;                                       (fn [e]
+;;                                         (if-let [coord-conv
+;;                                                  (deref coord-conv-fn-atom)]
+;;                                          (do
+;;                                            (println "handy")
+;;                                            (coord-conv e))
+;;                                          (do
+;;                                            (throw (new js/Error "No coord conv fn available."))
+;;                                            e)))))
+
+                                           
+(def async-chan-mousedrag (async/chan 1))
 
 (def async-chan-ready (async/chan 1))
 
 (go-loop []
-  (let [_ (async/<! async-chan-mousedown)]
+  (let [lookup-vals (async/<! async-chan-mousedown)]
+    (println "mouse pressed")
     (loop []
       (if (async/poll! async-chan-mouseup)
-        nil
-        (do
-          (async/>! async-chan-mousedrag
-                    (async/<! async-chan-mousemove))
-          (recur))))
+        (println "mouse released")
+        (let [new-move-coord
+              ((deref coord-conv-fn-atom)
+               (async/<! async-chan-mousemove))]
+          (do
+            (async/>! async-chan-mousedrag [lookup-vals new-move-coord])
+            ;; (async/>! async-chan-mousedrag [lookup-vals "wut"])
+            (recur)))))
     (recur)))
+
+(go-loop []
+  (let [mouse-drag-event (async/<! async-chan-mousedrag)]
+    (println "neatttt")
+    (println (deref coord-conv-fn-atom))
+    (println mouse-drag-event))
+  (recur))
 
 (go
   (async/<! async-chan-ready)
@@ -45,6 +69,7 @@
         (.querySelector js/document 
                         "#app svg")]
     (assert (= "board" (.-id svg-target)))
+    (reset! coord-conv-fn-atom (utils/coord-conv svg-target))
     (.addEventListener svg-target
                        "mousemove"
                        (fn [e]
@@ -122,4 +147,3 @@
                (fn [game-create-response]
                  (println "Requested new game.")
                  (println game-create-response))))
-
