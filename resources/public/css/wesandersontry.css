@@ -2,17 +2,20 @@
 }
 
 body {
-  background: white;
+  /* background: white; */
+  background: aliceblue;
 }
 
 #amble {
   /* background-color: white; */
-  background-color: lightgrey;
+  /* background-color: lightgrey; */
+  background: aliceblue;
 }
 
 #amble svg#board {
   /* background-color: #666666ff; */
-  background-color: lightgrey;
+  /* background-color: lightgrey; */
+  background: aliceblue;
 }
 
 #amble svg#board circle.player-one {
@@ -39,7 +42,7 @@ body {
     fill: #ca936aff;
 }
 
-#amble svg#board circle.designatee {
+#amble svg#board circle.landing {
     fill: white;
     opacity: 100%;
     stroke-width: 0;
