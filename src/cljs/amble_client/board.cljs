@@ -4,17 +4,17 @@
   (:require-macros
    [cljs.core.async :refer [go go-loop]]))
 
-(defn board-fn [board-pieces-fn, player-pieces-fn]
-  (fn []
-    [:svg {:id "board" "viewBox" "0 0 1 1"}
-     [board-pieces-fn]
-     [player-pieces-fn]]))
+(defn init [board-pieces, player-pieces]
+  9)
+  ;; (fn []
+  ;;   [:svg {:id "board" "viewBox" "0 0 1 1"}
+  ;;    [board-pieces]]))
+  ;;   ;;  [player-pieces]]))
+
 
 (defmethod ig/init-key :amble/board [_ {:keys [board-pieces, player-pieces]}]
-  (go
-    (let [board-pieces-fn (async/<! board-pieces)
-          player-pieces-fn (async/<! player-pieces)]
-      (board-fn board-pieces-fn
-                player-pieces-fn))))
+  (println "real neat")
+  (println [board-pieces, player-pieces])
+  (init board-pieces, player-pieces))
 
 

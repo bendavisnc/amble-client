@@ -117,38 +117,6 @@
                                              :player-id player-id)))))))))
 
 ;;
-(defmethod ig/init-key :amble/player-pieces [_ {:keys [game-id, resource-chan-player-get, resource-chan-move-add, async-resource-move-chan,  post-init-chan]}]
-  (go
-    (let [
-          players (async/<! (resource-chan-player-get game-id))
-          player-coordinates (async/<! (async/into {}
-                                                   (async/merge
-                                                    (for [player-id players]
-                                                      (async/pipe (resource-chan-player-get game-id player-id)
-                                                                  (async/chan 1
-                                                                              (map (fn [coordinates]
-                                                                                     [(keyword player-id) coordinates]))))))))
-          piece-coordinates (piece-coordinates player-coordinates)
-          on-after-render (fn [_]
-                            (let [svg-board-elem ;; A bit unsure if this should be handled as a dep
-                                  (.querySelector js/document "svg#board")]
-                              (reset! coord-conv-fn-atom (utils/coord-conv svg-board-elem))
-                              (init-mouse-chans! game-id
-                                                 svg-board-elem)
-                              (init-drawing!)))
-          on-remote-move (fn [move]
-                           (println "secondary fuck yeah?")
-                           (println move))]
-
-      (reset! piece-coordinates-atom piece-coordinates)
-      (reset! resource-chan-move-add-atom
-              resource-chan-move-add)
-      (async/take! post-init-chan
-                   on-after-render)
-      (async/take! async-resource-move-chan
-                   on-remote-move)
-      ;(remote-tracking/start!)
-      (player-pieces-fn player-coordinates))))
-
-
-
+(defmethod ig/init-key :amble/player-pieces [_]
+  (fn [] nil))
+  

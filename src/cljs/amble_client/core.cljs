@@ -2,6 +2,7 @@
   (:require [cljs.core.async :as async]
             [integrant.core :as ig]
             [reagent.dom :as reagent-dom]
+            [reagent.ratom :as reagent-ratom]
             [amble-client.board-pieces]
             [amble-client.board]
             [amble-client.player-pieces]
@@ -11,45 +12,35 @@
             [amble-client.async-resource.base]
             [amble-client.async-resource.move :as async-move-resource]
             [amble-client.resource.move :as move-resource]
-            [amble-client.utils :as utils])
+            [amble-client.utils :as utils]
+            [amble-client.config :as amble-client-config])
   (:require-macros [cljs.core.async :refer [go]]))
 
-(defn ig-amble-config [game-id, on-after-render-chan-multap]
-  {:amble/board   {:board-pieces (ig/ref :amble/board-pieces)
-                   :player-pieces (ig/ref :amble/player-pieces)}
-   :amble/board-pieces {:game-id          game-id
-                        :resource-chan-fn board-resource/get!}
-   :amble/async-resource-base {:game-id game-id}
-   :amble/async-resource-move {:async-resource-base (ig/ref :amble/async-resource-base)
-                               :resource-chan-move-get move-resource/get!}
+(def app-atom (reagent-ratom/atom {}))
 
-   :amble/player-pieces {:game-id          game-id
-                         :resource-chan-player-get player-resource/get!
-                         :resource-chan-move-add move-resource/add!
-                         :async-resource-move-chan (ig/ref :amble/async-resource-move)
-                         :post-init-chan (async/tap on-after-render-chan-multap (async/chan 1))}})
+(.addEventListener (.-body js/document)
+                   "mousemove"
+                   (fn [e]
+                     (println "neato")
+                     (.log js/console e)
+                     (swap! app-atom assoc :x (.-clientX e))
+                     (swap! app-atom assoc :y (.-clientY e))
+                     (.log js/console (deref app-atom))
+                     (println @app-atom)))
 
-(defn app [board-fn]
-  [:div {:id "amble"} [board-fn]])
+(defn app []
+  (let [s (deref app-atom)]
+    [:div {:width "400px"
+           :height "300px"}
+      [:ol
+        [:li (str "x: " (s :x))]
+        [:li (str "y: " (s :y))]
+        [:li (str "coord: " s)]]
+      [:button "neat button"]]))
+
+(defn mount-root []
+  (println "Invoking reagent/react.")
+  (reagent-dom/render [app] (.getElementById js/document "app")))
 
 (defn init! []
-  (println "Starting client init!")
-  (go (let [game-id (utils/game-id-from-window)
-            on-after-render-chan (async/chan 1)
-            multtap (async/mult on-after-render-chan)
-            ig-amble (ig/init (ig-amble-config game-id
-                                               multtap))
-            board-fn (async/<! (:amble/board ig-amble))]
-        (println "Invoking reagent.")
-        (reagent-dom/render (app board-fn)
-                            (.getElementById js/document "app")
-                            (fn []
-                              (async/put! on-after-render-chan true)))
-        nil)))
-
-(defn post-game! []
-  (async/take! (game-resource/create!)
-               (fn [game-create-response]
-                 (println "Requested new game.")
-                 (println game-create-response))))
-
+  (mount-root))
