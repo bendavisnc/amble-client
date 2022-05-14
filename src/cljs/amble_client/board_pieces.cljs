@@ -5,7 +5,7 @@
   (:require-macros
    [cljs.core.async :refer [go]]))
 
-(def classname "board-pieces")
+(def classname "board-piece")
 (def piece-size 0.023)
 
 (defn- piece [& {:keys [x, y, size, class, index]}]

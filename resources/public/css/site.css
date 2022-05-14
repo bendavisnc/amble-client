@@ -67,7 +67,7 @@ body {
     fill: #00aaff;
 }
 
-#amble svg#board circle.landing {
+#amble svg#board circle.board-piece {
   fill: #999;
     /* stroke: gray; */
     /* opacity: 22%; */

@@ -19,23 +19,6 @@
 
 (def app-atom (reagent-ratom/atom {}))
 
-(swap! app-atom assoc :board-pieces [])
-(swap! app-atom update-in [:board-pieces] conj {:x 0.5 :y 0.5})
-(swap! app-atom update-in [:board-pieces] conj {:x 0.5 :y 0.7})
-
-(defn wut[]
-  (println (deref app-atom)))
-
-;; (.addEventListener (.-body js/document)
-;;                    "mousemove"
-;;                    (fn [e]
-;;                      (println "neato")
-;;                      (.log js/console e)
-;;                      (swap! app-atom assoc :x (.-clientX e))
-;;                      (swap! app-atom assoc :y (.-clientY e))
-;;                      (.log js/console (deref app-atom))
-;;                      (println @app-atom)))
-
 
 (def app-config {:amble/app {:board (ig/ref :amble/board)}
                  :amble/board {:board-pieces (ig/ref :amble/board-pieces)
@@ -47,9 +30,29 @@
   (let [app-config-initialized (ig/init app-config)
         _ (.log js/console app-config-initialized)
         _ (println app-config-initialized)]
-    (reagent-dom/render [(:amble/app app-config-initialized)] 
+    (reagent-dom/render [(:amble/app app-config-initialized)]
                         (.getElementById js/document "app"))))
-
 
 (defn init! []
   (mount-root))
+
+(go
+  (let [board-response (async/<! (board-resource/get! "TheSaturdayGame"))
+        board-pieces (mapv (fn [c]
+                             (let [[x, y] c]
+                               {:x x
+                                :y y}))
+                           board-response)]
+    (swap! app-atom assoc :board-pieces board-pieces)))
+
+
+
+(defn post-game! []
+  (async/take! (game-resource/create!)
+               (fn [game-create-response]
+                 (println "Requested new game.")
+                 (println game-create-response))))
+
+(defn wut []
+  (println (deref app-atom)))
+

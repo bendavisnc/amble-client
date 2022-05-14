@@ -1,8 +1,5 @@
 (ns amble-client.board
-  (:require [integrant.core :as ig]
-            [cljs.core.async :as async])
-  (:require-macros
-   [cljs.core.async :refer [go go-loop]]))
+  (:require [integrant.core :as ig]))
 
 (defn board [board-pieces, player-pieces]
   (fn []
