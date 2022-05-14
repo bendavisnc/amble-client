@@ -17,6 +17,8 @@
             [amble-client.config :as amble-client-config])
   (:require-macros [cljs.core.async :refer [go]]))
 
+;; (def game-id (utils/game-id-from-window))
+;; (assert game-id "Problem getting game-id from browser url.")
 (def app-atom (reagent-ratom/atom {}))
 
 
@@ -36,8 +38,26 @@
 (defn init! []
   (mount-root))
 
+(defn- is-valid-game-id? [id]
+  (and id
+       (pos? (count id))))
+
+;; Set up board pieces from server game state.
 (go
-  (let [board-response (async/<! (board-resource/get! "TheSaturdayGame"))
+  (let [
+        game-response 
+                      (let [game-response-first-attempt
+                            (async/<! (game-resource/get! (utils/game-id-from-window)))]
+                        (if (is-valid-game-id? (:game-id game-response-first-attempt))
+                          (do 
+                            (println (str "Using game id provided from browser address, \"" (:game-id game-response-first-attempt) "\"."))
+                            game-response-first-attempt)
+                          (let [_ (println (str "Game not found with id, \"" (:game-id game-response-first-attempt) "\"."))
+                                game-response-create-attempt (async/<! (game-resource/create!))
+                                _ (println game-response-create-attempt)]
+                            game-response-create-attempt)))
+        game-id (:game-id game-response)
+        board-response (async/<! (board-resource/get! game-id))
         board-pieces (mapv (fn [c]
                              (let [[x, y] c]
                                {:x x
