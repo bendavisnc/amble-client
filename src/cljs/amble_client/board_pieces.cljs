@@ -10,13 +10,13 @@
 
 (defn- piece [& {:keys [x, y, size, class, index]}]
   (let [unique-key (str class
+                        "-"
                         index)]
     [:circle {:cx     x,
               :cy     y
               :r      size
               :key    unique-key
               :id     unique-key
-              :data-i index
               :class class}]))
 
 (defn- board-pieces [state-handler]

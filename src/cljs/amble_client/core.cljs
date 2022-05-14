@@ -24,8 +24,9 @@
 
 (def app-config {:amble/app {:board (ig/ref :amble/board)}
                  :amble/board {:board-pieces (ig/ref :amble/board-pieces)
-                               :player-pieces 7}
-                 :amble/board-pieces {:state-handler (fn [] (-> app-atom deref :board-pieces))}})
+                               :player-pieces (ig/ref :amble/player-pieces)}
+                 :amble/board-pieces {:state-handler (fn [] (-> app-atom deref :board-pieces))}
+                 :amble/player-pieces {:state-handler (fn [] (-> app-atom deref :player-pieces))}})
 
 (defn mount-root []
   ;; (println "Invoking reagent/react.")
@@ -44,12 +45,9 @@
 
 ;; Set up board pieces from server game state.
 (go
-  (let [
-        game-response 
-                      (let [game-response-first-attempt
-                            (async/<! (game-resource/get! (utils/game-id-from-window)))]
+  (let [game-response (let [game-response-first-attempt (async/<! (game-resource/get! (utils/game-id-from-window)))]
                         (if (is-valid-game-id? (:game-id game-response-first-attempt))
-                          (do 
+                          (do
                             (println (str "Using game id provided from browser address, \"" (:game-id game-response-first-attempt) "\"."))
                             game-response-first-attempt)
                           (let [_ (println (str "Game not found with id, \"" (:game-id game-response-first-attempt) "\"."))
@@ -62,8 +60,18 @@
                              (let [[x, y] c]
                                {:x x
                                 :y y}))
-                           board-response)]
-    (swap! app-atom assoc :board-pieces board-pieces)))
+                           board-response)
+
+        players-response (async/<! (player-resource/get! game-id))
+        player-pieces (async/<! (async/into {}
+                                            (async/merge
+                                             (for [player-id players-response]
+                                               (async/pipe (player-resource/get! game-id player-id)
+                                                           (async/chan 1
+                                                                       (map (fn [coordinates]
+                                                                              [(keyword player-id) coordinates]))))))))]
+    (swap! app-atom assoc :board-pieces board-pieces)
+    (swap! app-atom assoc :player-pieces player-pieces)))
 
 
 
