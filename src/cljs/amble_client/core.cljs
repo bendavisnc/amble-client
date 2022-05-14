@@ -4,7 +4,8 @@
             [reagent.dom :as reagent-dom]
             [reagent.ratom :as reagent-ratom]
             [amble-client.board-pieces]
-            [amble-client.board]
+            [amble-client.board :as amble-board]
+            [amble-client.app :as amble-app]
             [amble-client.player-pieces]
             [amble-client.resource.board :as board-resource]
             [amble-client.resource.game :as game-resource]
@@ -18,29 +19,37 @@
 
 (def app-atom (reagent-ratom/atom {}))
 
-(.addEventListener (.-body js/document)
-                   "mousemove"
-                   (fn [e]
-                     (println "neato")
-                     (.log js/console e)
-                     (swap! app-atom assoc :x (.-clientX e))
-                     (swap! app-atom assoc :y (.-clientY e))
-                     (.log js/console (deref app-atom))
-                     (println @app-atom)))
+(swap! app-atom assoc :board-pieces [])
+(swap! app-atom update-in [:board-pieces] conj {:x 0.5 :y 0.5})
+(swap! app-atom update-in [:board-pieces] conj {:x 0.5 :y 0.7})
 
-(defn app []
-  (let [s (deref app-atom)]
-    [:div {:width "400px"
-           :height "300px"}
-      [:ol
-        [:li (str "x: " (s :x))]
-        [:li (str "y: " (s :y))]
-        [:li (str "coord: " s)]]
-      [:button "neat button"]]))
+(defn wut[]
+  (println (deref app-atom)))
+
+;; (.addEventListener (.-body js/document)
+;;                    "mousemove"
+;;                    (fn [e]
+;;                      (println "neato")
+;;                      (.log js/console e)
+;;                      (swap! app-atom assoc :x (.-clientX e))
+;;                      (swap! app-atom assoc :y (.-clientY e))
+;;                      (.log js/console (deref app-atom))
+;;                      (println @app-atom)))
+
+
+(def app-config {:amble/app {:board (ig/ref :amble/board)}
+                 :amble/board {:board-pieces (ig/ref :amble/board-pieces)
+                               :player-pieces 7}
+                 :amble/board-pieces {:state-handler (fn [] (-> app-atom deref :board-pieces))}})
 
 (defn mount-root []
-  (println "Invoking reagent/react.")
-  (reagent-dom/render [app] (.getElementById js/document "app")))
+  ;; (println "Invoking reagent/react.")
+  (let [app-config-initialized (ig/init app-config)
+        _ (.log js/console app-config-initialized)
+        _ (println app-config-initialized)]
+    (reagent-dom/render [(:amble/app app-config-initialized)] 
+                        (.getElementById js/document "app"))))
+
 
 (defn init! []
   (mount-root))
