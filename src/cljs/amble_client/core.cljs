@@ -14,6 +14,7 @@
             [amble-client.async-resource.move :as async-move-resource]
             [amble-client.resource.move :as move-resource]
             [amble-client.utils :as utils]
+            [amble-client.user-feedback-handler :as user-feedback-handler]
             [amble-client.config :as amble-client-config])
   (:require-macros [cljs.core.async :refer [go]]))
 
@@ -26,7 +27,9 @@
                  :amble/board {:board-pieces (ig/ref :amble/board-pieces)
                                :player-pieces (ig/ref :amble/player-pieces)}
                  :amble/board-pieces {:state-handler (fn [] (-> app-atom deref :board-pieces))}
-                 :amble/player-pieces {:state-handler (fn [] (-> app-atom deref :player-pieces))}})
+                 :amble/player-pieces {:state-handler (fn [] (-> app-atom deref :player-pieces))
+                                       :user-feedback-handler user-feedback-handler/handle-ui-event}})
+                ;;  :amble/user-feedback-handler user-feedback-handler/handle-ui-event
 
 (defn mount-root []
   ;; (println "Invoking reagent/react.")

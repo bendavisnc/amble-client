@@ -14,15 +14,17 @@
        "-"
        index))
 
-(defn- piece [& {:keys [x, y, size, class, index, unique-key]}]
+(defn- piece [& {:keys [x, y, size, class, index, unique-key, user-feedback-handler]}]
   [:circle {:cx     x,
             :cy     y
             :r      size
             :key    unique-key
             :id     unique-key
-            :class class}])
+            :class class
+            :on-mouse-down (fn [e] (user-feedback-handler e)) 
+            :on-mouse-up (fn [e] (user-feedback-handler e))}]) 
 
-(defn- player-pieces [state-handler]
+(defn- player-pieces [state-handler, user-feedback-handler]
   (fn []
     (let [player-pieces (state-handler)]
       [:<>
@@ -38,8 +40,9 @@
                    :size piece-size
                    :class (str classname " " (name player-id))
                    :index i
-                   :unique-key unique-key))])]))) 
+                   :unique-key unique-key 
+                   :user-feedback-handler user-feedback-handler))])])))
 
 
-(defmethod ig/init-key :amble/player-pieces [_, {:keys [state-handler]}]
-  (player-pieces state-handler))
+(defmethod ig/init-key :amble/player-pieces [_, {:keys [state-handler, user-feedback-handler]}]
+  (player-pieces state-handler user-feedback-handler))
