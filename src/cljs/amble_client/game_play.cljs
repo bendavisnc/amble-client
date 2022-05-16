@@ -27,19 +27,6 @@
   (js/parseInt (.getAttribute element
                               "data-player-piece-index")))
  
-
-(def coordinate-converter
-  (let [cached-fn-atom (atom nil)]
-    (fn []
-      (or (deref cached-fn-atom)
-          (println "Creating new function for svg coordinates from events (lazily).")
-          (let [new-fn-instance
-                (utils/coord-conv (.getElementById js/document "board"))]
-            (reset! cached-fn-atom
-                    new-fn-instance)
-            new-fn-instance)))))
-  
-
 (defn handle-ui-event [e]
   (cond (= "mousedown"
            (.-type e))
@@ -55,7 +42,9 @@
           (println "User event not handled!")
           (.log js/console e))))
   
-(go-loop [app-atom (async/<! app-atom-chan)]
+(go-loop [app-atom (async/<! app-atom-chan)
+          event-to-coord (utils/coord-conv
+                          (.getElementById js/document "board"))]
   (let [piece-grab-event (async/<! piece-grab-chan)
         player-id (element-to-player-id (.-target piece-grab-event))
         player-piece-index (element-to-piece-index (.-target piece-grab-event))]
@@ -63,11 +52,12 @@
       (if (async/poll! piece-release-chan)
         (on-move-finally! nil moves-acc)
         (let [move (async/<! piece-move-chan)
-              [x, y] ((coordinate-converter)
+              [x, y] (event-to-coord
                       move)]              
           (on-move! app-atom player-id, player-piece-index, x, y)
           (recur (conj moves-acc [x, y])))))
-    (recur app-atom)))
+    (recur app-atom
+           event-to-coord))) 
 
 (defmethod ig/init-key :amble/game-play [_ {:keys [app-atom]}]
   (async/put! app-atom-chan app-atom)
