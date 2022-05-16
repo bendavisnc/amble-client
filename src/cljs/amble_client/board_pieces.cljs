@@ -25,8 +25,8 @@
       [:<>
        (for [i (range (count pieces))
              :let [p (pieces i)]]
-         (piece :x (:x p)
-                :y (:y p)
+         (piece :x (p 0)
+                :y (p 1)
                 :size piece-size
                 :class classname
                 :index i))])))

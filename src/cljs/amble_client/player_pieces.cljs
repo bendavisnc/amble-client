@@ -14,17 +14,25 @@
        "-"
        index))
 
-(defn- piece [& {:keys [x, y, size, class, index, unique-key, user-feedback-handler]}]
+(defn- piece [& {:keys [x, y, size, class, index, player-id, unique-key, user-feedback-handler]}]
   [:circle {:cx     x,
             :cy     y
             :r      size
             :key    unique-key
             :id     unique-key
+            :data-player-id player-id
+            :data-player-piece-index index
             :class class
-            :on-mouse-down (fn [e] (user-feedback-handler e)) 
-            :on-mouse-up (fn [e] (user-feedback-handler e))}]) 
+            :on-mouse-down (fn [e] 
+                             (.persist e)
+                             (.preventDefault e)
+                             (user-feedback-handler e)) 
+            :on-mouse-up (fn [e] 
+                           (.persist e)
+                           (.preventDefault e)
+                           (user-feedback-handler e))}]) 
 
-(defn- player-pieces [state-handler, user-feedback-handler]
+(defn- player-pieces [state-handler, game-play]
   (fn []
     (let [player-pieces (state-handler)]
       [:<>
@@ -40,9 +48,10 @@
                    :size piece-size
                    :class (str classname " " (name player-id))
                    :index i
+                   :player-id player-id
                    :unique-key unique-key 
-                   :user-feedback-handler user-feedback-handler))])])))
+                   :user-feedback-handler (:handle-ui-event game-play)))])])))
 
 
-(defmethod ig/init-key :amble/player-pieces [_, {:keys [state-handler, user-feedback-handler]}]
-  (player-pieces state-handler user-feedback-handler))
+(defmethod ig/init-key :amble/player-pieces [_, {:keys [state-handler, game-play]}]
+  (player-pieces state-handler game-play))
