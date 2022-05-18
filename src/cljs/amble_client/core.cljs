@@ -21,6 +21,19 @@
 ;; (assert game-id "Problem getting game-id from browser url.")
 (def app-atom (reagent-ratom/atom {}))
 
+(defmulti on-move! (fn [& args]
+                     (if (-> args last number?)
+                       ::move-instance
+                       ::move)))
+
+(defmethod on-move! ::move-instance [player-id, player-piece-index, x, y]
+  (swap! app-atom assoc-in [:player-pieces player-id player-piece-index] [x, y]))
+
+(defmethod on-move! ::move [player-id, player-piece-index, move]
+  (println "neat move")
+  (println [player-id, player-piece-index, move]))
+
+
 
 (def app-config {:amble/app {:board (ig/ref :amble/board)}
                  :amble/board {:board-pieces (ig/ref :amble/board-pieces)
@@ -29,8 +42,7 @@
                  :amble/board-pieces {:state-handler (fn [] (-> app-atom deref :board-pieces))}
                  :amble/player-pieces {:state-handler (fn [] (-> app-atom deref :player-pieces))
                                        :game-play (ig/ref :amble/game-play)}
-                 :amble/game-play {:app-atom app-atom
-                                   :move-resource-add! move-resource/add!}})
+                 :amble/game-play {:on-move! on-move!}})
                 ;;  :amble/app-atom app-atom
                 ;;  :amble/user-feedback-handler user-feedback-handler/handle-ui-event
 

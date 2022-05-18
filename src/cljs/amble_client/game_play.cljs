@@ -10,12 +10,10 @@
 (def piece-release-chan (async/chan))
 (def piece-move-chan (async/chan))
 ;; This is just used instead of some other mutable var solution.
-(def app-atom-chan (async/chan))
-(def move-resource-add!-chan (async/chan))
+(def on-move!-chan (async/chan))
 
-(defn on-move! [app-atom, player-id, player-piece-index, x, y]
-  (swap! app-atom assoc-in [:player-pieces player-id player-piece-index] [x, y]))
-
+;; (defn on-move! [app-atom, player-id, player-piece-index, x, y]
+  ;; (swap! app-atom assoc-in [:player-pieces player-id player-piece-index] [x, y]))
 
 (defn- element-to-player-id [element]
   (keyword (.getAttribute element
@@ -41,28 +39,26 @@
           (.log js/console e))))
   
 ;; A go loop for turning mouse dragging behavior into move events.
-(go-loop [app-atom (async/<! app-atom-chan)
-          move-resource-add! (async/<! move-resource-add!-chan)
+(go-loop [on-move! (async/<! on-move!-chan)
           event-to-coord (utils/coord-conv
                           (.getElementById js/document "board"))]
   (let [piece-grab-event (async/<! piece-grab-chan)
         player-id (element-to-player-id (.-target piece-grab-event))
         player-piece-index (element-to-piece-index (.-target piece-grab-event))]
-    (loop [moves-acc []]
+    (loop [moves []]
       (if (async/poll! piece-release-chan)
         (do (println (str "Sending move to server, " [player-id, player-piece-index, moves]))
-            (move-resource-add! player-id player-piece-index moves-acc))
+            (on-move! player-id player-piece-index moves))
         (let [move (async/<! piece-move-chan)
               [x, y] (event-to-coord
                       move)]              
-          (on-move! app-atom player-id, player-piece-index, x, y)
-          (recur (conj moves-acc [x, y])))))
-    (recur app-atom
+          (on-move! player-id, player-piece-index, x, y)
+          (recur (conj moves [x, y])))))
+    (recur on-move!
            event-to-coord))) 
 
-(defmethod ig/init-key :amble/game-play [_ {:keys [app-atom, move-resource-add!]}]
-  (async/put! app-atom-chan app-atom)
-  (async/put! move-resource-add!-chan move-resource-add!)
+(defmethod ig/init-key :amble/game-play [_ {:keys [on-move!]}]
+  (async/put! on-move!-chan on-move!)
   {:handle-ui-event handle-ui-event}) 
 
 
