@@ -11,13 +11,11 @@
 (def piece-move-chan (async/chan))
 ;; This is just used instead of some other mutable var solution.
 (def app-atom-chan (async/chan))
+(def move-resource-add!-chan (async/chan))
 
 (defn on-move! [app-atom, player-id, player-piece-index, x, y]
   (swap! app-atom assoc-in [:player-pieces player-id player-piece-index] [x, y]))
 
-(defn on-move-finally! [player-id, moves]
-  (println (str "Player move ready, \"" moves "\"."))
-  (println "  (" player-id")"))
 
 (defn- element-to-player-id [element]
   (keyword (.getAttribute element
@@ -42,7 +40,9 @@
           (println "User event not handled!")
           (.log js/console e))))
   
+;; A go loop for turning mouse dragging behavior into move events.
 (go-loop [app-atom (async/<! app-atom-chan)
+          move-resource-add! (async/<! move-resource-add!-chan)
           event-to-coord (utils/coord-conv
                           (.getElementById js/document "board"))]
   (let [piece-grab-event (async/<! piece-grab-chan)
@@ -50,7 +50,8 @@
         player-piece-index (element-to-piece-index (.-target piece-grab-event))]
     (loop [moves-acc []]
       (if (async/poll! piece-release-chan)
-        (on-move-finally! nil moves-acc)
+        (do (println (str "Sending move to server, " [player-id, player-piece-index, moves]))
+            (move-resource-add! player-id player-piece-index moves-acc))
         (let [move (async/<! piece-move-chan)
               [x, y] (event-to-coord
                       move)]              
@@ -59,8 +60,9 @@
     (recur app-atom
            event-to-coord))) 
 
-(defmethod ig/init-key :amble/game-play [_ {:keys [app-atom]}]
+(defmethod ig/init-key :amble/game-play [_ {:keys [app-atom, move-resource-add!]}]
   (async/put! app-atom-chan app-atom)
+  (async/put! move-resource-add!-chan move-resource-add!)
   {:handle-ui-event handle-ui-event}) 
 
 

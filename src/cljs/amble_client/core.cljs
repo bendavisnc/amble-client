@@ -29,7 +29,8 @@
                  :amble/board-pieces {:state-handler (fn [] (-> app-atom deref :board-pieces))}
                  :amble/player-pieces {:state-handler (fn [] (-> app-atom deref :player-pieces))
                                        :game-play (ig/ref :amble/game-play)}
-                 :amble/game-play {:app-atom app-atom}})
+                 :amble/game-play {:app-atom app-atom
+                                   :move-resource-add! move-resource/add!}})
                 ;;  :amble/app-atom app-atom
                 ;;  :amble/user-feedback-handler user-feedback-handler/handle-ui-event
 
