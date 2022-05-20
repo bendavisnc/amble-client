@@ -32,9 +32,9 @@
                            (.preventDefault e)
                            (user-feedback-handler e))}]) 
 
-(defn- player-pieces [state-handler, game-play]
+(defn- player-pieces [supplier, game-play]
   (fn []
-    (let [player-pieces (state-handler)]
+    (let [player-pieces (supplier)]
       [:<>
        (for [player-id (keys player-pieces)
              :let [pieces (player-id player-pieces)]]
@@ -53,5 +53,5 @@
                    :user-feedback-handler (:handle-ui-event game-play)))])])))
 
 
-(defmethod ig/init-key :amble/player-pieces [_, {:keys [state-handler, game-play]}]
-  (player-pieces state-handler game-play))
+(defmethod ig/init-key :amble/player-pieces [_, {:keys [supplier, game-play]}]
+  (player-pieces supplier game-play))

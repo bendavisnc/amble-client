@@ -42,8 +42,8 @@
                  :amble/board {:board-pieces (ig/ref :amble/board-pieces)
                                :player-pieces (ig/ref :amble/player-pieces)
                                :game-play (ig/ref :amble/game-play)}
-                 :amble/board-pieces {:state-handler (fn [] (-> app-atom deref :board-pieces))}
-                 :amble/player-pieces {:state-handler (fn [] (-> app-atom deref :player-pieces))
+                 :amble/board-pieces {:supplier (fn [] (-> app-atom deref :board-pieces))}
+                 :amble/player-pieces {:supplier (fn [] (-> app-atom deref :player-pieces))
                                        :game-play (ig/ref :amble/game-play)}
                  :amble/game-play {:on-move! on-move!}})
                 ;;  :amble/app-atom app-atom

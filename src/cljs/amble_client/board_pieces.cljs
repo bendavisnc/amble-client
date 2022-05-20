@@ -19,9 +19,9 @@
               :id     unique-key
               :class class}]))
 
-(defn- board-pieces [state-handler]
+(defn- board-pieces [supplier]
   (fn []
-    (let [pieces (state-handler)]
+    (let [pieces (supplier)]
       [:<>
        (for [i (range (count pieces))
              :let [p (pieces i)]]
@@ -32,5 +32,5 @@
                 :index i))])))
 
 
-(defmethod ig/init-key :amble/board-pieces [_, {:keys [state-handler]}]
-  (board-pieces state-handler))
+(defmethod ig/init-key :amble/board-pieces [_, {:keys [supplier]}]
+  (board-pieces supplier))
