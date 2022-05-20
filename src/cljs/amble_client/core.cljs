@@ -30,8 +30,11 @@
   (swap! app-atom assoc-in [:player-pieces player-id player-piece-index] [x, y]))
 
 (defmethod on-move! ::move [player-id, player-piece-index, move]
-  (println "neat move")
-  (println [player-id, player-piece-index, move]))
+  (move-resource/add! (:game-id, 
+                       (deref app-atom))  
+                      (name player-id) 
+                      player-piece-index, 
+                      move))
 
 
 
@@ -80,6 +83,7 @@
                                                            (async/chan 1
                                                                        (map (fn [coordinates]
                                                                               [(keyword player-id) coordinates]))))))))]
+    (swap! app-atom assoc :game-id game-id)
     (swap! app-atom assoc :board-pieces board-response)
     (swap! app-atom assoc :player-pieces player-pieces)))
 
