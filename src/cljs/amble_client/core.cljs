@@ -21,6 +21,10 @@
 ;; (assert game-id "Problem getting game-id from browser url.")
 (def app-atom (reagent-ratom/atom {}))
 
+(defn app-atom-supplier []
+  (deref app-atom))
+  
+
 (defmulti on-move! (fn [& args]
                      (if (-> args last number?)
                        ::move-instance
@@ -37,13 +41,12 @@
                       move))
 
 
-
 (def app-config {:amble/app {:board (ig/ref :amble/board)}
                  :amble/board {:board-pieces (ig/ref :amble/board-pieces)
                                :player-pieces (ig/ref :amble/player-pieces)
                                :game-play (ig/ref :amble/game-play)}
-                 :amble/board-pieces {:supplier (fn [] (-> app-atom deref :board-pieces))}
-                 :amble/player-pieces {:supplier (fn [] (-> app-atom deref :player-pieces))
+                 :amble/board-pieces {:supplier (comp :board-pieces app-atom-supplier)}
+                 :amble/player-pieces {:supplier (comp :player-pieces app-atom-supplier) 
                                        :game-play (ig/ref :amble/game-play)}
                  :amble/game-play {:on-move! on-move!}})
                 ;;  :amble/app-atom app-atom
