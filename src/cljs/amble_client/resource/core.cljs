@@ -17,9 +17,16 @@
 
 (def interceptor-coors-dont-bother-me {:name  ::interceptor-coors-dont-bother-me
                                        :leave (fn [req]
-                                                (assoc-in req
-                                                          [:request, :with-credentials?] ;; Don't be bothered by cors for now.
-                                                          false))})
+                                                (-> req
+                                                    (assoc-in [:request, :with-credentials?] ;; Don't be bothered by cors for now.
+                                                              false)))})
+                                                    ;; (assoc-in [:request, :headers :mode] ;; Don't be bothered by cors for now.
+                                                              ;; "no-cors")))})
+
+
+
+
+
 
 (defn api-chan* []
   (let [c (casync/chan)]

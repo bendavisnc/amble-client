@@ -77,7 +77,7 @@
         "tags" : [ "game" ]
       }
     },
-    "/game/{gameId}/player/{playerId}/move" : {
+    "/game/{gameId}/player/{playerId}/move/{playerPieceIndex}" : {
       "post" : {
         "operationId" : "moveAdd",
         "parameters" : [ {
@@ -221,6 +221,18 @@
     }
   },
   "components" : {
+    "requestBodies" : {
+      "Move" : {
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Move"
+            }
+          }
+        },
+        "description" : "Move to add to a game"
+      }
+    },
     "schemas" : {
       "GameAdd" : {
         "$ref" : "#/components/schemas/GameId"
@@ -243,15 +255,10 @@
         "type" : "array"
       },
       "Move" : {
-        "properties" : {
-          "move" : {
-            "items" : {
-              "$ref" : "#/components/schemas/Coord"
-            },
-            "type" : "array"
-          }
+        "items" : {
+          "$ref" : "#/components/schemas/Coord"
         },
-        "type" : "object"
+        "type" : "array"
       }
     }
   }

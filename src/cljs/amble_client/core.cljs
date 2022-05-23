@@ -97,7 +97,3 @@
                (fn [game-create-response]
                  (println "Requested new game.")
                  (println game-create-response))))
-
-(defn wut []
-  (println (deref app-atom)))
-

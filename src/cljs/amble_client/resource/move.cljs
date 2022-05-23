@@ -16,5 +16,6 @@
                                 :param-map    {:game-id game-id
                                                :player-id player-id
                                                :player-piece-index player-piece-index
-                                               :move move}}))
+                                               :request {:body move}}}))
+                                              ;;  :request {:body move}}}))
 
