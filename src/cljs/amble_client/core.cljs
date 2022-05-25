@@ -30,9 +30,11 @@
                        ::move-instance
                        ::move)))
 
+;; Updates a player piece with a new x y position. 
 (defmethod on-move! ::move-instance [player-id, player-piece-index, x, y]
   (swap! app-atom assoc-in [:player-pieces player-id player-piece-index] [x, y]))
 
+;; Posts the move once all the current move's position info is in place.
 (defmethod on-move! ::move [player-id, player-piece-index, move]
   (move-resource/add! (:game-id, 
                        (deref app-atom))  

@@ -221,18 +221,6 @@
     }
   },
   "components" : {
-    "requestBodies" : {
-      "Move" : {
-        "content" : {
-          "application/json" : {
-            "schema" : {
-              "$ref" : "#/components/schemas/Move"
-            }
-          }
-        },
-        "description" : "Move to add to a game"
-      }
-    },
     "schemas" : {
       "GameAdd" : {
         "$ref" : "#/components/schemas/GameId"
@@ -255,10 +243,15 @@
         "type" : "array"
       },
       "Move" : {
-        "items" : {
-          "$ref" : "#/components/schemas/Coord"
+        "properties" : {
+          "move" : {
+            "items" : {
+              "$ref" : "#/components/schemas/Coord"
+            },
+            "type" : "array"
+          }
         },
-        "type" : "array"
+        "type" : "object"
       }
     }
   }
