@@ -42,6 +42,9 @@
                       player-piece-index, 
                       move))
 
+(defn on-async-move! [move-index]
+  (go (let [move-latest (async/<! (move-resource/get (:game-id (deref app-atom))))])))
+
 
 (def app-config {:amble/app {:board (ig/ref :amble/board)}
                  :amble/board {:board-pieces (ig/ref :amble/board-pieces)
@@ -50,7 +53,9 @@
                  :amble/board-pieces {:supplier (comp :board-pieces app-atom-supplier)}
                  :amble/player-pieces {:supplier (comp :player-pieces app-atom-supplier) 
                                        :game-play (ig/ref :amble/game-play)}
-                 :amble/game-play {:on-move! on-move!}})
+                 :amble/game-play {:on-move! on-move!
+                                   :on-async-move! on-async-move!}
+                 :amble/move-update-event-handler {}})
                 ;;  :amble/app-atom app-atom
                 ;;  :amble/user-feedback-handler user-feedback-handler/handle-ui-event
 

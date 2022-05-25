@@ -1,5 +1,5 @@
 (ns amble-client.game-play
-  "A centralized place for defining behavior based on user feedback events."
+  "A centralized place for defining behavior based on local user feedback events."
   (:require [integrant.core :as ig]
             [cljs.core.async :as async]
             [amble-client.utils :as utils])
