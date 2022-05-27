@@ -7,6 +7,12 @@
 (def classname "player")
 (def piece-size 0.023)
 
+(defn on-move! [move-index, move]
+  nil)
+
+
+(defn on-move-xy! [move-index, x, y])
+
 (defn unique-player-key [player-id index]
   (str (name player-id)
        "-"
@@ -52,6 +58,11 @@
                    :unique-key unique-key 
                    :user-feedback-handler (:handle-ui-event game-play)))])])))
 
+(go-loop []
+  (let [move-xy ]))
 
-(defmethod ig/init-key :amble/player-pieces [_, {:keys [supplier, game-play]}]
-  (player-pieces supplier game-play))
+(defmethod ig/init-key :amble/player-pieces [_, {:keys [supplier, move-subject, game-play]}]
+  (let [observer {:on-move! on-move!
+                  :on-move-xy! on-move-xy!}]
+    (move-subject/add-observer observer)
+    (player-pieces supplier game-play)))
