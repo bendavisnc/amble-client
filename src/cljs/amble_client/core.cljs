@@ -25,37 +25,46 @@
   (deref app-atom))
   
 
-(defmulti on-move! (fn [& args]
-                     (if (-> args last number?)
-                       ::move-instance
-                       ::move)))
+;; (defmulti on-move! (fn [& args]
+;;                      (if (-> args last number?)
+;;                        ::move-instance
+;;                        ::move)))
 
-;; Updates a player piece with a new x y position. 
-(defmethod on-move! ::move-instance [player-id, player-piece-index, x, y]
-  (swap! app-atom assoc-in [:player-pieces player-id player-piece-index] [x, y]))
+;; ;; Updates a player piece with a new x y position. 
+;; (defmethod on-move! ::move-instance [player-id, player-piece-index, x, y]
+;;   (swap! app-atom assoc-in [:player-pieces player-id player-piece-index] [x, y]))
 
-;; Posts the move once all the current move's position info is in place.
-(defmethod on-move! ::move [player-id, player-piece-index, move]
-  (move-resource/add! (:game-id, 
-                       (deref app-atom))  
-                      (name player-id) 
-                      player-piece-index, 
-                      move))
+;; ;; Posts the move once all the current move's position info is in place.
+;; (defmethod on-move! ::move [player-id, player-piece-index, move]
+;;   (move-resource/add! (:game-id, 
+;;                        (deref app-atom))  
+;;                       (name player-id) 
+;;                       player-piece-index, 
+;;                       move))
 
-(defn on-async-move! [move-index]
-  (go (let [move-latest (async/<! (move-resource/get (:game-id (deref app-atom))))])))
+;; (defn on-async-move! [move-index]
+  ;; (go (let [move-latest (async/<! (move-resource/get (:game-id (deref app-atom))))])))
 
+(def move-chan (async/chan))
+(def move-chan-multicast (async/mult move-chan))
+(def move-xy-chan (async/chan))
+(def move-xy-chan-multicast (async/mult move-xy-chan))
 
 (def app-config {:amble/app {:board (ig/ref :amble/board)}
                  :amble/board {:board-pieces (ig/ref :amble/board-pieces)
                                :player-pieces (ig/ref :amble/player-pieces)
                                :game-play (ig/ref :amble/game-play)}
                  :amble/board-pieces {:supplier (comp :board-pieces app-atom-supplier)}
-                 :amble/player-pieces {:supplier (comp :player-pieces app-atom-supplier) 
-                                       :game-play (ig/ref :amble/game-play)}
-                 :amble/game-play {:on-move! on-move!
-                                   :on-async-move! on-async-move!}
-                 :amble/move-update-event-handler {}})
+                 :amble/player-pieces {:app-atom app-atom
+                                       :game-play (ig/ref :amble/game-play)
+                                       :move-chan (let [c (async/chan)]
+                                                    (async/tap move-chan-multicast c)
+                                                    c)
+                                       :move-xy-chan (let [c (async/chan)]
+                                                       (async/tap move-xy-chan-multicast c)
+                                                       c)}
+                 :amble/game-play {:move-chan move-chan 
+                                   :move-xy-chan move-xy-chan}})
                 ;;  :amble/app-atom app-atom
                 ;;  :amble/user-feedback-handler user-feedback-handler/handle-ui-event
 

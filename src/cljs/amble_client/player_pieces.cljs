@@ -2,16 +2,16 @@
   "Represents player pieces that can change position based on user feedback."
   (:require [integrant.core :as ig]
             [reagent.core :as reagent]
-            [amble-client.utils :as utils]))
+            [cljs.core.async :as async]
+            [amble-client.utils :as utils])
+  (:require-macros [cljs.core.async :refer [go, go-loop]]))
 
 (def classname "player")
 (def piece-size 0.023)
 
-(defn on-move! [move-index, move]
-  nil)
-
-
-(defn on-move-xy! [move-index, x, y])
+(def app-atom-chan (async/chan))
+(def move-chan-chan (async/chan))
+(def move-xy-chan-chan (async/chan))
 
 (defn unique-player-key [player-id index]
   (str (name player-id)
@@ -38,9 +38,9 @@
                            (.preventDefault e)
                            (user-feedback-handler e))}]) 
 
-(defn- player-pieces [supplier, game-play]
+(defn- player-pieces [app-atom, game-play]
   (fn []
-    (let [player-pieces (supplier)]
+    (let [player-pieces (:player-pieces @app-atom)]
       [:<>
        (for [player-id (keys player-pieces)
              :let [pieces (player-id player-pieces)]]
@@ -58,11 +58,24 @@
                    :unique-key unique-key 
                    :user-feedback-handler (:handle-ui-event game-play)))])])))
 
-(go-loop []
-  (let [move-xy ]))
+;; Pulls from xy moves and updates position state from the app atom.
+(go-loop [app-atom (async/<! app-atom-chan)
+          move-xy-chan (async/<! move-xy-chan-chan)]
+  (let [{:keys [player-id, player-piece-index, x, y]} (async/<! move-xy-chan)]
+    (swap! app-atom assoc-in [:player-pieces player-id player-piece-index] [x, y]))
+  (recur app-atom
+         move-xy-chan))
 
-(defmethod ig/init-key :amble/player-pieces [_, {:keys [supplier, move-subject, game-play]}]
-  (let [observer {:on-move! on-move!
-                  :on-move-xy! on-move-xy!}]
-    (move-subject/add-observer observer)
-    (player-pieces supplier game-play)))
+
+(go-loop [
+          move-chan (async/<! move-chan-chan)]
+  (let [m (async/<! move-chan)]
+    (println "neat")
+    (println m))
+  (recur move-chan))
+
+(defmethod ig/init-key :amble/player-pieces [_, {:keys [app-atom, move-chan, move-xy-chan, game-play]}]
+  (async/put! app-atom-chan app-atom)
+  (async/put! move-xy-chan-chan move-xy-chan)
+  (async/put! move-chan-chan move-chan)
+  (player-pieces app-atom game-play))
