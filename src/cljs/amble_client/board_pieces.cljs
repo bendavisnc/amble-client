@@ -19,9 +19,9 @@
               :id     unique-key
               :class class}]))
 
-(defn- board-pieces [supplier]
+(defn- board-pieces [app-atom]
   (fn []
-    (let [pieces (supplier)]
+    (let [pieces (:board-pieces @app-atom)]
       [:<>
        (for [i (range (count pieces))
              :let [p (pieces i)]]
@@ -32,5 +32,5 @@
                 :index i))])))
 
 
-(defmethod ig/init-key :amble/board-pieces [_, {:keys [supplier]}]
-  (board-pieces supplier))
+(defmethod ig/init-key :amble/board-pieces [_, {:keys [app-atom]}]
+  (board-pieces app-atom))

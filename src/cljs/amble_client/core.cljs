@@ -21,30 +21,6 @@
 ;; (assert game-id "Problem getting game-id from browser url.")
 (def app-atom (reagent-ratom/atom {}))
 
-(defn app-atom-supplier []
-  (deref app-atom))
-  
-
-;; (defmulti on-move! (fn [& args]
-;;                      (if (-> args last number?)
-;;                        ::move-instance
-;;                        ::move)))
-
-;; ;; Updates a player piece with a new x y position. 
-;; (defmethod on-move! ::move-instance [player-id, player-piece-index, x, y]
-;;   (swap! app-atom assoc-in [:player-pieces player-id player-piece-index] [x, y]))
-
-;; ;; Posts the move once all the current move's position info is in place.
-;; (defmethod on-move! ::move [player-id, player-piece-index, move]
-;;   (move-resource/add! (:game-id, 
-;;                        (deref app-atom))  
-;;                       (name player-id) 
-;;                       player-piece-index, 
-;;                       move))
-
-;; (defn on-async-move! [move-index]
-  ;; (go (let [move-latest (async/<! (move-resource/get (:game-id (deref app-atom))))])))
-
 (def move-chan (async/chan))
 (def move-chan-multicast (async/mult move-chan))
 (def move-xy-chan (async/chan))
@@ -54,7 +30,7 @@
                  :amble/board {:board-pieces (ig/ref :amble/board-pieces)
                                :player-pieces (ig/ref :amble/player-pieces)
                                :game-play (ig/ref :amble/game-play)}
-                 :amble/board-pieces {:supplier (comp :board-pieces app-atom-supplier)}
+                 :amble/board-pieces {:app-atom app-atom}
                  :amble/player-pieces {:app-atom app-atom
                                        :game-play (ig/ref :amble/game-play)
                                        :move-chan (let [c (async/chan)]
