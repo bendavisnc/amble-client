@@ -16,6 +16,10 @@
 ;; (defn on-move! [app-atom, player-id, player-piece-index, x, y]
   ;; (swap! app-atom assoc-in [:player-pieces player-id player-piece-index] [x, y]))
 
+(defn- element-to-game-id [element]
+  (keyword (.getAttribute element
+                          "data-game-id")))
+
 (defn- element-to-player-id [element]
   (keyword (.getAttribute element
                           "data-player-id")))
@@ -47,12 +51,14 @@
                           (.getElementById js/document "board"))]
   (println "Waiting for game play.")
   (let [piece-grab-event (async/<! piece-grab-chan)
+        game-id (element-to-game-id (.-target piece-grab-event))
         player-id (element-to-player-id (.-target piece-grab-event))
         player-piece-index (element-to-piece-index (.-target piece-grab-event))]
     (loop [moves []]
       (if (async/poll! piece-release-chan)
         (do (println "Local move complete!")
-            (async/>! move-chan {:player-id player-id 
+            (async/>! move-chan {:game-id game-id 
+                                 :player-id player-id 
                                  :player-piece-index player-piece-index
                                  :move moves}))
         (let [move (async/<! piece-move-chan)

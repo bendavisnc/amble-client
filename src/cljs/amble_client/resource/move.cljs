@@ -10,13 +10,9 @@
 
 
 (defn add! [game-id, player-id, player-piece-index, move]
-  (println "neat mr")
-  (println [game-id, player-id, player-piece-index, move])
   (resource-core/response-chan {:endpoint-key :move-add
                                 :param-map    {:game-id game-id
                                                :player-id player-id
                                                :player-piece-index player-piece-index
                                                :move move}})) 
-                                              ;;  :request {:body move}}}))
-                                              ;;  :request {:body move}}}))
 

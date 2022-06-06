@@ -20,12 +20,13 @@
        "-"
        index))
 
-(defn- piece [& {:keys [x, y, size, class, index, player-id, unique-key, user-feedback-handler]}]
+(defn- piece [& {:keys [x, y, size, class, index, game-id, player-id, unique-key, user-feedback-handler]}]
   [:circle {:cx     x,
             :cy     y
             :r      size
             :key    unique-key
             :id     unique-key
+            :data-game-id game-id
             :data-player-id player-id
             :data-player-piece-index index
             :class class
@@ -40,7 +41,9 @@
 
 (defn- player-pieces [app-atom, game-play]
   (fn []
-    (let [player-pieces (:player-pieces @app-atom)]
+    (let [
+          game-id (:game-id @app-atom)
+          player-pieces (:player-pieces @app-atom)]
       [:<>
        (for [player-id (keys player-pieces)
              :let [pieces (player-id player-pieces)]]
@@ -54,6 +57,7 @@
                    :size piece-size
                    :class (str classname " " (name player-id))
                    :index i
+                   :game-id game-id
                    :player-id player-id
                    :unique-key unique-key 
                    :user-feedback-handler (:handle-ui-event game-play)))])])))

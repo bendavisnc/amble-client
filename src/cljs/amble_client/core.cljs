@@ -14,7 +14,8 @@
             [amble-client.async-resource.move :as async-move-resource]
             [amble-client.resource.move :as move-resource]
             [amble-client.utils :as utils]
-            [amble-client.game-play :as game-play])
+            [amble-client.game-play :as game-play]
+            [amble-client.move-send :as move-send])
   (:require-macros [cljs.core.async :refer [go]]))
 
 ;; (def game-id (utils/game-id-from-window))
@@ -40,7 +41,13 @@
                                                        (async/tap move-xy-chan-multicast c)
                                                        c)}
                  :amble/game-play {:move-chan move-chan 
-                                   :move-xy-chan move-xy-chan}})
+                                   :move-xy-chan move-xy-chan}
+                 :amble/move-send {:move-chan (let [c (async/chan)]
+                                                (async/tap move-chan-multicast c)
+                                                c) 
+                                   :move-resource-add! move-resource/add!}})
+                ;;  :amble/move-receive {:move-chan move-chan}}) 
+ 
                 ;;  :amble/app-atom app-atom
                 ;;  :amble/user-feedback-handler user-feedback-handler/handle-ui-event
 
