@@ -9,10 +9,11 @@
 (def piece-grab-chan (async/chan))
 (def piece-release-chan (async/chan))
 (def piece-move-chan (async/chan))
-;; This is just used instead of some other mutable var solution.
-(def move-chan-chan (async/chan))
-(def move-xy-chan-chan (async/chan))
 
+(def move-chan (async/chan))
+(def move-xy-chan (async/chan))
+
+(def event-to-coord-chan (async/chan))
 ;; (defn on-move! [app-atom, player-id, player-piece-index, x, y]
   ;; (swap! app-atom assoc-in [:player-pieces player-id player-piece-index] [x, y]))
 
@@ -45,10 +46,8 @@
   
 ;; A go loop for turning mouse dragging behavior into move events.
 ;; Invokes out to the chans that are provided as dependencies.
-(go-loop [move-chan (async/<! move-chan-chan)
-          move-xy-chan (async/<! move-xy-chan-chan)
-          event-to-coord (utils/coord-conv
-                          (.getElementById js/document "board"))]
+(go-loop [
+          event-to-coord (async/<! event-to-coord-chan)]
   (println "Waiting for game play.")
   (let [piece-grab-event (async/<! piece-grab-chan)
         game-id (element-to-game-id (.-target piece-grab-event))
@@ -69,16 +68,15 @@
                                   :x x
                                   :y y})
           (recur (conj moves [x, y]))))))
-  (recur move-chan
-         move-xy-chan
+  (recur 
+         
          event-to-coord)) 
 
 (defmethod ig/init-key :amble/game-play [_ {:keys [move-chan, move-xy-chan]}]
-  (println "wuttt")
-  (println [move-chan, move-xy-chan])
-  (async/put! move-chan-chan move-chan)
-  (async/put! move-xy-chan-chan move-xy-chan)
-  (println "wrong?")
+  (async/pipe move-chan amble-client.game-play/move-chan)
+  (async/pipe move-xy-chan amble-client.game-play/move-xy-chan)
+  (async/put! event-to-coord-chan (utils/coord-conv
+                                    (.getElementById js/document "board")))
   {:handle-ui-event handle-ui-event}) 
 
 
