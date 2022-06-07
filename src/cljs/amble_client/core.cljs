@@ -45,8 +45,9 @@
                  :amble/move-send {:move-chan (let [c (async/chan)]
                                                 (async/tap move-chan-multicast c)
                                                 c) 
-                                   :move-resource-add! move-resource/add!}})
-                ;;  :amble/move-receive {:move-chan move-chan}}) 
+                                   :move-resource-add! move-resource/add!}
+                 :amble/move-receive {:move-resource-get! move-resource/get! 
+                                      :app-atom app-atom}}) 
  
                 ;;  :amble/app-atom app-atom
                 ;;  :amble/user-feedback-handler user-feedback-handler/handle-ui-event
