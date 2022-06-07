@@ -10,8 +10,8 @@
 (def piece-size 0.023)
 
 (def app-atom-chan (async/chan))
-(def move-chan-chan (async/chan))
-(def move-xy-chan-chan (async/chan))
+(def move-chan (async/chan))
+(def move-xy-chan (async/chan))
 
 (defn unique-player-key [player-id index]
   (str (name player-id)
@@ -63,23 +63,20 @@
                    :user-feedback-handler (:handle-ui-event game-play)))])])))
 
 ;; Pulls from xy moves and updates position state from the app atom.
-(go-loop [app-atom (async/<! app-atom-chan)
-          move-xy-chan (async/<! move-xy-chan-chan)]
+(go-loop [app-atom (async/<! app-atom-chan)]
   (let [{:keys [player-id, player-piece-index, x, y]} (async/<! move-xy-chan)]
     (swap! app-atom assoc-in [:player-pieces player-id player-piece-index] [x, y]))
-  (recur app-atom
-         move-xy-chan))
+  (recur app-atom))
 
 
-(go-loop [
-          move-chan (async/<! move-chan-chan)]
+(go-loop []
   (let [m (async/<! move-chan)]
     (println "neat")
     (println m))
-  (recur move-chan))
+  (recur))
 
 (defmethod ig/init-key :amble/player-pieces [_, {:keys [app-atom, move-chan, move-xy-chan, game-play]}]
   (async/put! app-atom-chan app-atom)
-  (async/put! move-xy-chan-chan move-xy-chan)
-  (async/put! move-chan-chan move-chan)
+  (async/pipe move-chan amble-client.player-pieces/move-chan)
+  (async/pipe move-xy-chan amble-client.player-pieces/move-xy-chan)
   (player-pieces app-atom game-play))
