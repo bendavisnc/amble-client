@@ -17,13 +17,10 @@
           game-id (:game-id (deref (async/<! app-atom-chan)))
           websockets-connection-chan (haslett-client/connect (websockets-url game-id))
           move-source-chan (:source (async/<! websockets-connection-chan))]
-  (println "alright alright")
-  (println [game-id, websockets-connection-chan, move-source-chan])
   (let [move-from-server (async/<! move-source-chan)]
     (assert (not (nil? move-from-server)) 
             "Move from server is nil.")
-    (println [game-id, websockets-connection-chan, move-source-chan])
-    (println "Receiving move from server.")
+    (println "Received new move from server.")
     (println move-from-server))
   (recur game-id
          websockets-connection-chan
