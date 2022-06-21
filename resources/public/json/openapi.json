@@ -77,6 +77,49 @@
         "tags" : [ "game" ]
       }
     },
+    "/game/{gameId}/move/{id}" : {
+      "get" : {
+        "operationId" : "moveGetById",
+        "parameters" : [ {
+          "description" : "The id of the game",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        }, {
+          "description" : "The id of the move",
+          "explode" : false,
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MoveGet"
+                }
+              }
+            },
+            "description" : "The move."
+          },
+          "404" : {
+            "description" : "No corresponding move found."
+          }
+        },
+        "summary" : "Get move by move id",
+        "tags" : [ "move" ]
+      }
+    },
     "/game/{gameId}/player/{playerId}/move/{playerPieceIndex}" : {
       "post" : {
         "operationId" : "moveAdd",
@@ -232,6 +275,29 @@
         "properties" : {
           "game-id" : {
             "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
+      "MoveGet" : {
+        "$ref" : "#/components/schemas/MoveGetResponse"
+      },
+      "MoveGetResponse" : {
+        "properties" : {
+          "game-id" : {
+            "type" : "string"
+          },
+          "player-id" : {
+            "type" : "string"
+          },
+          "player-piece-id" : {
+            "type" : "string"
+          },
+          "move" : {
+            "items" : {
+              "$ref" : "#/components/schemas/Coord"
+            },
+            "type" : "array"
           }
         },
         "type" : "object"

@@ -20,8 +20,8 @@
   (let [move-from-server (async/<! move-source-chan)]
     (assert (not (nil? move-from-server)) 
             "Move from server is nil.")
-    (println "Received new move from server.")
-    (println move-from-server))
+    (println (str "Received new move from server, " move-from-server "."))
+    (async/>! latest-move-index-chan move-from-server))
   (recur game-id
          websockets-connection-chan
          move-source-chan))

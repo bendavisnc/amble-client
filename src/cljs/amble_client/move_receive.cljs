@@ -14,13 +14,16 @@
   (let [latest-move-index (async/<! latest-move-index-chan)
         _ (println (str "New move announced from server, index " latest-move-index "."))
         latest-move (async/<! (move-resource-get! game-id, latest-move-index))]
-    (println "Successfully requestedl latest move.")
+    (println "Requested latest move.")
     (println latest-move)
     (recur move-resource-get!, app-atom, game-id)))
 
 (defmethod ig/init-key :amble/move-receive [_ {:keys [app-atom, move-chan, move-resource-get!, latest-move-index-chan]}]
   (async/pipe latest-move-index-chan amble-client.move-receive/latest-move-index-chan)
-  (async/put! app-atom-chan app-atom)
+  (js/setTimeout (fn [& args]
+                   (async/put! app-atom-chan app-atom))
+                 1000) 
+
   (async/put! move-resource-get!-chan move-resource-get!)
   nil)
 
