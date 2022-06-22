@@ -9,7 +9,7 @@
 (def classname "player")
 (def piece-size 0.023)
 
-(def app-atom-chan (async/chan))
+(def app-atom-chan (async/chan 2))
 (def move-chan (async/chan))
 (def move-xy-chan (async/chan))
 
@@ -68,14 +68,13 @@
     (swap! app-atom assoc-in [:player-pieces player-id player-piece-index] [x, y]))
   (recur app-atom))
 
-
-(go-loop []
-  (let [m (async/<! move-chan)]
-    (println "neat")
-    (println m))
-  (recur))
+(go-loop [app-atom (async/<! app-atom-chan)]
+  (let [{:keys [player-id, player-piece-index, x, y]} (async/<! move-chan)]
+    (swap! app-atom assoc-in [:player-pieces (keyword player-id) (js/parseInt player-piece-index)] [x, y]))
+  (recur app-atom))
 
 (defmethod ig/init-key :amble/player-pieces [_, {:keys [app-atom, move-chan, move-xy-chan, game-play]}]
+  (async/put! app-atom-chan app-atom)
   (async/put! app-atom-chan app-atom)
   (async/pipe move-chan amble-client.player-pieces/move-chan)
   (async/pipe move-xy-chan amble-client.player-pieces/move-xy-chan)
