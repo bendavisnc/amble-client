@@ -59,7 +59,8 @@
             (async/>! move-chan {:game-id game-id 
                                  :player-id player-id 
                                  :player-piece-index player-piece-index
-                                 :move moves}))
+                                 :move moves
+                                 :origin :local}))
         (let [move (async/<! piece-move-chan)
               [x, y] (event-to-coord
                       move)]              

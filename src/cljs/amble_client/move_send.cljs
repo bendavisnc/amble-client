@@ -6,7 +6,11 @@
   (:require-macros [cljs.core.async :refer [go, go-loop]]))
 
 (def move-resource-add!-chan (async/chan))
-(def move-chan (async/chan))
+(def move-chan (async/chan
+                           1
+                           (filter (fn [move]
+                                     (= :local
+                                        (:origin move))))))
 
 (go-loop [move-resource-add! (async/<! move-resource-add!-chan)]
   (let [move-to-send (async/<! move-chan)]
