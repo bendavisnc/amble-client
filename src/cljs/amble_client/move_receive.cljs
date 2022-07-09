@@ -14,7 +14,8 @@
           game-id (:game-id (deref app-atom))]
   (let [latest-move-index (async/<! latest-move-index-chan)
         _ (println (str "New move announced from server, index " latest-move-index "."))
-        latest-move (async/<! (move-resource-get! game-id, latest-move-index))]
+        latest-move-from-server (async/<! (move-resource-get! game-id, latest-move-index))
+        latest-move (assoc latest-move-from-server :origin :remote)]
     (println "Requested latest move.")
     (assert (not (empty? (:move latest-move)))
             "Received invalid move!") 
