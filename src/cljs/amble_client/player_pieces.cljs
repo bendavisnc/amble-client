@@ -9,12 +9,9 @@
 (def classname "player")
 (def piece-size 0.023)
 
-;; (def app-atom-chan (async/chan 2))
-(def app-atom-chan (async/chan))
+(def app-atom-chan (async/chan 2))
 (def move-chan (async/chan))
 (def move-xy-chan (async/chan))
-(def move-replay-chan (async/chan))
-(def move-place-chan (async/chan))
 
 (defn unique-player-key [player-id index]
   (str (name player-id)
@@ -71,50 +68,14 @@
     (swap! app-atom assoc-in [:player-pieces player-id player-piece-index] [x, y]))
   (recur app-atom))
 
-;; Pulls from the move chan. 
-;; Conditional because local moves don't need replay.
-;; (go-loop [app-atom (async/<! app-atom-chan)
-;;           move-replay (async/<! move-replay-chan)
-;;           move-place (async/<! move-place-chan)]
-;;   (let [{:keys [player-id, player-piece-index, x, y, origin] :as move} (async/<! move-chan)]
-;;     (cond (= :remote origin)
-;;           (let [replay-finished-chan (:replay-move move-replay move)
-;;                 _ (async/<! replay-finished-chan)]
-;;             (:place-move move-place move))
-;;           (= :local origin)
-;;           (move-place/place-move move)
-;;           :default
-;;           (throw (new js/Error (str "Unexpected origin type, " origin "."))))
-;;     ;; Come back to, fix at server
-;;     (swap! app-atom assoc-in [:player-pieces (keyword player-id) (js/parseInt player-piece-index)] [x, y]))
-;;   (recur app-atom
-;;          move-replay
-;;          move-place)) 
+(go-loop [app-atom (async/<! app-atom-chan)]
+  (let [{:keys [player-id, player-piece-index, x, y]} (async/<! move-chan)]
+    (swap! app-atom assoc-in [:player-pieces (keyword player-id) (js/parseInt player-piece-index)] [x, y]))
+  (recur app-atom))
 
-(go-loop [app-atom (async/<! app-atom-chan)
-          move-replay (async/<! move-replay-chan)
-          move-place (async/<! move-place-chan)]
-  (let [{:keys [player-id, player-piece-index, x, y, origin] :as move} (async/<! move-chan)]
-    ;; (cond (= :remote origin)
-    ;;       (let [replay-finished-chan (:replay-move move-replay move)
-    ;;             _ (async/<! replay-finished-chan)]
-    ;;         (:place-move move-place move))
-    ;;       (= :local origin)
-    ;;       (move-place/place-move move)
-    ;;       :default
-    ;;       (throw (new js/Error (str "Unexpected origin type, " origin "."))))
-    ;; Come back to, fix at server
-    (swap! app-atom assoc-in [:player-pieces (keyword player-id) (js/parseInt player-piece-index)] [x, y])
-    (println "Pulled lastst move."))
-  (recur app-atom
-         move-replay
-         move-place)) 
-
-(defmethod ig/init-key :amble/player-pieces [_, {:keys [app-atom, move-chan, move-replay, move-place, move-xy-chan, game-play]}]
+(defmethod ig/init-key :amble/player-pieces [_, {:keys [app-atom, move-chan, move-xy-chan, game-play]}]
   (async/put! app-atom-chan app-atom)
-  (async/put! move-replay-chan move-replay)
-  (async/put! move-place-chan move-place)
+  (async/put! app-atom-chan app-atom)
   (async/pipe move-chan amble-client.player-pieces/move-chan)
   (async/pipe move-xy-chan amble-client.player-pieces/move-xy-chan)
-  (player-pieces app-atom game-play))  
-
+  (player-pieces app-atom game-play))
