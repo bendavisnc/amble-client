@@ -1,5 +1,5 @@
-(ns amble-client.move-place
-  "Provides action for placing piece after the end of a move."
+(ns amble-client.move-replay
+  "Provides action for replaying a move."
   (:require [integrant.core :as ig]
             [cljs.core.async :as async]
             [amble-client.resource.environment :refer [environment]]
@@ -8,14 +8,13 @@
 
 (def app-atom-chan (async/chan))
 
-(defn place-move [move]
+(defn replay-move [move]
   (println "at place move, come back to"))
 
-(defmethod ig/init-key :amble/move-place [_ {:keys [app-atom]}]
+(defmethod ig/init-key :amble/move-replay [_ {:keys [app-atom]}]
   (js/setTimeout (fn [& args]
                    (async/put! app-atom-chan app-atom))
                  1000) 
-  {:place-move place-move}
-  nil)
+  {:replay-move replay-move})
 
 

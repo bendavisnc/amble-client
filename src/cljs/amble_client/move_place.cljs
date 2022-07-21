@@ -16,7 +16,6 @@
   (js/setTimeout (fn [& args]
                    (async/put! app-atom-chan app-atom))
                  1000) 
-  {:place-move place-move}
-  nil)
+  {:place-move place-move})
 
 

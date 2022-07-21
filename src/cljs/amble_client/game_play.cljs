@@ -1,5 +1,6 @@
 (ns amble-client.game-play
-  "A centralized place for defining behavior based on local user feedback events."
+  "A centralized place for defining behavior based on local user feedback events.
+   Reads from the piece chan deps and writes to the move chan deps."
   (:require [integrant.core :as ig]
             [cljs.core.async :as async]
             [amble-client.utils :as utils])
@@ -72,10 +73,8 @@
   (recur))
 
 (defmethod ig/init-key :amble/game-play [_ {:keys [move-chan, move-xy-chan]}]
-  (println "guch?")
   (async/pipe amble-client.game-play/move-chan move-chan)
   (async/pipe  amble-client.game-play/move-xy-chan move-xy-chan)
-  (println "guchi guchi?")
   {:handle-ui-event handle-ui-event}) 
 
 
