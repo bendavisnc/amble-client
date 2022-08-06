@@ -1,5 +1,5 @@
-(ns amble-client.move-end
-  "Provides action for placing piece after the end of a move."
+(ns amble-client.move-local
+  "Handles moves made locally."
   (:require [integrant.core :as ig]
             [cljs.core.async :as async]
             [amble-client.resource.environment :refer [environment]]
@@ -10,16 +10,14 @@
 
 (def move-chan (async/chan))
 
-;; Listens for moves and sends pieces back to the board at the end of a move.
-;; Targets both local and remote moves.
 (go-loop [app-atom (async/<! app-atom-chan)]
-  (let [{:keys [player-id, player-piece-index, x, y] :as move-latest} (async/<! move-chan)]
-    (println "hey neat guys")
-    (println move-latest)
+  (let [{:keys [player-id, player-piece-index, x, y] :as move} (async/<! move-chan)]
+    (println "Handling local move. - todo")
+    ;; (println move)
     (recur app-atom)))
 
-(defmethod ig/init-key :amble/move-end [_ {:keys [app-atom, move-chan]}]
-  (async/pipe move-chan amble-client.move-end/move-chan)
+(defmethod ig/init-key :amble/move-local [_ {:keys [app-atom, move-local-chan]}]
+  (async/pipe move-local-chan amble-client.move-local/move-chan)
   (js/setTimeout (fn [& args]
                    (async/put! app-atom-chan app-atom))
                  1000) 

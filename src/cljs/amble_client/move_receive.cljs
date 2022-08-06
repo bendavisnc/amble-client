@@ -22,11 +22,11 @@
     (async/>! move-chan latest-move)
     (recur move-resource-get!, app-atom, game-id)))
 
-(defmethod ig/init-key :amble/move-receive [_ {:keys [app-atom, move-chan, move-resource-get!, latest-move-index-chan]}]
+(defmethod ig/init-key :amble/move-receive [_ {:keys [app-atom, move-remote-chan, move-resource-get!, latest-move-index-chan]}]
   (async/pipe latest-move-index-chan 
               amble-client.move-receive/latest-move-index-chan)
   (async/pipe  amble-client.move-receive/move-chan
-               move-chan)
+               move-remote-chan)
   (js/setTimeout (fn [& args]
                    (async/put! app-atom-chan app-atom))
                  1000) 

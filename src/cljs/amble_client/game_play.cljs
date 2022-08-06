@@ -1,6 +1,5 @@
 (ns amble-client.game-play
-  "A centralized place for defining behavior based on local user feedback events.
-   Reads from the piece chan deps and writes to the move chan deps."
+  "Producer of move events."
   (:require [integrant.core :as ig]
             [cljs.core.async :as async]
             [amble-client.utils :as utils])
@@ -11,7 +10,8 @@
 (def piece-release-chan (async/chan))
 (def piece-move-chan (async/chan))
 
-(def move-chan (async/chan))
+(def move-remote-chan (async/chan))
+(def move-local-chan (async/chan))
 (def move-xy-chan (async/chan))
 
 (defn- element-to-game-id [element]
@@ -57,11 +57,11 @@
     (loop [moves []]
       (if (async/poll! piece-release-chan)
         (do (println "Local move complete!")
-            (async/>! move-chan {:game-id game-id 
-                                 :player-id player-id 
-                                 :player-piece-index player-piece-index
-                                 :move moves
-                                 :origin :local}))
+            (async/>! move-local-chan {:game-id game-id 
+                                       :player-id player-id 
+                                       :player-piece-index player-piece-index
+                                       :move moves
+                                       :origin :local}))
         (let [move (async/<! piece-move-chan)
               [x, y] (event-to-coord
                       move)]              
@@ -72,8 +72,8 @@
           (recur (conj moves [x, y]))))))
   (recur))
 
-(defmethod ig/init-key :amble/game-play [_ {:keys [move-chan, move-xy-chan]}]
-  (async/pipe amble-client.game-play/move-chan move-chan)
+(defmethod ig/init-key :amble/game-play [_ {:keys [move-local-chan, move-xy-chan]}]
+  (async/pipe amble-client.game-play/move-local-chan move-local-chan)
   (async/pipe  amble-client.game-play/move-xy-chan move-xy-chan)
   {:handle-ui-event handle-ui-event}) 
 

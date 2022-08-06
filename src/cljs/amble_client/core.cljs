@@ -15,8 +15,9 @@
             [amble-client.game-play :as game-play]
             [amble-client.move-send :as move-send]
             [amble-client.move-async :as move-async]
+            [amble-client.move-local :as move-local]
+            [amble-client.move-remote :as move-remote]
             [amble-client.move-receive :as move-receive]
-            [amble-client.move-end :as move-end]
             [amble-client.move-replay :as move-replay])
   (:require-macros [cljs.core.async :refer [go]]))
 
@@ -24,12 +25,23 @@
 ;; (assert game-id "Problem getting game-id from browser url.")
 (def app-atom (reagent-ratom/atom {}))
 
-(def move-chan (async/chan))
-(def move-chan-multicast (async/mult move-chan))
+(def move-local-chan (async/chan))
+(def move-remote-chan (async/chan))
+(def move-chan-multicast (async/mult move-local-chan))
+(def move-remote-chan-multicast (async/mult move-remote-chan))
 (def move-xy-chan (async/chan))
 (def move-xy-chan-multicast (async/mult move-xy-chan))
 (def latest-move-index-chan (async/chan)) 
 
+(defn move-chan-dup []
+  (let [c (async/chan)]
+    (async/tap move-chan-multicast c)
+    c))
+
+(defn move-remote-chan-dup []
+  (let [c (async/chan)]
+    (async/tap move-remote-chan-multicast c)
+    c))
 
 (def app-config {:amble/app {:board (ig/ref :amble/board)}
                  :amble/board {:board-pieces (ig/ref :amble/board-pieces)
@@ -38,32 +50,26 @@
                  :amble/board-pieces {:app-atom app-atom}
                  :amble/player-pieces {:app-atom app-atom
                                        :game-play (ig/ref :amble/game-play)
-                                       :move-end (ig/ref :amble/move-end)
                                        :move-replay (ig/ref :amble/move-replay)
-                                       :move-chan (let [c (async/chan)]
-                                                    (async/tap move-chan-multicast c)
-                                                    c)
                                        :move-xy-chan (let [c (async/chan)]
                                                        (async/tap move-xy-chan-multicast c)
                                                        c)}
-                 :amble/game-play {:move-chan move-chan
+                 :amble/game-play {:move-local-chan move-local-chan
                                    :move-xy-chan move-xy-chan}
-                 :amble/move-send {:move-chan (let [c (async/chan)]
-                                                (async/tap move-chan-multicast c)
-                                                c)
+                 :amble/move-send {:move-chan (move-chan-dup) 
                                    :move-resource-add! move-resource/add!}
                  :amble/move-receive {:move-resource-get! move-resource/get!
                                       :latest-move-index-chan latest-move-index-chan
-                                      :move-chan move-chan
+                                      :move-remote-chan move-remote-chan
                                       :app-atom app-atom}
                  :amble/move-async {:latest-move-index-chan latest-move-index-chan
                                     :app-atom app-atom}
-                 :amble/move-end {
+                 :amble/move-local {
                                     :app-atom app-atom
-                                    :move-chan (let [c (async/chan)]
-                                                 (async/tap move-chan-multicast c)
-                                                 c)}
-
+                                    :move-local-chan (move-chan-dup)}
+                 :amble/move-remote {
+                                     :app-atom app-atom
+                                     :move-remote-chan (move-remote-chan-dup)}
                  :amble/move-replay {
                                      :app-atom app-atom}})
 
