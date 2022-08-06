@@ -16,7 +16,7 @@
             [amble-client.move-send :as move-send]
             [amble-client.move-async :as move-async]
             [amble-client.move-receive :as move-receive]
-            [amble-client.move-place :as move-place]
+            [amble-client.move-end :as move-end]
             [amble-client.move-replay :as move-replay])
   (:require-macros [cljs.core.async :refer [go]]))
 
@@ -38,7 +38,7 @@
                  :amble/board-pieces {:app-atom app-atom}
                  :amble/player-pieces {:app-atom app-atom
                                        :game-play (ig/ref :amble/game-play)
-                                       :move-place (ig/ref :amble/move-place)
+                                       :move-end (ig/ref :amble/move-end)
                                        :move-replay (ig/ref :amble/move-replay)
                                        :move-chan (let [c (async/chan)]
                                                     (async/tap move-chan-multicast c)
@@ -58,8 +58,12 @@
                                       :app-atom app-atom}
                  :amble/move-async {:latest-move-index-chan latest-move-index-chan
                                     :app-atom app-atom}
-                 :amble/move-place {
-                                    :app-atom app-atom}
+                 :amble/move-end {
+                                    :app-atom app-atom
+                                    :move-chan (let [c (async/chan)]
+                                                 (async/tap move-chan-multicast c)
+                                                 c)}
+
                  :amble/move-replay {
                                      :app-atom app-atom}})
 

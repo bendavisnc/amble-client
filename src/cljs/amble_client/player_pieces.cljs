@@ -9,7 +9,7 @@
 (def classname "player")
 (def piece-size 0.023)
 
-(def app-atom-chan (async/chan 2))
+(def app-atom-chan (async/chan))
 (def move-chan (async/chan))
 (def move-xy-chan (async/chan))
 
