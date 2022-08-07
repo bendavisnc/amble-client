@@ -6,10 +6,13 @@
   (:require-macros [cljs.core.async :refer [go, go-loop]]))
 
 
+;; channels, input
 (def piece-grab-chan (async/chan))
 (def piece-release-chan (async/chan))
 (def piece-move-chan (async/chan))
+(def board-piece-closest-chan (async/chan))
 
+;; channels, output
 (def move-remote-chan (async/chan))
 (def move-local-chan (async/chan))
 (def move-xy-chan (async/chan))
@@ -47,7 +50,7 @@
                (.getElementById js/document "board")))))
 ;; A go loop for turning mouse dragging behavior into move events.
 ;; Invokes out to the chans that are provided as dependencies.
-(go-loop []
+(go-loop [board-piece-closest (async/<! board-piece-closest-chan)]
   (println "Waiting for game play.")
   (let [piece-grab-event (async/<! piece-grab-chan)
         game-id (element-to-game-id (.-target piece-grab-event))
@@ -56,14 +59,16 @@
         event-to-coord (event-to-coord-cached)]
     (loop [moves []]
       (if (async/poll! piece-release-chan)
-        (do (println "Local move complete!")
-            (async/>! move-local-chan {:game-id game-id 
-                                       :player-id player-id 
-                                       :player-piece-index player-piece-index
-                                       :move moves
-                                       :x (-> moves last first)
-                                       :y (-> moves last last)
-                                       :origin :local}))
+        (let [_ (println "Local move complete!")
+              [last-x, last-y] (last moves)
+              [x, y] (board-piece-closest last-x, last-y)]
+          (async/>! move-local-chan {:game-id game-id 
+                                     :player-id player-id 
+                                     :player-piece-index player-piece-index
+                                     :move moves
+                                     :x x
+                                     :y y
+                                     :origin :local}))
         (let [move (async/<! piece-move-chan)
               [x, y] (event-to-coord
                       move)]              
@@ -72,11 +77,12 @@
                                   :x x
                                   :y y})
           (recur (conj moves [x, y]))))))
-  (recur))
+  (recur board-piece-closest))
 
-(defmethod ig/init-key :amble/game-play [_ {:keys [move-local-chan, move-xy-chan]}]
+(defmethod ig/init-key :amble/game-play [_ {:keys [move-local-chan, move-xy-chan, board-piece-closest]}]
   (async/pipe amble-client.game-play/move-local-chan move-local-chan)
   (async/pipe  amble-client.game-play/move-xy-chan move-xy-chan)
+  (async/put! board-piece-closest-chan board-piece-closest)
   {:handle-ui-event handle-ui-event}) 
 
 

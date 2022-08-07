@@ -5,6 +5,7 @@
             [reagent.ratom :as reagent-ratom]
             [amble-client.board-pieces]
             [amble-client.board :as amble-board]
+            [amble-client.board-piece-closest]
             [amble-client.app :as amble-app]
             [amble-client.player-pieces]
             [amble-client.resource.board :as board-resource]
@@ -61,7 +62,8 @@
                                                        (async/tap move-xy-chan-multicast c)
                                                        c)}
                  :amble/game-play {:move-local-chan move-local-chan
-                                   :move-xy-chan move-xy-chan}
+                                   :move-xy-chan move-xy-chan
+                                   :board-piece-closest (ig/ref :amble/board-piece-closest)}
                  :amble/move-send {:move-chan (move-chan-dup) 
                                    :move-resource-add! move-resource/add!}
                  :amble/move-receive {:move-resource-get! move-resource/get!
@@ -78,7 +80,12 @@
                                      :app-atom app-atom
                                      :move-remote-chan (move-remote-chan-dup)}
                  :amble/move-replay {
-                                     :app-atom app-atom}})
+                                     :app-atom app-atom}
+                 :amble/board-piece-closest {
+                                             :app-atom app-atom
+                                             :app-ready-chan (app-ready-chan-dup)}})
+
+
 
                 ;;  :amble/app-atom app-atom
                 ;;  :amble/user-feedback-handler user-feedback-handler/handle-ui-event

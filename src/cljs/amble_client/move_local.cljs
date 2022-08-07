@@ -12,7 +12,8 @@
 
 (go-loop [app-atom (async/<! app-atom-chan)]
   (let [{:keys [player-id, player-piece-index, x, y] :as move} (async/<! move-chan)]
-    (println "Handling local move. - todo")
+    (println "Handling local move.")
+    (swap! app-atom assoc-in [:player-pieces player-id player-piece-index] [x, y])
     ;; (println move)
     (recur app-atom)))
 

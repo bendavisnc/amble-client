@@ -13,7 +13,8 @@
 (go-loop [app-atom (async/<! app-atom-chan)]
   (let [{:keys [player-id, player-piece-index, x, y] :as move} (async/<! move-chan)]
     (println "Handling remote move. - todo")
-    (println move)
+    ;; (println move)
+    (swap! app-atom assoc-in [:player-pieces (keyword player-id) (js/parseInt player-piece-index)] [x, y])
     (recur app-atom)))
 
 (defmethod ig/init-key :amble/move-remote [_ {:keys [app-atom, move-remote-chan]}]
