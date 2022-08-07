@@ -298,6 +298,12 @@
               "$ref" : "#/components/schemas/Coord"
             },
             "type" : "array"
+          },
+          "x" : {
+            "type" : "number"
+          },
+          "y" : {
+            "type" : "number"
           }
         },
         "type" : "object"
@@ -315,6 +321,12 @@
               "$ref" : "#/components/schemas/Coord"
             },
             "type" : "array"
+          },
+          "x" : {
+            "type" : "number"
+          },
+          "y" : {
+            "type" : "number"
           }
         },
         "type" : "object"

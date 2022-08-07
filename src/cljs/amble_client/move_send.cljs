@@ -18,7 +18,9 @@
     (move-resource-add! (name (:game-id move-to-send))
                         (name (:player-id move-to-send))
                         (:player-piece-index move-to-send)
-                        (:move move-to-send)))
+                        (:move move-to-send)
+                        (:x move-to-send) 
+                        (:y move-to-send))) 
   (recur move-resource-add!))
 
 (defmethod ig/init-key :amble/move-send [_ {:keys [move-chan, move-resource-add!]}]

@@ -17,6 +17,8 @@
           game-id (:game-id (deref (async/<! app-atom-chan)))
           websockets-connection-chan (haslett-client/connect (websockets-url game-id))
           move-source-chan (:source (async/<! websockets-connection-chan))]
+  (assert (not (nil? game-id)) 
+          "game-id is nil.")
   (let [move-from-server (async/<! move-source-chan)]
     (assert (not (nil? move-from-server)) 
             "Move from server is nil.")
@@ -26,11 +28,11 @@
          websockets-connection-chan
          move-source-chan))
 
-(defmethod ig/init-key :amble/move-async [_ {:keys [app-atom, latest-move-index-chan]}]
+(defmethod ig/init-key :amble/move-async [_ {:keys [app-atom, latest-move-index-chan, app-ready-chan]}]
   (async/pipe amble-client.move-async/latest-move-index-chan latest-move-index-chan)
-  (js/setTimeout (fn [& args]
-                   (async/put! app-atom-chan app-atom))
-                 1000) 
+  (go
+    (async/<! app-ready-chan)
+    (async/>! app-atom-chan app-atom))
   nil)
 
 

@@ -61,6 +61,8 @@
                                        :player-id player-id 
                                        :player-piece-index player-piece-index
                                        :move moves
+                                       :x (-> moves last first)
+                                       :y (-> moves last last)
                                        :origin :local}))
         (let [move (async/<! piece-move-chan)
               [x, y] (event-to-coord

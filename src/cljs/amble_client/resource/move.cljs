@@ -8,10 +8,13 @@
                                             :id move-id}}))
 
 
-(defn add! [game-id, player-id, player-piece-index, move]
+(defn add! [game-id, player-id, player-piece-index, move, x, y]
   (resource-core/response-chan {:endpoint-key :move-add
                                 :param-map    {:game-id game-id
                                                :player-id player-id
                                                :player-piece-index player-piece-index
-                                               :move move}})) 
+                                               :move move 
+                                               :x x
+                                               :y y}}))
+                                              
 

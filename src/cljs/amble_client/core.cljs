@@ -24,7 +24,8 @@
 ;; (def game-id (utils/game-id-from-window))
 ;; (assert game-id "Problem getting game-id from browser url.")
 (def app-atom (reagent-ratom/atom {}))
-
+(def app-ready-chan (async/chan))
+(def app-ready-chan-multicast (async/mult app-ready-chan))
 (def move-local-chan (async/chan))
 (def move-remote-chan (async/chan))
 (def move-chan-multicast (async/mult move-local-chan))
@@ -41,6 +42,11 @@
 (defn move-remote-chan-dup []
   (let [c (async/chan)]
     (async/tap move-remote-chan-multicast c)
+    c))
+
+(defn app-ready-chan-dup []
+  (let [c (async/chan)]
+    (async/tap app-ready-chan-multicast c)
     c))
 
 (def app-config {:amble/app {:board (ig/ref :amble/board)}
@@ -63,7 +69,8 @@
                                       :move-remote-chan move-remote-chan
                                       :app-atom app-atom}
                  :amble/move-async {:latest-move-index-chan latest-move-index-chan
-                                    :app-atom app-atom}
+                                    :app-atom app-atom
+                                    :app-ready-chan (app-ready-chan-dup)}
                  :amble/move-local {
                                     :app-atom app-atom
                                     :move-local-chan (move-chan-dup)}
@@ -82,38 +89,38 @@
         _ (.log js/console app-config-initialized)
         _ (println app-config-initialized)]
     (reagent-dom/render [(:amble/app app-config-initialized)]
-                        (.getElementById js/document "app"))))
+                        (.getElementById js/document "app")
+                        (fn []
+                          (async/put! app-ready-chan true)))))
 
 (defn init! []
-  (mount-root))
+  ;; Set up board pieces from server game state.
+  (go
+    (let [game-response (let [game-id-from-window (utils/game-id-from-window)
+                              game-response-first-attempt (async/<! (game-resource/get! game-id-from-window))] 
+                          (if (:game-id game-response-first-attempt)
+                            (do
+                              (println (str "Using game id provided from browser address, \"" game-id-from-window))
+                              game-response-first-attempt)
+                            (let [_ (println (str "Game not found with id, \"" game-id-from-window))
+                                  game-response-create-attempt (async/<! (game-resource/create!))
+                                  _ (println game-response-create-attempt)]
+                              game-response-create-attempt)))
+          game-id (:game-id game-response)
+          board-response (async/<! (board-resource/get! game-id))
 
-;; Set up board pieces from server game state.
-(go
-  (let [game-response (let [game-id-from-window (utils/game-id-from-window)
-                            game-response-first-attempt (async/<! (game-resource/get! game-id-from-window))] 
-                        (if (:game-id game-response-first-attempt)
-                          (do
-                            (println (str "Using game id provided from browser address, \"" game-id-from-window))
-                            game-response-first-attempt)
-                          (let [_ (println (str "Game not found with id, \"" game-id-from-window))
-                                game-response-create-attempt (async/<! (game-resource/create!))
-                                _ (println game-response-create-attempt)]
-                            game-response-create-attempt)))
-        game-id (:game-id game-response)
-        board-response (async/<! (board-resource/get! game-id))
-
-        players-response (async/<! (player-resource/get! game-id))
-        player-pieces (async/<! (async/into {}
-                                            (async/merge
-                                             (for [player-id players-response]
-                                               (async/pipe (player-resource/get! game-id player-id)
-                                                           (async/chan 1
-                                                                       (map (fn [coordinates]
-                                                                              [(keyword player-id) coordinates]))))))))]
-    (swap! app-atom assoc :game-id game-id)
-    (swap! app-atom assoc :board-pieces board-response)
-    (swap! app-atom assoc :player-pieces player-pieces)))
-
+          players-response (async/<! (player-resource/get! game-id))
+          player-pieces (async/<! (async/into {}
+                                              (async/merge
+                                               (for [player-id players-response]
+                                                 (async/pipe (player-resource/get! game-id player-id)
+                                                             (async/chan 1
+                                                                         (map (fn [coordinates]
+                                                                                [(keyword player-id) coordinates]))))))))]
+      (swap! app-atom assoc :game-id game-id)
+      (swap! app-atom assoc :board-pieces board-response)
+      (swap! app-atom assoc :player-pieces player-pieces)
+      (mount-root))))
 
 
 (defn post-game! []
