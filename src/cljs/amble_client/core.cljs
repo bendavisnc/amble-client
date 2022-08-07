@@ -75,7 +75,8 @@
                                     :app-ready-chan (app-ready-chan-dup)}
                  :amble/move-local {
                                     :app-atom app-atom
-                                    :move-local-chan (move-chan-dup)}
+                                    :move-local-chan (move-chan-dup)
+                                    :app-ready-chan (app-ready-chan-dup)}
                  :amble/move-remote {
                                      :app-atom app-atom
                                      :move-remote-chan (move-remote-chan-dup)}
