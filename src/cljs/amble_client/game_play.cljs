@@ -61,7 +61,7 @@
       (if (async/poll! piece-release-chan)
         (let [_ (println "Local move complete!")
               [last-x, last-y] (last moves)
-              [x, y] (board-piece-closest last-x, last-y)]
+              {:keys [x, y]} (board-piece-closest last-x, last-y)]
           (async/>! move-local-chan {:game-id game-id 
                                      :player-id player-id 
                                      :player-piece-index player-piece-index

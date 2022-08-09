@@ -7,13 +7,12 @@
 (def board-pieces-atom (atom nil))
 
 (defn board-piece-closest [x, y]
-  (first (sort-by (fn [[xx, yy]]
-                    (let [xxx (- xx x)
-                          yyy (- yy y)]
+  (first (sort-by (fn [board-piece]
+                    (let [xxx (- (:x board-piece) x)
+                          yyy (- (:y board-piece) y)]
                       (Math/sqrt (+ (* xxx xxx)
                                     (* yyy yyy)))))
                   (deref board-pieces-atom))))
-    
 
 (defmethod ig/init-key :amble/board-piece-closest [_ {:keys [app-atom, app-ready-chan]}]
   (go

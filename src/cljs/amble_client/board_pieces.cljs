@@ -8,28 +8,26 @@
 (def classname "board-piece")
 (def piece-size 0.023)
 
-(defn- piece [& {:keys [x, y, size, class, index]}]
-  (let [unique-key (str class
-                        "-"
-                        index)]
-    [:circle {:cx     x,
-              :cy     y
-              :r      size
-              :key    unique-key
-              :id     unique-key
-              :class class}]))
+(defn- piece [& {:keys [x, y, size, id, class]}]
+  [:circle {:cx     x,
+            :cy     y
+            :r      size
+            :key    id
+            :id     id
+            :class class}])
 
 (defn- board-pieces [app-atom]
+  (println "hey man")
   (fn []
     (let [pieces (:board-pieces @app-atom)]
       [:<>
-       (for [i (range (count pieces))
-             :let [p (pieces i)]]
-         (piece :x (p 0)
-                :y (p 1)
+        (for [{:keys [x, y, is-active?, index]} pieces]
+         (piece :x x
+                :y y
                 :size piece-size
-                :class classname
-                :index i))])))
+                :id (str classname "-" index) ` 
+                :class (str classname 
+                            (if is-active? " active" ""))))]))) 
 
 
 (defmethod ig/init-key :amble/board-pieces [_, {:keys [app-atom]}]

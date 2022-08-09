@@ -6,6 +6,7 @@
             [amble-client.board-pieces]
             [amble-client.board :as amble-board]
             [amble-client.board-piece-closest]
+            [amble-client.board-piece-active]
             [amble-client.app :as amble-app]
             [amble-client.player-pieces]
             [amble-client.resource.board :as board-resource]
@@ -45,6 +46,12 @@
     (async/tap move-remote-chan-multicast c)
     c))
 
+(defn move-xy-chan-dup []
+  (let [c (async/chan)]
+    (async/tap move-xy-chan-multicast c)
+    c))
+
+
 (defn app-ready-chan-dup []
   (let [c (async/chan)]
     (async/tap app-ready-chan-multicast c)
@@ -58,9 +65,7 @@
                  :amble/player-pieces {:app-atom app-atom
                                        :game-play (ig/ref :amble/game-play)
                                        :move-replay (ig/ref :amble/move-replay)
-                                       :move-xy-chan (let [c (async/chan)]
-                                                       (async/tap move-xy-chan-multicast c)
-                                                       c)}
+                                       :move-xy-chan (move-xy-chan-dup)}
                  :amble/game-play {:move-local-chan move-local-chan
                                    :move-xy-chan move-xy-chan
                                    :board-piece-closest (ig/ref :amble/board-piece-closest)}
@@ -84,7 +89,12 @@
                                      :app-atom app-atom}
                  :amble/board-piece-closest {
                                              :app-atom app-atom
-                                             :app-ready-chan (app-ready-chan-dup)}})
+                                             :app-ready-chan (app-ready-chan-dup)}
+                 :amble/board-piece-active {
+                                            :app-atom app-atom
+                                            :move-xy-chan (move-xy-chan-dup)
+                                            :board-piece-closest (ig/ref :amble/board-piece-closest)
+                                            :app-ready-chan (app-ready-chan-dup)}})
 
 
 
@@ -126,8 +136,13 @@
                                                                          (map (fn [coordinates]
                                                                                 [(keyword player-id) coordinates]))))))))]
       (swap! app-atom assoc :game-id game-id)
-      (swap! app-atom assoc :board-pieces board-response)
+      (swap! app-atom assoc :board-pieces (vec (for [[i, [x,y]] (map-indexed vector board-response)]
+                                                 {:x x
+                                                  :y y
+                                                  :index i
+                                                  :is-active? false})))
       (swap! app-atom assoc :player-pieces player-pieces)
+      (println "wut")
       (mount-root))))
 
 

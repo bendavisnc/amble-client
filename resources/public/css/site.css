@@ -75,3 +75,7 @@ body {
     /* opacity: 22%; */
     /* stroke-width: 0.002px; */
 }
+
+#amble svg#board circle.board-piece.active {
+  fill:  red;
+}

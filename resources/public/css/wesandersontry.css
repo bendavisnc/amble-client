@@ -3,19 +3,19 @@
 
 body {
   /* background: white; */
-  background: aliceblue;
+  /* background: aliceblue; */
 }
 
 #amble {
   /* background-color: white; */
-  /* background-color: lightgrey; */
-  background: aliceblue;
+  background-color: lightgrey;
+  /* background: aliceblue; */
 }
 
 #amble svg#board {
   /* background-color: #666666ff; */
-  /* background-color: lightgrey; */
-  background: aliceblue;
+  background-color: lightgrey;
+  /* background: aliceblue; */
 }
 
 #amble svg#board circle.player-one {
