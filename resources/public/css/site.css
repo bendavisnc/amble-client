@@ -77,5 +77,6 @@ body {
 }
 
 #amble svg#board circle.board-piece.active {
-  fill:  red;
+  /* fill:  lightslategray; */
+  fill: #b3b3b3ff;
 }
