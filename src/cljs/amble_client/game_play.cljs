@@ -9,7 +9,8 @@
 ;; channels, input
 (def piece-grab-chan (async/chan))
 (def piece-release-chan (async/chan))
-(def piece-move-chan (async/chan))
+(def piece-move-chan (async/chan (async/dropping-buffer 1)))
+;; (def piece-move-chan (async/chan))
 (def board-piece-closest-chan (async/chan))
 
 ;; channels, output
@@ -56,7 +57,11 @@
         game-id (element-to-game-id (.-target piece-grab-event))
         player-id (element-to-player-id (.-target piece-grab-event))
         player-piece-index (element-to-piece-index (.-target piece-grab-event))
-        event-to-coord (event-to-coord-cached)]
+        event-to-coord (event-to-coord-cached)
+        ;; wut (async/<! (async/into [] piece-move-chan)) 
+        wut (async/<! piece-move-chan) 
+        _ (println "wut wut")
+        _ (println wut)]
     (loop [moves []]
       ;; (println (str "so damn confused " (count moves)))
       (when (= 0 (count moves))

@@ -26,8 +26,9 @@
                 (println (str "Finished replay, time," (new js/Date) "."))
                 (when (on-end)
                   (on-end)))
-              (let [move-next (moves index)
+              (let [move-next (nth moves index)
                     [x, y] move-next] 
+                (assert (number? x) "point values aren't numbers")
                 (f {:x x
                     :y y})
                 (js/setTimeout (fn []
