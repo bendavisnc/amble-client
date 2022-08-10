@@ -3,7 +3,8 @@
   (:require [integrant.core :as ig]
             [cljs.core.async :as async]
             [amble-client.resource.environment :refer [environment]]
-            [amble-client.interpolate-function :refer [interpolate-function]]
+            [amble-client.move-helpers :refer [end-move-at-point!]]
+            [amble-client.move-replay :refer [replay-move!]]
             [haslett.client :as haslett-client])
   (:require-macros [cljs.core.async :refer [go, go-loop]]))
 
@@ -12,25 +13,24 @@
 (def move-chan (async/chan))
 
 (go-loop [app-atom (async/<! app-atom-chan)]
-  (let [{:keys [player-id, player-piece-index, x, y, move]} (async/<! move-chan)
-        [last-x, last-y] (last move)]
+  (let [{:keys [player-id, player-piece-index, x, y, move] :as move-remote} (async/<! move-chan)
+        player-id (keyword player-id)
+        move-remote (assoc move-remote :player-id player-id)]
     (println "Handling remote move.")
-    (interpolate-function (fn [{:keys [x, y]}]
-                            (swap! app-atom assoc-in [:player-pieces (keyword player-id) (js/parseInt player-piece-index)] [x, y]))
-                          :x1 last-x
-                          :y1 last-y
-                          :x2 x
-                          :y2 y)
-                     
+    (replay-move! (fn [{:keys [x, y]}]
+                    (swap! app-atom assoc-in [:player-pieces player-id (js/parseInt player-piece-index)] [x, y]))
+                  move-remote
+                  (fn []
+                    (end-move-at-point! app-atom move-remote)))
     ;; (println move)
     (recur app-atom)))
 
 
-(defmethod ig/init-key :amble/move-remote [_ {:keys [app-atom, move-remote-chan]}]
+(defmethod ig/init-key :amble/move-remote [_ {:keys [app-atom, app-ready-chan, move-remote-chan]}]
   (async/pipe move-remote-chan amble-client.move-remote/move-chan)
-  (js/setTimeout (fn [& args]
-                   (async/put! app-atom-chan app-atom))
-                 1000) 
+  (go
+    (async/<! app-ready-chan)
+    (async/>! app-atom-chan app-atom))
   nil)
 
 

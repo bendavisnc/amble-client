@@ -58,6 +58,10 @@
         player-piece-index (element-to-piece-index (.-target piece-grab-event))
         event-to-coord (event-to-coord-cached)]
     (loop [moves []]
+      ;; (println (str "so damn confused " (count moves)))
+      (when (= 0 (count moves))
+        (println "hot damn"))
+      (println "damn")
       (if (async/poll! piece-release-chan)
         (let [_ (println "Local move complete!")
               [last-x, last-y] (last moves)

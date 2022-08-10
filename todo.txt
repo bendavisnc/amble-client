@@ -6,3 +6,17 @@
 - interaction src
   - improve impl
     - get rid of atoms
+    
+- incorporate external style system
+
+- avoid remote moves from self
+
+- remove subscribers correctly
+
+- add remote relay animation
+
+- add move list
+
+- make public
+
+- clean up environment vars

@@ -19,8 +19,7 @@
             [amble-client.move-async :as move-async]
             [amble-client.move-local :as move-local]
             [amble-client.move-remote :as move-remote]
-            [amble-client.move-receive :as move-receive]
-            [amble-client.move-replay :as move-replay])
+            [amble-client.move-receive :as move-receive])
   (:require-macros [cljs.core.async :refer [go]]))
 
 ;; (def game-id (utils/game-id-from-window))
@@ -64,7 +63,6 @@
                  :amble/board-pieces {:app-atom app-atom}
                  :amble/player-pieces {:app-atom app-atom
                                        :game-play (ig/ref :amble/game-play)
-                                       :move-replay (ig/ref :amble/move-replay)
                                        :move-xy-chan (move-xy-chan-dup)}
                  :amble/game-play {:move-local-chan move-local-chan
                                    :move-xy-chan move-xy-chan
@@ -84,9 +82,8 @@
                                     :app-ready-chan (app-ready-chan-dup)}
                  :amble/move-remote {
                                      :app-atom app-atom
+                                     :app-ready-chan (app-ready-chan-dup)
                                      :move-remote-chan (move-remote-chan-dup)}
-                 :amble/move-replay {
-                                     :app-atom app-atom}
                  :amble/board-piece-closest {
                                              :app-atom app-atom
                                              :app-ready-chan (app-ready-chan-dup)}
@@ -142,7 +139,6 @@
                                                   :index i
                                                   :is-active? false})))
       (swap! app-atom assoc :player-pieces player-pieces)
-      (println "wut")
       (mount-root))))
 
 
