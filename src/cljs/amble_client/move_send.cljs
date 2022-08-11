@@ -20,7 +20,9 @@
                         (:player-piece-index move-to-send)
                         (:move move-to-send)
                         (:x move-to-send) 
-                        (:y move-to-send))) 
+                        (:y move-to-send) 
+                        (:client-id move-to-send)))
+
   (recur move-resource-add!))
 
 (defmethod ig/init-key :amble/move-send [_ {:keys [move-chan, move-resource-add!]}]

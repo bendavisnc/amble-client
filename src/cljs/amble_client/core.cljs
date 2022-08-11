@@ -19,7 +19,8 @@
             [amble-client.move-async :as move-async]
             [amble-client.move-local :as move-local]
             [amble-client.move-remote :as move-remote]
-            [amble-client.move-receive :as move-receive])
+            [amble-client.move-receive :as move-receive]
+            [amble-client.move-record-check])
   (:require-macros [cljs.core.async :refer [go]]))
 
 ;; (def game-id (utils/game-id-from-window))
@@ -29,15 +30,15 @@
 (def app-ready-chan-multicast (async/mult app-ready-chan))
 (def move-local-chan (async/chan))
 (def move-remote-chan (async/chan))
-(def move-chan-multicast (async/mult move-local-chan))
+(def move-local-chan-multicast (async/mult move-local-chan))
 (def move-remote-chan-multicast (async/mult move-remote-chan))
 (def move-xy-chan (async/chan))
 (def move-xy-chan-multicast (async/mult move-xy-chan))
 (def latest-move-index-chan (async/chan)) 
 
-(defn move-chan-dup []
+(defn move-local-chan-dup []
   (let [c (async/chan)]
-    (async/tap move-chan-multicast c)
+    (async/tap move-local-chan-multicast c)
     c))
 
 (defn move-remote-chan-dup []
@@ -67,7 +68,7 @@
                  :amble/game-play {:move-local-chan move-local-chan
                                    :move-xy-chan move-xy-chan
                                    :board-piece-closest (ig/ref :amble/board-piece-closest)}
-                 :amble/move-send {:move-chan (move-chan-dup) 
+                 :amble/move-send {:move-chan (move-local-chan-dup) 
                                    :move-resource-add! move-resource/add!}
                  :amble/move-receive {:move-resource-get! move-resource/get!
                                       :latest-move-index-chan latest-move-index-chan
@@ -78,12 +79,16 @@
                                     :app-ready-chan (app-ready-chan-dup)}
                  :amble/move-local {
                                     :app-atom app-atom
-                                    :move-local-chan (move-chan-dup)
+                                    :move-local-chan (move-local-chan-dup)
                                     :app-ready-chan (app-ready-chan-dup)}
                  :amble/move-remote {
                                      :app-atom app-atom
                                      :app-ready-chan (app-ready-chan-dup)
-                                     :move-remote-chan (move-remote-chan-dup)}
+                                     :move-remote-chan (move-remote-chan-dup)
+                                     :move-record-check (ig/ref :amble/move-record-check)}
+                 :amble/move-record-check {
+                                           :move-local-chan (move-local-chan-dup)}
+
                  :amble/board-piece-closest {
                                              :app-atom app-atom
                                              :app-ready-chan (app-ready-chan-dup)}

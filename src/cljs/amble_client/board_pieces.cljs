@@ -17,7 +17,6 @@
             :class class}])
 
 (defn- board-pieces [app-atom]
-  (println "hey man")
   (fn []
     (let [pieces (:board-pieces @app-atom)]
       [:<>

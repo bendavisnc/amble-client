@@ -15,9 +15,6 @@
 (def on-end-chan (async/chan))
 
 (defn loop-animation [f, moves, on-end]
-  (println "i'm bewildered")
-  (println (count moves))
-  (println moves)
   (letfn [
           (recursive-call [index]
             (if (>= index
@@ -41,8 +38,6 @@
       (let [f (async/<! f-chan)
             move (async/<! move-chan)
             on-end (async/<! on-end-chan)]
-        (println "working")
-        (println [(:id move), (count (:move move))])
         (loop-animation f 
                         (:move move)
                         on-end))

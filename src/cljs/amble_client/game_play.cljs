@@ -57,24 +57,19 @@
         game-id (element-to-game-id (.-target piece-grab-event))
         player-id (element-to-player-id (.-target piece-grab-event))
         player-piece-index (element-to-piece-index (.-target piece-grab-event))
-        event-to-coord (event-to-coord-cached)
-        ;; wut (async/<! (async/into [] piece-move-chan)) 
-        wut (async/<! piece-move-chan) 
-        _ (println "wut wut")
-        _ (println wut)]
+        event-to-coord (event-to-coord-cached)]
     (loop [moves []]
-      ;; (println (str "so damn confused " (count moves)))
-      (when (= 0 (count moves))
-        (println "hot damn"))
-      (println "damn")
       (if (async/poll! piece-release-chan)
         (let [_ (println "Local move complete!")
               [last-x, last-y] (last moves)
-              {:keys [x, y]} (board-piece-closest last-x, last-y)]
+              {:keys [x, y]} (board-piece-closest last-x, last-y)
+              ;; client-id (str (hash moves))]
+              client-id (str (.now js/Date))]
           (async/>! move-local-chan {:game-id game-id 
                                      :player-id player-id 
                                      :player-piece-index player-piece-index
                                      :move moves
+                                     :client-id client-id
                                      :x x
                                      :y y
                                      :origin :local}))
