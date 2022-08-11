@@ -327,6 +327,9 @@
           },
           "y" : {
             "type" : "number"
+          },
+          "client-id" : {
+            "type" : "string"
           }
         },
         "type" : "object"

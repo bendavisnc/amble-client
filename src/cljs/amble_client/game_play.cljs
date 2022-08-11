@@ -57,30 +57,34 @@
         game-id (element-to-game-id (.-target piece-grab-event))
         player-id (element-to-player-id (.-target piece-grab-event))
         player-piece-index (element-to-piece-index (.-target piece-grab-event))
-        event-to-coord (event-to-coord-cached)]
+        event-to-coord (event-to-coord-cached)
+        _ (async/poll! piece-move-chan)]
     (loop [moves []]
-      (if (async/poll! piece-release-chan)
-        (let [_ (println "Local move complete!")
-              [last-x, last-y] (last moves)
-              {:keys [x, y]} (board-piece-closest last-x, last-y)
-              ;; client-id (str (hash moves))]
-              client-id (str (.now js/Date))]
-          (async/>! move-local-chan {:game-id game-id 
-                                     :player-id player-id 
-                                     :player-piece-index player-piece-index
-                                     :move moves
-                                     :client-id client-id
-                                     :x x
-                                     :y y
-                                     :origin :local}))
-        (let [move (async/<! piece-move-chan)
-              [x, y] (event-to-coord
-                      move)]              
-          (async/>! move-xy-chan {:player-id player-id 
-                                  :player-piece-index player-piece-index
-                                  :x x
-                                  :y y})
-          (recur (conj moves [x, y]))))))
+      (async/alt! piece-release-chan 
+                  ([_] 
+                   (let [_ (println "Local move complete!")
+                         [last-x, last-y] (last moves)
+                         {:keys [x, y]} (board-piece-closest last-x, last-y)
+                         client-id (str (.now js/Date))]
+                     (async/>! move-local-chan {:game-id game-id 
+                                                :player-id player-id 
+                                                :player-piece-index player-piece-index
+                                                :move moves
+                                                :client-id client-id
+                                                :x x
+                                                :y y
+                                                :origin :local})))
+
+                  piece-move-chan 
+                  ([move] 
+                   (let [[x, y] (event-to-coord
+                                 move)]              
+                     (async/>! move-xy-chan {:player-id player-id 
+                                             :player-piece-index player-piece-index
+                                             :x x
+                                             :y y})
+
+                     (recur (conj moves [x, y])))))))
   (recur board-piece-closest))
 
 (defmethod ig/init-key :amble/game-play [_ {:keys [move-local-chan, move-xy-chan, board-piece-closest]}]
