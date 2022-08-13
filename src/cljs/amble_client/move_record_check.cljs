@@ -11,8 +11,6 @@
 (defn move-record-check 
   "Returns if this move is recorded as made, according to the list of client ids."
   [client-id]
-  (println "huh")
-  (println @client-ids)
   ((deref client-ids)
    client-id))
 

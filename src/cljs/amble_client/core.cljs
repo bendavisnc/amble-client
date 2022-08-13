@@ -68,7 +68,7 @@
                  :amble/game-play {:move-local-chan move-local-chan
                                    :move-xy-chan move-xy-chan
                                    :board-piece-closest (ig/ref :amble/board-piece-closest)}
-                 :amble/move-send {:move-chan (move-local-chan-dup) 
+                 :amble/move-send {:move-local-chan (move-local-chan-dup) 
                                    :move-resource-add! move-resource/add!}
                  :amble/move-receive {:move-resource-get! move-resource/get!
                                       :latest-move-index-chan latest-move-index-chan
