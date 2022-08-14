@@ -18,7 +18,8 @@
         latest-move (assoc latest-move-from-server :origin :remote)]
     (println "Requested latest move.")
     (assert (not (empty? (:move latest-move)))
-            "Received invalid move!") 
+            (str "Received invalid move!\n  " 
+                 latest-move))
     (async/>! move-chan latest-move)
     (recur move-resource-get!, app-atom, game-id)))
 
