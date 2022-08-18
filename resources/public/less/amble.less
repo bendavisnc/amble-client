@@ -1,0 +1,65 @@
+@color-primary: lightgrey;
+@color-secondary-secondary: white;
+
+@color-player-one: #6acac8;
+@color-player-two: #6a81ca;
+@color-player-three: #ca6ab8;
+@color-player-four: #9a6aca;
+@color-player-five: #97adc2;
+@color-player-six: #ca936a;
+
+@color-player-active: #b3b3b3;
+
+body {
+  background: white;
+
+  #amble {
+    background-color: @color-primary;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+
+    #board {
+      width: auto;
+      height: max(120vh, 800px);
+      background-color: @color-primary;
+
+      circle {
+        &.board-piece {
+          fill: @color-secondary-secondary;
+        }
+
+        &.player-one {
+          fill: @color-player-one;
+        }
+
+        &.player-two {
+          fill: @color-player-two;
+        }
+
+        &.player-three {
+          fill: @color-player-three;
+        }
+
+        &.player-four {
+          fill: @color-player-four;
+        }
+
+        &.player-five {
+          fill: @color-player-five;
+        }
+
+        &.player-six {
+          fill: @color-player-six;
+        }
+
+        &.active {
+          fill: @color-player-active;
+        }
+      }
+    }
+  }
+}

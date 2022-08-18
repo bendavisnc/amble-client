@@ -1,0 +1,41 @@
+body {
+  background: white;
+}
+body #amble {
+  background-color: #d3d3d3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+body #amble #board {
+  width: auto;
+  height: max(120vh, 800px);
+  background-color: #d3d3d3;
+}
+body #amble #board circle.board-piece {
+  fill: #ffffff;
+}
+body #amble #board circle.player-one {
+  fill: #6acac8;
+}
+body #amble #board circle.player-two {
+  fill: #6a81ca;
+}
+body #amble #board circle.player-three {
+  fill: #ca6ab8;
+}
+body #amble #board circle.player-four {
+  fill: #9a6aca;
+}
+body #amble #board circle.player-five {
+  fill: #97adc2;
+}
+body #amble #board circle.player-six {
+  fill: #ca936a;
+}
+body #amble #board circle.active {
+  fill: #b3b3b3;
+}

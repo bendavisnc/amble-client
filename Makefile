@@ -1,8 +1,11 @@
 
-rundevserver: createopenapiresource
+rundevserver: styles openapi 
 	lein figwheel
 
-createopenapiresource:
+openapi:
 	mkdir -p resources/public/json
 	cd ../amble-openapi; make clean; make openapi
 	cp ../amble-openapi/target/openapi/openapi.json resources/public/json/openapi.json
+	
+styles:
+	lessc resources/public/less/amble.less resources/public/css/amble.css

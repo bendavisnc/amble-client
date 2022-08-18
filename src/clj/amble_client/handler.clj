@@ -17,9 +17,7 @@
    [:meta {:charset "utf-8"}]
    [:meta {:name "viewport"
            :content "width=device-width, initial-scale=1"}]
-   (include-css
-    (if (env :dev) "/css/site.css" "/css/site.min.css"))
-   (include-css "/css/wesandersontry.css")])
+   (include-css "/css/amble.css")])
 
 (defn loading-page []
   (html5
