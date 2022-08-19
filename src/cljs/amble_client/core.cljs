@@ -4,6 +4,7 @@
             [reagent.dom :as reagent-dom]
             [reagent.ratom :as reagent-ratom]
             [amble-client.board-pieces]
+            [amble-client.example :as example]
             [amble-client.board :as amble-board]
             [amble-client.board-piece-closest]
             [amble-client.board-piece-active]
@@ -57,7 +58,8 @@
     (async/tap app-ready-chan-multicast c)
     c))
 
-(def app-config {:amble/app {:board (ig/ref :amble/board)}
+(def app-config {:amble/app {:board (ig/ref :amble/board)
+                             :example (ig/ref :amble/example)}
                  :amble/board {:board-pieces (ig/ref :amble/board-pieces)
                                :player-pieces (ig/ref :amble/player-pieces)
                                :game-play (ig/ref :amble/game-play)}
@@ -68,7 +70,7 @@
                  :amble/game-play {:move-local-chan move-local-chan
                                    :move-xy-chan move-xy-chan
                                    :board-piece-closest (ig/ref :amble/board-piece-closest)}
-                 :amble/move-send {:move-local-chan (move-local-chan-dup) 
+                 :amble/move-send {:move-local-chan (move-local-chan-dup)
                                    :move-resource-add! move-resource/add!}
                  :amble/move-receive {:move-resource-get! move-resource/get!
                                       :latest-move-index-chan latest-move-index-chan
@@ -77,26 +79,22 @@
                  :amble/move-async {:latest-move-index-chan latest-move-index-chan
                                     :app-atom app-atom
                                     :app-ready-chan (app-ready-chan-dup)}
-                 :amble/move-local {
-                                    :app-atom app-atom
+                 :amble/move-local {:app-atom app-atom
                                     :move-local-chan (move-local-chan-dup)
                                     :app-ready-chan (app-ready-chan-dup)}
-                 :amble/move-remote {
-                                     :app-atom app-atom
+                 :amble/move-remote {:app-atom app-atom
                                      :app-ready-chan (app-ready-chan-dup)
                                      :move-remote-chan (move-remote-chan-dup)
                                      :move-record-check (ig/ref :amble/move-record-check)}
-                 :amble/move-record-check {
-                                           :move-local-chan (move-local-chan-dup)}
+                 :amble/move-record-check {:move-local-chan (move-local-chan-dup)}
 
-                 :amble/board-piece-closest {
-                                             :app-atom app-atom
+                 :amble/board-piece-closest {:app-atom app-atom
                                              :app-ready-chan (app-ready-chan-dup)}
-                 :amble/board-piece-active {
-                                            :app-atom app-atom
+                 :amble/board-piece-active {:app-atom app-atom
                                             :move-xy-chan (move-xy-chan-dup)
                                             :board-piece-closest (ig/ref :amble/board-piece-closest)
-                                            :app-ready-chan (app-ready-chan-dup)}})
+                                            :app-ready-chan (app-ready-chan-dup)}
+                 :amble/example {:app-atom app-atom}})
 
 
 
