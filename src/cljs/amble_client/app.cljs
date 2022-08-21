@@ -6,13 +6,12 @@
 
 (def app-id "amble")
 
-(defn app [board, example]
+(defn app [board]
   (fn []
-    [:div {:id app-id}
-     [board] 
-     [example]])) 
+    [:div {:id app-id} 
+      [board]]))
 
-(defmethod ig/init-key :amble/app [_ {:keys [board, example]}]
-  (app board example))
+(defmethod ig/init-key :amble/app [_ {:keys [board]}]
+  (app board))
 
 

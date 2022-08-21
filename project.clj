@@ -4,16 +4,22 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
-  :dependencies [[org.clojure/clojure "1.10.1"]
+  :dependencies [[org.clojure/clojure "1.11.1"]
+                 [org.clojure/clojurescript "1.11.60"]
                  [ring-server "0.5.0"]
-                 [reagent "0.10.0"]
-                 [cljsjs/react-with-addons "15.6.1-0" :exclusions [cljsjs/react]]
+                 [reagent "1.1.1"]
+                ;;  [cljsjs/react "18.2.0-0"]
+                ;;  [cljsjs/react-dom "18.2.0-0"]
+                ;;  [cljsjs/react-with-addons "15.6.1-0" :exclusions [cljsjs/react]]
+                ;;  [cljsjs/react-with-addons "15.6.1-0"]
+                 [cljsjs/react "17.0.1-0"]
+                 [cljsjs/react-dom "17.0.1-0"]
+                 [cljsjs/react-transition-group "4.3.0-0"]
                  [reagent-utils "0.3.3"]
                  [ring "1.8.1"]
                  [ring/ring-defaults "0.3.2"]
                  [hiccup "1.0.5"]
-                 [yogthos/config "1.1.7"]
-                 [org.clojure/clojurescript "1.10.764"
+                 [yogthos/config "1.1.7"
                   :scope "provided"]
                  [metosin/reitit "0.5.1"]
                  [metosin/jsonista "0.2.6"]
