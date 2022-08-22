@@ -1,6 +1,7 @@
 (ns amble-client.example
   (:require [integrant.core :as ig]
-            [reagent.core :as reagent]))
+            ["react-transition-group" :refer [TransitionGroup CSSTransition]]
+            [cljsjs.react]))
 
 ;; taken from
 ;;   https://github.com/reagent-project/reagent-cookbook/blob/master/recipes/ReactCSSTransitionGroup/README.md#step-5-create-the-initial-app-state
@@ -21,12 +22,12 @@
 
   .foo-enter {
   height: 0;
-  transition: height 0.27s ease-out;
+  transition: height 0.07s ease-in;
   }
 
-  .foo-leave {
+  .foo-leave, .foo-exit {
   height: 0;
-  transition: height 0.27s ease-out;
+  transition: height 2.27s linear;
   }
 
   .foo-enter-active {
@@ -34,8 +35,21 @@
   opacity: 1;
   }")
 
-(def css-transition-group
-  (reagent/adapt-react-class js/React.addons.CSSTransitionGroup))
+;; (def css-transition-group 
+;;   (try
+;;     (reagent/adapt-react-class js/React.addons.CSSTransitionGroup)
+;;     (catch js/Error e
+;;       (println "welp")
+;;       (println e)))) 
+;
+
+;; (defn css-transition-group [] 
+;;   (reagent/adapt-react-class js/React.addons.CSSTransitionGroup))
+;;  ;; (try
+;;  ;;   (reagent/adapt-react-class js/React.addons.CSSTransitionGroup)
+;;  ;;   (catch js/Error e
+;;  ;;     (println "wuuuut")
+;;  ;;     (println e))))
 
 (defn add-item-builder [app-state]
   (fn []
@@ -57,16 +71,30 @@
      [:button {:on-click (add-item-builder app-state)} "add"]
      [:button {:on-click (delete-item-builder app-state)} "delete"]
      [:style style]
-     [:ul
-      [css-transition-group {:transition-name "foo"}
-       (map-indexed (fn [i x]
-                      ^{:key i} [:li (str "List Item " x)])
-                    (:items @app-state))]]]))
+     [:> TransitionGroup {:component "ul"}
+       (for [[i, x] 
+             (map-indexed vector (:items @app-state))]
+         [:> CSSTransition
+           {:key i 
+            :class-names "foo"
+            :timeout 500}
+           [:li (str "List Item " x)]])]]))
+
+;; (defn home-builder [app-state]
+;;   (fn []
+;;     [:div
+;;      [:div (str "Total list items to date:  " "7")]]))
 
 
 (defmethod ig/init-key :amble/example [_ {:keys [app-atom]}]
-  (swap! app-atom assoc :items [])
-  (swap! app-atom assoc :items-counter 0)
-  (home-builder app-atom))
+  (try (do
+         (swap! app-atom assoc :items [])
+         (swap! app-atom assoc :items-counter 0)
+         (home-builder app-atom))
+       (catch js/Object e
+         (do 
+           (.log js/console "welllp")
+           (println e))))) 
+      
 
 
