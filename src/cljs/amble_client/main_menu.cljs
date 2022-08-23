@@ -13,6 +13,22 @@
 (defmulti content (fn [menu-item, _]
                     menu-item))
 
+(defmulti selected-class-name identity)
+
+(defmethod selected-class-name board [_]
+  "first-selected")
+
+(defmethod selected-class-name moves [_]
+  "second-selected")
+
+(defmethod selected-class-name settings [_]
+  "third-selected")
+
+(defmethod selected-class-name :default [menu-item-unknown]
+  (println (str "weird, " menu-item-unknown))
+  "")
+
+
 ;; (defmethod content board [_]
 ;;   [:div "board"])
 
@@ -26,10 +42,9 @@
   (println "well this is nice")
   (.log js/console menu-item-selected)
   (.log js/console event)
-  (doseq [menu-item menu-items] 
-    (swap! app-atom assoc-in [:main-menu menu-item] 
-                             (= menu-item-selected menu-item))))
-  ;; (.log js/console (str (deref app-atom))))
+  (swap! app-atom assoc-in [:main-menu :menu-item-selected] 
+                           menu-item-selected)
+  (.log js/console (str (deref app-atom))))
   
 
 (defn menu-item-selected [app-atom]
@@ -39,7 +54,8 @@
 (defmethod content :default [thiz, app-atom]
   [:div {:class (str "menu-item "
                      (name thiz))
-         :on-click (partial on-click, app-atom, thiz)}
+         :on-click (partial on-click, app-atom, thiz)
+         :on-mouse-enter (partial on-click, app-atom, thiz)}
    (name thiz)])
 
 (defn on-enter []
@@ -57,14 +73,20 @@
                         (get-in (deref app-atom)
                                 [:main-menu menu-item])]]
 
-              ^{:key (name menu-item)}
-              [:div {:id (str item-name)
-                     :class (str "highlight-item"
-                                 " "
-                                 (if (zero? i)
+              (if (zero? i)
+                ^{:key (name menu-item)}
+                [:div {:id (str item-name)
+                       :class (str "highlight-item"
                                    " "
-                                   "place-holder"))}
-               (unescapeEntities "&nbsp;")]))]])
+                                   (selected-class-name (:menu-item-selected (:main-menu (deref app-atom)))))}
+                  (unescapeEntities "&nbsp;")]
+                ^{:key (name menu-item)}
+                [:div {:id (str item-name)
+                           :class (str "highlight-item"
+                                        " "
+                                       "place-holder")}
+                  (unescapeEntities "&nbsp;")])))]])
+
 
 (defn main-menu [app-atom]
   (fn []
@@ -77,6 +99,7 @@
          (content menu-item, app-atom)])]]))
 
 (defmethod ig/init-key :amble/main-menu [_ {:keys [app-atom]}]
+  (swap! app-atom assoc-in [:main-menu :menu-item-selected] board)
   (main-menu app-atom))
 
 

@@ -48,10 +48,25 @@ body {
           font-size: 22px;
           width: @highlight-width;
           background-color: @color-menu-highlight;
+          position: relative;
+          transition: top 0.25s ease-out;
 
           &.place-holder {
             background-color: initial;
           }
+          
+          &.first-selected {
+            top: 0px;
+          }
+          
+          &.second-selected {
+            top: 40px;
+          }
+
+          &.third-selected {
+            top: 80px;
+          }
+
         }
       }
     }
