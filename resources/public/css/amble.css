@@ -28,14 +28,15 @@ body #amble #main-menu #highlight-container .menu-item {
   margin-left: 4px;
   color: #ffffff;
 }
-body #amble #main-menu #menu-items-container .highlight-analog,
-body #amble #main-menu #highlight-container .highlight-analog {
+body #amble #main-menu #menu-items-container .highlight-item,
+body #amble #main-menu #highlight-container .highlight-item {
   font-size: 22px;
   width: 100px;
-}
-body #amble #main-menu #menu-items-container .highlight-analog.actual,
-body #amble #main-menu #highlight-container .highlight-analog.actual {
   background-color: #4d4d4d;
+}
+body #amble #main-menu #menu-items-container .highlight-item.place-holder,
+body #amble #main-menu #highlight-container .highlight-item.place-holder {
+  background-color: none;
 }
 body #amble #board {
   width: auto;

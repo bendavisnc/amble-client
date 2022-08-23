@@ -44,12 +44,13 @@ body {
           color: @color-secondary;
         }
 
-        .highlight-analog {
+        .highlight-item {
           font-size: 22px;
           width: @highlight-width;
+          background-color: @color-menu-highlight;
 
-          &.actual {
-            background-color: @color-menu-highlight;
+          &.place-holder {
+            background-color: initial;
           }
         }
       }

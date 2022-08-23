@@ -46,29 +46,25 @@
   (println "well cool beans"))
 
 (defn highlight-container [app-atom]
-  [:> TransitionGroup {:component "div"
-                       :id "highlight-container"}
-   (doall
-     (for [[i, menu-item] 
-           (map-indexed vector menu-items)
-           :let [item-name (str (name menu-item)
-                                "-highlight-analog")
-                 is-selected?
-                 (get-in (deref app-atom)
-                         [:main-menu menu-item])
-                 _ (println (str "wtttttf " is-selected?))]]
-       [:> CSSTransition {:key item-name
-                          :class-names "highlight-analog"
-                          :on-enter on-enter
-                          :timeout 500
-                          :in is-selected?}
-         [:div {:id (str item-name)
-                :class (str "highlight-analog"
-                             (if (zero? i)
-                                   ;; (menu-item-selected app-atom))
-                               " actual"
-                               ""))}
-           (unescapeEntities "&nbsp;")]]))])
+  [:div {:id "highlight-container"}
+        [:<>
+          (doall
+            (for [[i, menu-item]
+                  (map-indexed vector menu-items)
+                  :let [item-name (str (name menu-item)
+                                       "-highlight-item")
+                        is-selected?
+                        (get-in (deref app-atom)
+                                [:main-menu menu-item])]]
+
+              ^{:key (name menu-item)}
+              [:div {:id (str item-name)
+                     :class (str "highlight-item"
+                                 " "
+                                 (if (zero? i)
+                                   " "
+                                   "place-holder"))}
+               (unescapeEntities "&nbsp;")]))]])
 
 (defn main-menu [app-atom]
   (fn []
