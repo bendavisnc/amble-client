@@ -5,7 +5,7 @@
             [reagent.ratom :as reagent-ratom]
             [amble-client.board-pieces]
             [amble-client.board :as amble-board]
-            [amble-client.example]
+            [amble-client.main-menu :as main-menu]
             [amble-client.board-piece-closest]
             [amble-client.board-piece-active]
             [amble-client.app :as amble-app]
@@ -58,11 +58,14 @@
     (async/tap app-ready-chan-multicast c)
     c))
 
-(def app-config {:amble/app {:board (ig/ref :amble/board) 
-                             :example (ig/ref :amble/example)}
+(def app-config {:amble/app {:main-menu (ig/ref :amble/main-menu)
+                             :board (ig/ref :amble/board)}
+
                  :amble/board {:board-pieces (ig/ref :amble/board-pieces)
                                :player-pieces (ig/ref :amble/player-pieces)
                                :game-play (ig/ref :amble/game-play)}
+
+                 :amble/main-menu {:app-atom app-atom}
                  :amble/board-pieces {:app-atom app-atom}
                  :amble/player-pieces {:app-atom app-atom
                                        :game-play (ig/ref :amble/game-play)
@@ -98,10 +101,8 @@
                                             :app-atom app-atom
                                             :move-xy-chan (move-xy-chan-dup)
                                             :board-piece-closest (ig/ref :amble/board-piece-closest)
-                                            :app-ready-chan (app-ready-chan-dup)}
+                                            :app-ready-chan (app-ready-chan-dup)}})
 
-                 :amble/example {
-                                 :app-atom app-atom}})
 
 
                 ;;  :amble/app-atom app-atom
@@ -113,9 +114,9 @@
         _ (.log js/console app-config-initialized)
         _ (println app-config-initialized)]
     (reagent-dom/render [(:amble/app app-config-initialized)]
-      (.getElementById js/document "app")
-      (fn []
-        (async/put! app-ready-chan true)))))
+                        (.getElementById js/document "app")
+                        (fn []
+                          (async/put! app-ready-chan true)))))
 
 (defn init! []
   ;; Set up board pieces from server game state.

@@ -1,5 +1,5 @@
 @color-primary: lightgrey;
-@color-secondary-secondary: white;
+@color-secondary: white;
 
 @color-player-one: #6acac8;
 @color-player-two: #6a81ca;
@@ -9,6 +9,9 @@
 @color-player-six: #ca936a;
 
 @color-player-active: #b3b3b3;
+@color-menu-highlight: #4d4d4d;
+
+@highlight-width: 100px;
 
 body {
   background: white;
@@ -22,6 +25,36 @@ body {
     height: 100vh;
     overflow: hidden;
 
+    #main-menu {
+      #menu-items-container,
+      #highlight-container {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .menu-item {
+          text-align: left;
+          font-size: 22px;
+          font-family: Arial, Helvetica, sans-serif;
+          margin-left: 4px;
+          color: @color-secondary;
+        }
+
+        .highlight-analog {
+          font-size: 22px;
+          width: @highlight-width;
+
+          &.actual {
+            background-color: @color-menu-highlight;
+          }
+        }
+      }
+    }
+
     #board {
       width: auto;
       height: max(120vh, 800px);
@@ -29,7 +62,7 @@ body {
 
       circle {
         &.board-piece {
-          fill: @color-secondary-secondary;
+          fill: @color-secondary;
         }
 
         &.player-one {

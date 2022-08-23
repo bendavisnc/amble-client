@@ -10,6 +10,33 @@ body #amble {
   height: 100vh;
   overflow: hidden;
 }
+body #amble #main-menu #menu-items-container,
+body #amble #main-menu #highlight-container {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+body #amble #main-menu #menu-items-container .menu-item,
+body #amble #main-menu #highlight-container .menu-item {
+  text-align: left;
+  font-size: 22px;
+  font-family: Arial, Helvetica, sans-serif;
+  margin-left: 4px;
+  color: #ffffff;
+}
+body #amble #main-menu #menu-items-container .highlight-analog,
+body #amble #main-menu #highlight-container .highlight-analog {
+  font-size: 22px;
+  width: 100px;
+}
+body #amble #main-menu #menu-items-container .highlight-analog.actual,
+body #amble #main-menu #highlight-container .highlight-analog.actual {
+  background-color: #4d4d4d;
+}
 body #amble #board {
   width: auto;
   height: max(120vh, 800px);
