@@ -65,7 +65,8 @@
                                :player-pieces (ig/ref :amble/player-pieces)
                                :game-play (ig/ref :amble/game-play)}
 
-                 :amble/main-menu {:app-atom app-atom}
+                 :amble/main-menu {:app-atom app-atom
+                                   :app-ready-chan (app-ready-chan-dup)}
                  :amble/board-pieces {:app-atom app-atom}
                  :amble/player-pieces {:app-atom app-atom
                                        :game-play (ig/ref :amble/game-play)

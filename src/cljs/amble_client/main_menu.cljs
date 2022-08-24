@@ -1,8 +1,10 @@
 (ns amble-client.main-menu
   (:require [integrant.core :as ig]
+            [cljs.core.async :as async]
             [goog.string :refer [unescapeEntities]]
             ["react-transition-group" :refer [TransitionGroup CSSTransition]]
-            [cljsjs.react]))
+            [cljsjs.react])
+  (:require-macros [cljs.core.async :refer [go, go-loop]]))
 
 (def board ::board)
 (def moves ::moves)
@@ -31,8 +33,15 @@
   "")
 
 (defn highlight-item [menu-item]
-  (.getElementById js/document (str (name menu-item)
-                                    "-highlight-item")))
+  (let [hi
+        (.getElementById js/document (str (name menu-item)
+                                          "-highlight-item"))]
+    (println (str (name menu-item)
+                  "-highlight-item")) 
+    (println hi) 
+    ;; (assert (not (nil? hi))
+    ;;         (str "Couldn't find highlight-item in dom for menu-item, " menu-item "."))
+    hi))
 
 
 
@@ -102,26 +111,37 @@
 
 (defn update-styles! []
   (let [offsets (map (fn [menu-item]
-                       (js/parseInt (.-offsetTop (highlight-item menu-item))))
+                       (let [hi (highlight-item menu-item)
+                             _ (println hi)
+                             offset (.-offsetTop hi)]
+                         offset))
                      menu-items)
         offsets-with-menu-items (map vector offsets menu-items)
-        stylesheet (nth (.-styleSheets js/document)
-                        0)]
+        stylesheet (aget (.-styleSheets js/document)
+                         0)]
+    (println "heyy")
     (println (str "Setting up main menu based of offset values, \"" 
-                  (vec offsets)
+                  offsets
                   "\", that come from the css flex declarations."))
     (doall
-      (for [[offset, menu-item] offsets-with-menu-items]
-        (.insertRule stylesheet
-                     (str "body #amble #main-menu #highlight-container .highlight-item." 
-                          (name menu-item)
-                          " { top: "
-                          offset
-                          "px;}")
-                     0)))))
+      (for [[offset, menu-item] offsets-with-menu-items
+            :let [s
+                  (str "body #amble #main-menu #highlight-container .highlight-item."
+                       (selected-class-name menu-item)
+                       " { top: "
+                       offset
+                       "px;}")]] 
+        (do
+          (println "this is s")
+          (println s)
+          (.insertRule stylesheet
+                       s 
+                       0))))))
 
-(defmethod ig/init-key :amble/main-menu [_ {:keys [app-atom]}]
-  (update-styles!)
+(defmethod ig/init-key :amble/main-menu [_ {:keys [app-atom, app-ready-chan]}]
+  (go
+    (async/<! app-ready-chan)
+    (update-styles!))
   (swap! app-atom assoc-in [:main-menu :menu-item-selected] board)
   (reset! menu-item-selected-atom board)
   (main-menu app-atom))

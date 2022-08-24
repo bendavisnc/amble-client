@@ -40,18 +40,6 @@ body #amble #main-menu #menu-items-container .highlight-item.place-holder,
 body #amble #main-menu #highlight-container .highlight-item.place-holder {
   background-color: initial;
 }
-body #amble #main-menu #menu-items-container .highlight-item.first-selected,
-body #amble #main-menu #highlight-container .highlight-item.first-selected {
-  top: 0px;
-}
-body #amble #main-menu #menu-items-container .highlight-item.second-selected,
-body #amble #main-menu #highlight-container .highlight-item.second-selected {
-  top: 40px;
-}
-body #amble #main-menu #menu-items-container .highlight-item.third-selected,
-body #amble #main-menu #highlight-container .highlight-item.third-selected {
-  top: 80px;
-}
 body #amble #board {
   width: auto;
   height: max(120vh, 800px);
