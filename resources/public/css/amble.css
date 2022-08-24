@@ -24,17 +24,20 @@ body #amble #main-menu #menu-items-container .menu-item,
 body #amble #main-menu #highlight-container .menu-item {
   text-align: left;
   font-size: 22px;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: sans-serif;
   margin-left: 4px;
   color: #ffffff;
+  height: 1.5em;
 }
 body #amble #main-menu #menu-items-container .highlight-item,
 body #amble #main-menu #highlight-container .highlight-item {
   font-size: 22px;
-  width: 100px;
+  width: 5em;
+  height: 1.5em;
   background-color: #4d4d4d;
+  border-radius: 5px;
   position: relative;
-  transition: top 0.25s ease-out;
+  transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 body #amble #main-menu #menu-items-container .highlight-item.place-holder,
 body #amble #main-menu #highlight-container .highlight-item.place-holder {
