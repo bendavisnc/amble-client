@@ -2,9 +2,7 @@
   (:require [integrant.core :as ig]
             [goog.string :refer [unescapeEntities]]
             ["react-transition-group" :refer [TransitionGroup CSSTransition]]
-            [cljsjs.react]
-            [goog.string :as gstring]
-            [goog.string.format]))
+            [cljsjs.react]))
 
 (def board ::board)
 (def moves ::moves)
@@ -109,14 +107,17 @@
         offsets-with-menu-items (map vector offsets menu-items)
         stylesheet (nth (.-styleSheets js/document)
                         0)]
-    (println (gstring/format "Setting up main menu based of offset values, %s, that come from the css flex declarations."
-                             (str (vector offsets))))
+    (println (str "Setting up main menu based of offset values, \"" 
+                  (vec offsets)
+                  "\", that come from the css flex declarations."))
     (doall
       (for [[offset, menu-item] offsets-with-menu-items]
         (.insertRule stylesheet
-                     (gstring/format "body #amble #main-menu #highlight-container .highlight-item.%s { top: %spx;}"
-                                     (name menu-item)
-                                     offset)
+                     (str "body #amble #main-menu #highlight-container .highlight-item." 
+                          (name menu-item)
+                          " { top: "
+                          offset
+                          "px;}")
                      0)))))
 
 (defmethod ig/init-key :amble/main-menu [_ {:keys [app-atom]}]
