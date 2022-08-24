@@ -2,7 +2,9 @@
   (:require [integrant.core :as ig]
             [goog.string :refer [unescapeEntities]]
             ["react-transition-group" :refer [TransitionGroup CSSTransition]]
-            [cljsjs.react]))
+            [cljsjs.react]
+            [goog.string :as gstring]
+            [goog.string.format]))
 
 (def board ::board)
 (def moves ::moves)
@@ -29,6 +31,11 @@
 (defmethod selected-class-name :default [menu-item-unknown]
   (println (str "weird, " menu-item-unknown))
   "")
+
+(defn highlight-item [menu-item]
+  (.getElementById js/document (str (name menu-item)
+                                    "-highlight-item")))
+
 
 
 ;; (defmethod content board [_]
@@ -95,7 +102,24 @@
         [:<>
          (content menu-item, app-atom)])]]))
 
+(defn update-styles! []
+  (let [offsets (map (fn [menu-item]
+                       (js/parseInt (.-offsetTop (highlight-item menu-item))))
+                     menu-items)
+        stylesheet (nth (.-styleSheets js/document)
+                        0)]
+    (println (gstring/format "Setting up main menu based of offset values, %s, that come from the css flex declarations."
+                             (str (vector offsets))))
+    (doall
+      (for [[offset, menu-item] offsets]
+        (.insertRule stylesheet
+                     (gstring/format "body #amble #main-menu #highlight-container .highlight-item.%s { top: %spx;}"
+                                     (name menu-item)
+                                     offset)
+                     0)))))
+
 (defmethod ig/init-key :amble/main-menu [_ {:keys [app-atom]}]
+  (update-styles!)
   (swap! app-atom assoc-in [:main-menu :menu-item-selected] board)
   (reset! menu-item-selected-atom board)
   (main-menu app-atom))
