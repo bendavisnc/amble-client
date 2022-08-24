@@ -106,12 +106,13 @@
   (let [offsets (map (fn [menu-item]
                        (js/parseInt (.-offsetTop (highlight-item menu-item))))
                      menu-items)
+        offsets-with-menu-items (map vector offsets menu-items)
         stylesheet (nth (.-styleSheets js/document)
                         0)]
     (println (gstring/format "Setting up main menu based of offset values, %s, that come from the css flex declarations."
                              (str (vector offsets))))
     (doall
-      (for [[offset, menu-item] offsets]
+      (for [[offset, menu-item] offsets-with-menu-items]
         (.insertRule stylesheet
                      (gstring/format "body #amble #main-menu #highlight-container .highlight-item.%s { top: %spx;}"
                                      (name menu-item)
