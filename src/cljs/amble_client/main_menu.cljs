@@ -29,30 +29,15 @@
   "third-selected")
 
 (defmethod selected-class-name :default [menu-item-unknown]
-  (println (str "weird, " menu-item-unknown))
   "")
 
 (defn highlight-item [menu-item]
   (let [hi
         (.getElementById js/document (str (name menu-item)
                                           "-highlight-item"))]
-    (println (str (name menu-item)
-                  "-highlight-item")) 
-    (println hi) 
-    ;; (assert (not (nil? hi))
-    ;;         (str "Couldn't find highlight-item in dom for menu-item, " menu-item "."))
+    (assert (not (nil? hi))
+            (str "Couldn't find highlight-item in dom for menu-item, " menu-item "."))
     hi))
-
-
-
-;; (defmethod content board [_]
-;;   [:div "board"])
-
-;; (defmethod content moves [_]
-;;   [:div "moves"])
-
-;; (defmethod content settings [_]
-;;   [:div "settings"])
 
 (defn set-selected! [app-atom, menu-item]
   (swap! app-atom assoc-in [:main-menu :menu-item-selected] 
@@ -69,8 +54,6 @@
  
    (name thiz)])
 
-(defn on-enter []
-  (println "well cool beans"))
 
 (defn highlight-container [app-atom]
   [:div {:id "highlight-container"}
@@ -131,12 +114,7 @@
                        " { top: "
                        offset
                        "px;}")]] 
-        (do
-          (println "this is s")
-          (println s)
-          (.insertRule stylesheet
-                       s 
-                       0))))))
+        (.insertRule stylesheet s 0)))))
 
 (defmethod ig/init-key :amble/main-menu [_ {:keys [app-atom, app-ready-chan]}]
   (go
