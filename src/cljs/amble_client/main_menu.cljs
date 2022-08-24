@@ -10,6 +10,8 @@
 
 (def menu-items [board, moves, settings])
 
+(def menu-item-selected-atom (atom nil))
+
 (defmulti content (fn [menu-item, _]
                     menu-item))
 
@@ -38,24 +40,19 @@
 ;; (defmethod content settings [_]
 ;;   [:div "settings"])
 
-(defn on-click [app-atom, menu-item-selected, event]
-  (println "well this is nice")
-  (.log js/console menu-item-selected)
-  (.log js/console event)
+(defn set-selected! [app-atom, menu-item]
   (swap! app-atom assoc-in [:main-menu :menu-item-selected] 
-                           menu-item-selected)
-  (.log js/console (str (deref app-atom))))
-  
-
-(defn menu-item-selected [app-atom]
-  (get-in (deref app-atom)
-          [:main-menu :item-selected]))
-
+                           menu-item))
+ 
 (defmethod content :default [thiz, app-atom]
   [:div {:class (str "menu-item "
                      (name thiz))
-         :on-click (partial on-click, app-atom, thiz)
-         :on-mouse-enter (partial on-click, app-atom, thiz)}
+         :on-click (fn [_] 
+                     (reset! menu-item-selected-atom thiz) 
+                     (set-selected! app-atom, thiz))
+         :on-mouse-enter (fn [_] (set-selected! app-atom, thiz))
+         :on-mouse-leave (fn [_] (set-selected! app-atom (deref menu-item-selected-atom)))}
+ 
    (name thiz)])
 
 (defn on-enter []
@@ -100,6 +97,7 @@
 
 (defmethod ig/init-key :amble/main-menu [_ {:keys [app-atom]}]
   (swap! app-atom assoc-in [:main-menu :menu-item-selected] board)
+  (reset! menu-item-selected-atom board)
   (main-menu app-atom))
 
 
