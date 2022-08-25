@@ -35,8 +35,8 @@
   (let [hi
         (.getElementById js/document (str (name menu-item)
                                           "-highlight-item"))]
-    (assert (not (nil? hi))
-            (str "Couldn't find highlight-item in dom for menu-item, " menu-item "."))
+    ;; (assert (not (nil? hi))
+            ;; (str "Couldn't find highlight-item in dom for menu-item, " menu-item "."))]
     hi))
 
 (defn set-selected! [app-atom, menu-item]
@@ -92,17 +92,14 @@
         [:<>
          (content menu-item, app-atom)])]]))
 
+(defn offset [menu-item]
+  (.-offsetLeft (highlight-item menu-item)))
+
 (defn update-styles! []
-  (let [offsets (map (fn [menu-item]
-                       (let [hi (highlight-item menu-item)
-                             _ (println hi)
-                             offset (.-offsetTop hi)]
-                         offset))
-                     menu-items)
+  (let [offsets (map offset menu-items) 
         offsets-with-menu-items (map vector offsets menu-items)
         stylesheet (aget (.-styleSheets js/document)
                          0)]
-    (println "heyy")
     (println (str "Setting up main menu based of offset values, \"" 
                   offsets
                   "\", that come from the css flex declarations."))
@@ -111,10 +108,14 @@
             :let [s
                   (str "body #amble #main-menu #highlight-container .highlight-item."
                        (selected-class-name menu-item)
-                       " { top: "
+                      ;;  " { top: "
+                       " { left: "
                        offset
                        "px;}")]] 
-        (.insertRule stylesheet s 0)))))
+        (.insertRule stylesheet s 0)))
+    (.addEventListener (.-body js/document)
+                       "touchstart"       
+                       (fn [e] (.-preventDefault e)))))       
 
 (defmethod ig/init-key :amble/main-menu [_ {:keys [app-atom, app-ready-chan]}]
   (go

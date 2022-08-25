@@ -58,15 +58,16 @@
     (async/tap app-ready-chan-multicast c)
     c))
 
-(def app-config {:amble/app {:main-menu (ig/ref :amble/main-menu)
+(def app-config {:amble/app {:main-menu nil
+                            ;;  :main-menu (ig/ref :amble/main-menu)
                              :board (ig/ref :amble/board)}
 
                  :amble/board {:board-pieces (ig/ref :amble/board-pieces)
                                :player-pieces (ig/ref :amble/player-pieces)
                                :game-play (ig/ref :amble/game-play)}
 
-                 :amble/main-menu {:app-atom app-atom
-                                   :app-ready-chan (app-ready-chan-dup)}
+                ;;  :amble/main-menu {:app-atom app-atom
+                                  ;;  :app-ready-chan (app-ready-chan-dup)}
                  :amble/board-pieces {:app-atom app-atom}
                  :amble/player-pieces {:app-atom app-atom
                                        :game-play (ig/ref :amble/game-play)
@@ -114,6 +115,12 @@
   (let [app-config-initialized (ig/init app-config)
         _ (.log js/console app-config-initialized)
         _ (println app-config-initialized)]
+    ;; (.addEventListener (.-body js/document)
+    ;;                    "touchstart"       
+    ;;                    (fn [e] (.-preventDefault e))) 
+    ;; (.addEventListener (.-body js/document)
+    ;;                    "touchmove"       
+    ;;                    (fn [e] (.-preventDefault e))) 
     (reagent-dom/render [(:amble/app app-config-initialized)]
                         (.getElementById js/document "app")
                         (fn []

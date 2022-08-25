@@ -1,6 +1,12 @@
+html,
 body {
-  background: white;
+  overflow-x: hidden;
+  margin: 0;
 }
+body {
+  position: relative;
+}
+html #amble,
 body #amble {
   background-color: #d3d3d3;
   display: flex;
@@ -10,26 +16,36 @@ body #amble {
   height: 100vh;
   overflow: hidden;
 }
+html #amble #main-menu #menu-items-container,
 body #amble #main-menu #menu-items-container,
+html #amble #main-menu #highlight-container,
 body #amble #main-menu #highlight-container {
   position: absolute;
-  left: 20px;
-  top: 20px;
-  height: 100px;
+  left: 5vw;
+  top: 5vh;
+  width: 90vw;
+  height: 20vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-between;
 }
+html #amble #main-menu #menu-items-container .menu-item,
 body #amble #main-menu #menu-items-container .menu-item,
+html #amble #main-menu #highlight-container .menu-item,
 body #amble #main-menu #highlight-container .menu-item {
   text-align: left;
   font-size: 22px;
   font-family: sans-serif;
-  margin-left: 4px;
   color: #ffffff;
+  width: 5em;
   height: 1.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+html #amble #main-menu #menu-items-container .highlight-item,
 body #amble #main-menu #menu-items-container .highlight-item,
+html #amble #main-menu #highlight-container .highlight-item,
 body #amble #main-menu #highlight-container .highlight-item {
   font-size: 22px;
   width: 5em;
@@ -37,38 +53,49 @@ body #amble #main-menu #highlight-container .highlight-item {
   background-color: #4d4d4d;
   border-radius: 5px;
   position: relative;
-  transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: left 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+html #amble #main-menu #menu-items-container .highlight-item.place-holder,
 body #amble #main-menu #menu-items-container .highlight-item.place-holder,
+html #amble #main-menu #highlight-container .highlight-item.place-holder,
 body #amble #main-menu #highlight-container .highlight-item.place-holder {
   background-color: initial;
 }
+html #amble #board,
 body #amble #board {
   width: auto;
   height: max(120vh, 800px);
   background-color: #d3d3d3;
 }
+html #amble #board circle.board-piece,
 body #amble #board circle.board-piece {
   fill: #ffffff;
 }
+html #amble #board circle.player-one,
 body #amble #board circle.player-one {
   fill: #6acac8;
 }
+html #amble #board circle.player-two,
 body #amble #board circle.player-two {
   fill: #6a81ca;
 }
+html #amble #board circle.player-three,
 body #amble #board circle.player-three {
   fill: #ca6ab8;
 }
+html #amble #board circle.player-four,
 body #amble #board circle.player-four {
   fill: #9a6aca;
 }
+html #amble #board circle.player-five,
 body #amble #board circle.player-five {
   fill: #97adc2;
 }
+html #amble #board circle.player-six,
 body #amble #board circle.player-six {
   fill: #ca936a;
 }
+html #amble #board circle.active,
 body #amble #board circle.active {
   fill: #b3b3b3;
 }
