@@ -112,10 +112,10 @@
                        " { left: "
                        offset
                        "px;}")]] 
-        (.insertRule stylesheet s 0)))
-    (.addEventListener (.-body js/document)
-                       "touchstart"       
-                       (fn [e] (.-preventDefault e)))))       
+        (.insertRule stylesheet s 0)))))
+    ;; (.addEventListener (.-body js/document)
+    ;;                    "touchstart"       
+    ;;                    (fn [e] (.-preventDefault e)))))       
 
 (defmethod ig/init-key :amble/main-menu [_ {:keys [app-atom, app-ready-chan]}]
   (go

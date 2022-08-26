@@ -1,0 +1,4 @@
+(def wut [1 2 3])
+wut
+(wut 2)
+(nth wut 2)

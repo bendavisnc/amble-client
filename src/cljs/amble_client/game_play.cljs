@@ -40,6 +40,15 @@
         (= "mousemove"
            (.-type e))
         (async/put! piece-move-chan e)
+        (= "touchstart"
+           (.-type e))
+        (async/put! piece-grab-chan e)
+        (= "touchmove"
+           (.-type e))
+        (async/put! piece-move-chan e)
+        (= "touchend"
+           (.-type e))
+        (async/put! piece-release-chan e)
         true
         (do
           (println "User event not handled!")

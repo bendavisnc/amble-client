@@ -13,8 +13,10 @@
 
 // @highlight-width: 115px;
 @highlight-width: 5em;
+@menu-font-size: 1.3em;
 
-html, body {
+html,
+body {
   overflow-x: hidden;
   margin: 0;
 }
@@ -22,7 +24,14 @@ body {
   position: relative;
 }
 
-html, body {
+svg {
+  // width: 220vw;
+  // height: 220vw;
+  transform: scale(1.5);
+}
+
+html,
+body {
   // background: white;
   // width: 100%;
   // height: 100%;
@@ -42,7 +51,6 @@ html, body {
   // // min-height: 100%;
   // // overflow: hidden;
 
-
   #amble {
     background-color: @color-primary;
     display: flex;
@@ -53,12 +61,14 @@ html, body {
     overflow: hidden;
 
     #main-menu {
-      #menu-items-container, #highlight-container {
+      z-index: 1;
+      #menu-items-container,
+      #highlight-container {
         position: absolute;
         // left: 10vw;
         left: 5vw;
         // top: 10vh;
-        top: 5vh;
+        top: 3vh;
         // height: 100px;
         // height: 200px;
         // width: 80vw;
@@ -70,7 +80,7 @@ html, body {
 
         .menu-item {
           text-align: left;
-          font-size: 22px;
+          font-size: @menu-font-size;
           // font-family: Arial, Helvetica, sans-serif;
           font-family: sans-serif;
           // font-weight: bold;
@@ -81,11 +91,10 @@ html, body {
           display: flex;
           align-items: center;
           justify-content: center;
-
         }
 
         .highlight-item {
-          font-size: 22px;
+          font-size: @menu-font-size;
           width: @highlight-width;
           height: 1.5em;
           background-color: @color-menu-highlight;
@@ -95,18 +104,17 @@ html, body {
           // transition: top 0.1s ease-in;
           // transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
           transition: left 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          
+
           &.place-holder {
             background-color: initial;
           }
-
         }
       }
     }
 
     #board {
-      width: auto;
-      height: max(120vh, 800px);
+      // width: auto;
+      // height: max(120vh, 800px);
       background-color: @color-primary;
 
       circle {

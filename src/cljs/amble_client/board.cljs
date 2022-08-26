@@ -3,7 +3,8 @@
 
 (defn board [board-pieces, player-pieces, game-play]
   (fn []
-    [:svg {:id "board" "viewBox" "0 0 1 1"
+    [:svg {:id "board"  
+           "viewBox" "0 0 1 1"
            :on-mouse-move (fn [e]
                             (.preventDefault e)
                             (.persist e)

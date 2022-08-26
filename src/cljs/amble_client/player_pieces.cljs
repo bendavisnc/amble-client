@@ -36,7 +36,20 @@
             :on-mouse-up (fn [e] 
                            (.persist e)
                            (.preventDefault e)
-                           (user-feedback-handler e))}]) 
+                           (user-feedback-handler e)) 
+            :on-touch-start (fn [e] 
+                              (.persist e)
+                              (.preventDefault e)
+                              (user-feedback-handler e)) 
+            :on-touch-end (fn [e] 
+                            (.persist e)
+                            (.preventDefault e)
+                            (user-feedback-handler e)) 
+            :on-touch-move (fn [e] 
+                             (.persist e)
+                             (.preventDefault e)
+                             (user-feedback-handler e))}]) 
+
 
 (defn- player-pieces [app-atom, game-play]
   (fn []

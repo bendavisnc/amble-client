@@ -6,6 +6,9 @@ body {
 body {
   position: relative;
 }
+svg {
+  transform: scale(1.5);
+}
 html #amble,
 body #amble {
   background-color: #d3d3d3;
@@ -16,13 +19,17 @@ body #amble {
   height: 100vh;
   overflow: hidden;
 }
+html #amble #main-menu,
+body #amble #main-menu {
+  z-index: 1;
+}
 html #amble #main-menu #menu-items-container,
 body #amble #main-menu #menu-items-container,
 html #amble #main-menu #highlight-container,
 body #amble #main-menu #highlight-container {
   position: absolute;
   left: 5vw;
-  top: 5vh;
+  top: 3vh;
   width: 90vw;
   height: 20vh;
   display: flex;
@@ -34,7 +41,7 @@ body #amble #main-menu #menu-items-container .menu-item,
 html #amble #main-menu #highlight-container .menu-item,
 body #amble #main-menu #highlight-container .menu-item {
   text-align: left;
-  font-size: 22px;
+  font-size: 1.3em;
   font-family: sans-serif;
   color: #ffffff;
   width: 5em;
@@ -47,7 +54,7 @@ html #amble #main-menu #menu-items-container .highlight-item,
 body #amble #main-menu #menu-items-container .highlight-item,
 html #amble #main-menu #highlight-container .highlight-item,
 body #amble #main-menu #highlight-container .highlight-item {
-  font-size: 22px;
+  font-size: 1.3em;
   width: 5em;
   height: 1.5em;
   background-color: #4d4d4d;
@@ -63,8 +70,6 @@ body #amble #main-menu #highlight-container .highlight-item.place-holder {
 }
 html #amble #board,
 body #amble #board {
-  width: auto;
-  height: max(120vh, 800px);
   background-color: #d3d3d3;
 }
 html #amble #board circle.board-piece,

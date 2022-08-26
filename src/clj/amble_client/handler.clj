@@ -16,7 +16,7 @@
   [:head
    [:meta {:charset "utf-8"}]
    [:meta {:name "viewport"
-           :content "user-scalable=no"}]
+           :content "width=device-width, initial-scale=1, user-scalable=no"}]
    (include-css "/css/amble.css")
    (include-css "/css/amble_shims.css")
    (include-js "/js/amble_shims.js")])
