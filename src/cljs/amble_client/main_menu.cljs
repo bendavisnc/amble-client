@@ -35,8 +35,8 @@
   (let [hi
         (.getElementById js/document (str (name menu-item)
                                           "-highlight-item"))]
-    ;; (assert (not (nil? hi))
-            ;; (str "Couldn't find highlight-item in dom for menu-item, " menu-item "."))]
+    (assert (not (nil? hi))
+            (str "Couldn't find highlight-item in dom for menu-item, " menu-item "."))
     hi))
 
 (defn set-selected! [app-atom, menu-item]
@@ -92,8 +92,16 @@
         [:<>
          (content menu-item, app-atom)])]]))
 
+
+(defn portrait-mode? []
+  (not (= -1
+          (.indexOf (.-type (.-orientation js/screen))
+                    "ortrait"))))
+
 (defn offset [menu-item]
-  (.-offsetLeft (highlight-item menu-item)))
+  (if (portrait-mode?)
+    (.-offsetLeft (highlight-item menu-item))
+    (.-offsetTop (highlight-item menu-item))))
 
 (defn update-styles! []
   (let [offsets (map offset menu-items) 
@@ -109,13 +117,16 @@
                   (str "body #amble #main-menu #highlight-container .highlight-item."
                        (selected-class-name menu-item)
                       ;;  " { top: "
-                       " { left: "
+                       " { "
+                       (if (portrait-mode?)
+                         "left"
+                         "top")
+                       ": "
                        offset
                        "px;}")]] 
-        (.insertRule stylesheet s 0)))))
-    ;; (.addEventListener (.-body js/document)
-    ;;                    "touchstart"       
-    ;;                    (fn [e] (.-preventDefault e)))))       
+        (do
+          (println (str "Setting new style rule, " s))                      
+          (.insertRule stylesheet s 0))))))
 
 (defmethod ig/init-key :amble/main-menu [_ {:keys [app-atom, app-ready-chan]}]
   (go

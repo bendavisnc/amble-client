@@ -28,6 +28,12 @@ svg {
   // width: 220vw;
   // height: 220vw;
   transform: scale(1.5);
+  @media (orientation: landscape) {
+    // transform: scale(0.667);
+    // position: relative;
+    // top: 2em;
+    transform: scale(1/2);
+  }
 }
 
 html,
@@ -61,7 +67,7 @@ body {
     overflow: hidden;
 
     #main-menu {
-      z-index: 1;
+      // z-index: 1;
       #menu-items-container,
       #highlight-container {
         position: absolute;
@@ -78,6 +84,12 @@ body {
         flex-direction: row;
         justify-content: space-between;
 
+        @media (orientation: landscape) {
+          flex-direction: column;
+          left: 2vw;
+          left: 2vw;
+        }
+
         .menu-item {
           text-align: left;
           font-size: @menu-font-size;
@@ -91,6 +103,10 @@ body {
           display: flex;
           align-items: center;
           justify-content: center;
+          @media (orientation: landscape) {
+            justify-content: initial;
+            margin-left: 2/5em;
+          }
         }
 
         .highlight-item {
@@ -104,6 +120,9 @@ body {
           // transition: top 0.1s ease-in;
           // transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
           transition: left 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          @media (orientation: landscape) {
+            transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          }
 
           &.place-holder {
             background-color: initial;

@@ -9,6 +9,11 @@ body {
 svg {
   transform: scale(1.5);
 }
+@media (orientation: landscape) {
+  svg {
+    transform: scale(0.5);
+  }
+}
 html #amble,
 body #amble {
   background-color: #d3d3d3;
@@ -18,10 +23,6 @@ body #amble {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-}
-html #amble #main-menu,
-body #amble #main-menu {
-  z-index: 1;
 }
 html #amble #main-menu #menu-items-container,
 body #amble #main-menu #menu-items-container,
@@ -35,6 +36,15 @@ body #amble #main-menu #highlight-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+@media (orientation: landscape) {
+  html #amble #main-menu #menu-items-container,
+  body #amble #main-menu #menu-items-container,
+  html #amble #main-menu #highlight-container,
+  body #amble #main-menu #highlight-container {
+    flex-direction: column;
+    left: 2vw;
+  }
 }
 html #amble #main-menu #menu-items-container .menu-item,
 body #amble #main-menu #menu-items-container .menu-item,
@@ -50,6 +60,15 @@ body #amble #main-menu #highlight-container .menu-item {
   align-items: center;
   justify-content: center;
 }
+@media (orientation: landscape) {
+  html #amble #main-menu #menu-items-container .menu-item,
+  body #amble #main-menu #menu-items-container .menu-item,
+  html #amble #main-menu #highlight-container .menu-item,
+  body #amble #main-menu #highlight-container .menu-item {
+    justify-content: initial;
+    margin-left: 0.4em;
+  }
+}
 html #amble #main-menu #menu-items-container .highlight-item,
 body #amble #main-menu #menu-items-container .highlight-item,
 html #amble #main-menu #highlight-container .highlight-item,
@@ -61,6 +80,14 @@ body #amble #main-menu #highlight-container .highlight-item {
   border-radius: 5px;
   position: relative;
   transition: left 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@media (orientation: landscape) {
+  html #amble #main-menu #menu-items-container .highlight-item,
+  body #amble #main-menu #menu-items-container .highlight-item,
+  html #amble #main-menu #highlight-container .highlight-item,
+  body #amble #main-menu #highlight-container .highlight-item {
+    transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
 }
 html #amble #main-menu #menu-items-container .highlight-item.place-holder,
 body #amble #main-menu #menu-items-container .highlight-item.place-holder,

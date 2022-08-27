@@ -19,6 +19,7 @@
            :content "width=device-width, initial-scale=1, user-scalable=no"}]
    (include-css "/css/amble.css")
    (include-css "/css/amble_shims.css")
+   (include-css "/css/userChrome.css")
    (include-js "/js/amble_shims.js")])
 
 (defn loading-page []
