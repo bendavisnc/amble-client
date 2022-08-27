@@ -59,6 +59,7 @@
     c))
 
 (def app-config {:amble/app {
+                             :app-atom app-atom
                              :main-menu (ig/ref :amble/main-menu)
                              :board (ig/ref :amble/board)}
 

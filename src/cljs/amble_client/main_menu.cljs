@@ -2,9 +2,11 @@
   (:require [integrant.core :as ig]
             [cljs.core.async :as async]
             [goog.string :refer [unescapeEntities]]
-            ["react-transition-group" :refer [TransitionGroup CSSTransition]]
             [cljsjs.react])
   (:require-macros [cljs.core.async :refer [go, go-loop]]))
+
+(def app-atom-chan (async/chan))
+(def app-orientation-chan (async/chan))
 
 (def board ::board)
 (def moves ::moves)
@@ -62,10 +64,7 @@
             (for [[i, menu-item]
                   (map-indexed vector menu-items)
                   :let [item-name (str (name menu-item)
-                                       "-highlight-item")
-                        is-selected?
-                        (get-in (deref app-atom)
-                                [:main-menu menu-item])]]
+                                       "-highlight-item")]]
 
               (if (zero? i)
                 ^{:key (name menu-item)}
@@ -84,27 +83,27 @@
 
 (defn main-menu [app-atom]
   (fn []
+    (async/put! app-orientation-chan (get-in (deref app-atom) [:app :orientation]))
     [:div {:id "main-menu"}
      [highlight-container app-atom]
-     [:div {:id "menu-items-container"}
+     [:div {:id "menu-items-container" :data-mode (name (get-in (deref app-atom) [:app :orientation]))}
       (for [menu-item menu-items]
         ^{:key (name menu-item)}
         [:<>
          (content menu-item, app-atom)])]]))
 
 
-(defn portrait-mode? []
-  (not (= -1
-          (.indexOf (.-type (.-orientation js/screen))
-                    "ortrait"))))
+(defn portrait-mode? [app-atom]
+  (= :portrait (get-in (deref app-atom)
+                       [:app :orientation])))
 
-(defn offset [menu-item]
-  (if (portrait-mode?)
+(defn offset [app-atom, menu-item]
+  (if (portrait-mode? app-atom)
     (.-offsetLeft (highlight-item menu-item))
     (.-offsetTop (highlight-item menu-item))))
 
-(defn update-styles! []
-  (let [offsets (map offset menu-items) 
+(defn update-styles! [app-atom]
+  (let [offsets (map (partial offset app-atom) menu-items) 
         offsets-with-menu-items (map vector offsets menu-items)
         stylesheet (aget (.-styleSheets js/document)
                          0)]
@@ -118,7 +117,7 @@
                        (selected-class-name menu-item)
                       ;;  " { top: "
                        " { "
-                       (if (portrait-mode?)
+                       (if (portrait-mode? app-atom)
                          "left"
                          "top")
                        ": "
@@ -127,13 +126,21 @@
         (do
           (println (str "Setting new style rule, " s))                      
           (.insertRule stylesheet s 0))))))
+                             
+
+(go-loop [app-atom (async/<! app-atom-chan)
+          orientation-prior nil]
+  (let [o (async/<! app-orientation-chan)
+        _ (println (str "wut, " o))]    
+    (if (= o orientation-prior)
+      (recur app-atom o)
+      (do (update-styles! app-atom)
+          (recur app-atom o)))))
 
 (defmethod ig/init-key :amble/main-menu [_ {:keys [app-atom, app-ready-chan]}]
-  (go
-    (async/<! app-ready-chan)
-    (update-styles!))
+  (async/put! app-atom-chan app-atom)
   (swap! app-atom assoc-in [:main-menu :menu-item-selected] board)
-  (reset! menu-item-selected-atom board)
+  (cljs.core/reset! menu-item-selected-atom board)
   (main-menu app-atom))
 
 
