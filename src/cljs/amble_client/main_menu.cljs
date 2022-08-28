@@ -1,13 +1,13 @@
 (ns amble-client.main-menu
   (:require [integrant.core :as ig]
             [cljs.core.async :as async]
+            [goog.string :as gstring :refer [unescapeEntities]]
+            [goog.string.format]
             [clojure.string]
-            [goog.string :refer [unescapeEntities]]
             [cljsjs.react])
   (:require-macros [cljs.core.async :refer [go, go-loop]]))
 
-;; (def app-atom-chan (async/chan))
-;; (def app-orientation-chan (async/chan))
+(def app-orientation-chan (async/chan 1 (dedupe)))
 
 (def board ::board)
 (def moves ::moves)
@@ -16,8 +16,6 @@
 (def menu-items [board, moves, settings])
 
 (def menu-item-selected-atom (atom nil))
-
-(def app-orientation-atom (atom nil))
 
 (defmulti content (fn [menu-item, _]
                     menu-item))
@@ -123,11 +121,8 @@
 
 (defn main-menu [app-atom]
   (fn []
-    ;; (async/put! app-orientation-chan (get-in (deref app-atom) [:app :orientation]))
-    (println "resetting thing")
-    ;; (println (str (deref app-atom)))
-    (println (get-in (deref app-atom) [:app :orientation])) 
-    (cljs.core/reset! app-orientation-atom (get-in (deref app-atom) [:app :orientation]))
+    (async/put! app-orientation-chan
+                (get-in (deref app-atom) [:app :orientation]))
     [:div {:id "main-menu"}
      [highlight-container app-atom]
      [:div {:id "menu-items-container" :data-mode (name (get-in (deref app-atom) [:app :orientation]))}
@@ -141,6 +136,8 @@
   (let [offsets (offsets app-atom)]
     (when-not (empty? offsets)
        (let [
+             orientation (get-in (deref app-atom)
+                                 [:app :orientation])
              offsets-with-menu-items (map vector offsets menu-items)
              stylesheet (aget (.-styleSheets js/document)
                               0)]
@@ -150,25 +147,21 @@
         (doall
           (for [[offset, menu-item] offsets-with-menu-items
                 :let [s
-                      (str "body #amble #main-menu #highlight-container .highlight-item."
-                           (selected-class-name menu-item)
-                          ;;  " { top: "
-                           " { "
-                           (if (portrait-mode? app-atom)
-                             "left"
-                             "top")
-                           ": "
-                           offset
-                           "px;}")]] 
+                      ;; (gstring/format "body #amble #main-menu #highlight-container .highlight-item.%s { @media (orientation: %s) { %s: %spx;}}")
+                      ;; (gstring/format "body #amble #main-menu #highlight-container .highlight-item.%s { %s: %spx;}")
+                      (gstring/format "@media (orientation: %s) {body #amble #main-menu #highlight-container .highlight-item.%s { %s: %spx;}"
+                        (name orientation)
+                        (selected-class-name menu-item)
+                        (orientation {:portrait "left", :landscape "top"}) 
+                        offset)]]
             (do
               (println (str "Setting new style rule, " s))                      
-              (try
-                (.deleteRule stylesheet 0)
-                (catch js/Object e
-                  (do (println "Problem with managing styles dynamically.")
-                      (println e))))
+              ;; (try
+              ;;   (.deleteRule stylesheet 0)
+              ;;   (catch js/Object e
+              ;;     (do (println "Problem with managing styles dynamically.")
+              ;;         (println e))))
               (.insertRule stylesheet s 0))))))))
-
 
 ;; (go-loop [app-atom (async/<! app-atom-chan)
 ;;           orientation-prior nil]
@@ -179,21 +172,17 @@
 ;;       (do (update-styles! app-atom)
 ;;           (recur app-atom o)))))
 
+
 (defmethod ig/init-key :amble/main-menu [_ {:keys [app-atom, app-ready-chan]}]
   ;; (async/put! app-atom-chan app-atom)
   (swap! app-atom assoc-in [:main-menu :menu-item-selected] board)
   (cljs.core/reset! menu-item-selected-atom board)
-  (add-watch app-orientation-atom nil (fn [_, _, orientation-prior, orientation-now]
-                                        (println [orientation-prior, orientation-now])
-                                        (if (= orientation-now, orientation-prior)
-                                          (println "Orientation change is ignored, no real change occurred.")
-                                          (update-styles! app-atom))))
   (async/go
     (async/<! app-ready-chan)
-    (cljs.core/reset! app-orientation-atom nil) 
-    (cljs.core/reset! app-orientation-atom (get-in (deref app-atom)
-                                                   [:app :orientation])))
-
+    (async/<! app-orientation-chan)
+    (update-styles! app-atom)
+    (async/<! app-orientation-chan)
+    (update-styles! app-atom))
   (main-menu app-atom))
 
 
