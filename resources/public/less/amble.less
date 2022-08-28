@@ -15,6 +15,9 @@
 @highlight-width: 5em;
 @menu-font-size: 1.3em;
 
+@board-width: 140vw;
+@board-height-landscape: 120vh;
+
 html,
 body {
   overflow-x: hidden;
@@ -25,14 +28,17 @@ body {
 }
 
 svg {
-  // width: 220vw;
-  // height: 220vw;
-  transform: scale(1.5);
+
+  @media (orientation: portrait) {
+    min-width: @board-width;
+    width: @board-width;
+    height: auto;
+  }
+  
   @media (orientation: landscape) {
-    // transform: scale(0.667);
-    // position: relative;
-    // top: 2em;
-    transform: scale(1/2);
+    width: auto;
+    height: @board-height-landscape;
+    min-height: @board-height-landscape;
   }
 }
 

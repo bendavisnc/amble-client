@@ -6,12 +6,18 @@ body {
 body {
   position: relative;
 }
-svg {
-  transform: scale(1.5);
+@media (orientation: portrait) {
+  svg {
+    min-width: 140vw;
+    width: 140vw;
+    height: auto;
+  }
 }
 @media (orientation: landscape) {
   svg {
-    transform: scale(0.5);
+    width: auto;
+    height: 120vh;
+    min-height: 120vh;
   }
 }
 html #amble,

@@ -9,14 +9,16 @@
     
 - incorporate external style system
 
-- avoid remote moves from self
+- avoid remote moves from self ✅
 
-- remove subscribers correctly
+- remove subscribers correctly ✅
 
-- add remote relay animation
+- add remote relay animation ✅
 
 - add move list
 
 - make public
 
 - clean up environment vars
+
+- zoom tool
