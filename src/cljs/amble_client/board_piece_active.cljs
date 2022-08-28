@@ -8,21 +8,18 @@
 (def move-xy-chan (async/chan))
 (def board-piece-closest-chan (async/chan))
 
-
-
 (defn set-active! [app-atom, board-piece, is-active?]
   (swap! app-atom assoc-in [:board-pieces (:index board-piece)] (assoc board-piece :is-active? is-active?)))
 
 (defn activate! [app-atom, board-piece]
-  (set-active! app-atom board-piece true)) 
+  (set-active! app-atom board-piece true))
 
 (defn deactivate! [app-atom, board-piece]
-  (set-active! app-atom board-piece false)) 
+  (set-active! app-atom board-piece false))
 
 (go-loop [app-atom (async/<! app-atom-chan)
           board-piece-closest (async/<! board-piece-closest-chan)]
-  (let [
-        {:keys [x,y]} (async/<! move-xy-chan)
+  (let [{:keys [x,y]} (async/<! move-xy-chan)
         board-piece (board-piece-closest x, y)]
     (when-let [board-piece-active-last
                (first (filter :is-active?
@@ -30,7 +27,7 @@
       (deactivate! app-atom board-piece-active-last))
 
     (activate! app-atom board-piece)
-    (recur app-atom, board-piece-closest)))   
+    (recur app-atom, board-piece-closest)))
 
 (defmethod ig/init-key :amble/board-piece-active [_ {:keys [app-atom, board-piece-closest, move-xy-chan, app-ready-chan]}]
   (async/pipe move-xy-chan amble-client.board-piece-active/move-xy-chan)

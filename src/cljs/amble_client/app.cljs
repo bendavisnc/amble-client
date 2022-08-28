@@ -6,8 +6,8 @@
 (defn app [board, main-menu]
   (fn []
     [:div {:id app-id}
-      [main-menu]
-      [board]]))
+     [main-menu]
+     [board]]))
 
 (defn portrait-mode? []
   (not (= -1
@@ -23,16 +23,15 @@
   ;;                    (fn [_]
   ;;                      (println "neattttt?")
   ;;                      (swap! app-atom assoc-in [:app :orientation] (orientation))))
- 
+
   ;;  https://stackoverflow.com/questions/5498934/detect-change-in-orientation-using-javascript
   (.addListener (.matchMedia js/window
                              "(orientation: portrait)")
                 (fn [m]
-                  (swap! app-atom 
-                         assoc-in 
+                  (swap! app-atom
+                         assoc-in
                          [:app :orientation]
                          (if (.-matches m) :portrait :landscape))))
-                                     
 
   (swap! app-atom assoc-in [:app :orientation] (orientation))
   (app board, main-menu))
@@ -44,6 +43,6 @@
 ;;                                                // portrait}
 ;;                                else {
 ;;                                      // landscape}})
-        
+
 ;;     ;
 

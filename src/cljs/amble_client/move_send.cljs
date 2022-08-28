@@ -14,8 +14,8 @@
                         (name (:player-id move-to-send))
                         (:player-piece-index move-to-send)
                         (:move move-to-send)
-                        (:x move-to-send) 
-                        (:y move-to-send) 
+                        (:x move-to-send)
+                        (:y move-to-send)
                         (:client-id move-to-send)))
 
   (recur move-resource-add!))

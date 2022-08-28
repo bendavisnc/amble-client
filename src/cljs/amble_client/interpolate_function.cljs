@@ -13,18 +13,17 @@
 (def line-points-chan (async/chan))
 
 (defn loop-animation [f, x1, y1, x2, y2]
-  (let [wait-time-amount 
+  (let [wait-time-amount
         (.floor js/Math
-                (/ (* 1.0 time-duration)  
+                (/ (* 1.0 time-duration)
                    interpolation-discreet-count))]
         ;; _ (println wait-time-amount)]
-    (letfn [
-            (recursive-call [index]
-              (if (< interpolation-discreet-count 
+    (letfn [(recursive-call [index]
+              (if (< interpolation-discreet-count
                      index)
                 (println (str "Finished animation, time," (new js/Date) "."))
-                (let [i (/ index 
-                           (* 1.0 
+                (let [i (/ index
+                           (* 1.0
                               interpolation-discreet-count))
                       xi (+ x1
                             (* i
@@ -37,7 +36,7 @@
                   (js/setTimeout (fn []
                                    (recursive-call (inc index)))
                                  wait-time-amount))))]
-                                 
+
       (recursive-call 0))))
 
 (defn interpolate-function [f & {:keys [x1, y1, x2, y2]}]

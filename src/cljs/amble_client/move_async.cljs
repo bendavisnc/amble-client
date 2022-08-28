@@ -9,18 +9,16 @@
 (def app-atom-chan (async/chan))
 (def latest-move-index-chan (async/chan))
 
-
 (defn websockets-url [game-id]
   (str "ws://" (environment :host :amble) ":" (environment :port :amble) "/move/" "async/" "?game-id=" game-id))
 
-(go-loop [
-          game-id (:game-id (deref (async/<! app-atom-chan)))
+(go-loop [game-id (:game-id (deref (async/<! app-atom-chan)))
           websockets-connection-chan (haslett-client/connect (websockets-url game-id))
           move-source-chan (:source (async/<! websockets-connection-chan))]
-  (assert (not (nil? game-id)) 
+  (assert (not (nil? game-id))
           "game-id is nil.")
   (let [move-from-server (async/<! move-source-chan)]
-    (assert (not (nil? move-from-server)) 
+    (assert (not (nil? move-from-server))
             "Move from server is nil.")
     (println (str "Received new move from server, " move-from-server "."))
     (async/>! latest-move-index-chan move-from-server))

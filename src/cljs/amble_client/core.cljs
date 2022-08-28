@@ -35,7 +35,7 @@
 (def move-remote-chan-multicast (async/mult move-remote-chan))
 (def move-xy-chan (async/chan))
 (def move-xy-chan-multicast (async/mult move-xy-chan))
-(def latest-move-index-chan (async/chan)) 
+(def latest-move-index-chan (async/chan))
 
 (defn move-local-chan-dup []
   (let [c (async/chan)]
@@ -52,14 +52,12 @@
     (async/tap move-xy-chan-multicast c)
     c))
 
-
 (defn app-ready-chan-dup []
   (let [c (async/chan)]
     (async/tap app-ready-chan-multicast c)
     c))
 
-(def app-config {:amble/app {
-                             :app-atom app-atom
+(def app-config {:amble/app {:app-atom app-atom
                              :main-menu (ig/ref :amble/main-menu)
                              :board (ig/ref :amble/board)}
 
@@ -76,7 +74,7 @@
                  :amble/game-play {:move-local-chan move-local-chan
                                    :move-xy-chan move-xy-chan
                                    :board-piece-closest (ig/ref :amble/board-piece-closest)}
-                 :amble/move-send {:move-local-chan (move-local-chan-dup) 
+                 :amble/move-send {:move-local-chan (move-local-chan-dup)
                                    :move-resource-add! move-resource/add!}
                  :amble/move-receive {:move-resource-get! move-resource/get!
                                       :latest-move-index-chan latest-move-index-chan
@@ -85,30 +83,23 @@
                  :amble/move-async {:latest-move-index-chan latest-move-index-chan
                                     :app-atom app-atom
                                     :app-ready-chan (app-ready-chan-dup)}
-                 :amble/move-local {
-                                    :app-atom app-atom
+                 :amble/move-local {:app-atom app-atom
                                     :move-local-chan (move-local-chan-dup)
                                     :app-ready-chan (app-ready-chan-dup)}
-                 :amble/move-remote {
-                                     :app-atom app-atom
+                 :amble/move-remote {:app-atom app-atom
                                      :app-ready-chan (app-ready-chan-dup)
                                      :move-remote-chan (move-remote-chan-dup)
                                      :move-record-check (ig/ref :amble/move-record-check)}
-                 :amble/move-record-check {
-                                           :move-local-chan (move-local-chan-dup)}
+                 :amble/move-record-check {:move-local-chan (move-local-chan-dup)}
 
-                 :amble/board-piece-closest {
-                                             :app-atom app-atom
+                 :amble/board-piece-closest {:app-atom app-atom
                                              :app-ready-chan (app-ready-chan-dup)}
-                 :amble/board-piece-active {
-                                            :app-atom app-atom
+                 :amble/board-piece-active {:app-atom app-atom
                                             :move-xy-chan (move-xy-chan-dup)
                                             :board-piece-closest (ig/ref :amble/board-piece-closest)
                                             :app-ready-chan (app-ready-chan-dup)}})
 
-
-
-                ;;  :amble/app-atom app-atom
+;;  :amble/app-atom app-atom
                 ;;  :amble/user-feedback-handler user-feedback-handler/handle-ui-event
 
 (defn mount-root []
@@ -131,7 +122,7 @@
   ;; Set up board pieces from server game state.
   (go
     (let [game-response (let [game-id-from-window (utils/game-id-from-window)
-                              game-response-first-attempt (async/<! (game-resource/get! game-id-from-window))] 
+                              game-response-first-attempt (async/<! (game-resource/get! game-id-from-window))]
                           (if (:game-id game-response-first-attempt)
                             (do
                               (println (str "Using game id provided from browser address, \"" game-id-from-window))
@@ -159,7 +150,6 @@
                                                   :is-active? false})))
       (swap! app-atom assoc :player-pieces player-pieces)
       (mount-root))))
-
 
 (defn post-game! []
   (async/take! (game-resource/create!)

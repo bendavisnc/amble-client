@@ -5,7 +5,6 @@
             [amble-client.utils :as utils])
   (:require-macros [cljs.core.async :refer [go, go-loop]]))
 
-
 ;; channels, input
 (def piece-grab-chan (async/chan))
 (def piece-release-chan (async/chan))
@@ -29,7 +28,7 @@
 (defn- element-to-piece-index [element]
   (js/parseInt (.getAttribute element
                               "data-player-piece-index")))
- 
+
 (defn handle-ui-event [e]
   (cond (= "mousedown"
            (.-type e))
@@ -53,11 +52,11 @@
         (do
           (println "User event not handled!")
           (.log js/console e))))
-  
+
 (def event-to-coord-cached
   (memoize (fn []
              (utils/coord-conv
-               (.getElementById js/document "board")))))
+              (.getElementById js/document "board")))))
 ;; A go loop for turning mouse dragging behavior into move events.
 ;; Invokes out to the chans that are provided as dependencies.
 (go-loop [board-piece-closest (async/<! board-piece-closest-chan)]
@@ -69,14 +68,14 @@
         event-to-coord (event-to-coord-cached)
         _ (async/poll! piece-move-chan)]
     (loop [moves []]
-      (async/alt! piece-release-chan 
-                  ([_] 
+      (async/alt! piece-release-chan
+                  ([_]
                    (let [_ (println "Local move complete!")
                          [last-x, last-y] (last moves)
                          {:keys [x, y]} (board-piece-closest last-x, last-y)
                          client-id (str (.now js/Date))]
-                     (async/>! move-local-chan {:game-id game-id 
-                                                :player-id player-id 
+                     (async/>! move-local-chan {:game-id game-id
+                                                :player-id player-id
                                                 :player-piece-index player-piece-index
                                                 :move moves
                                                 :client-id client-id
@@ -84,11 +83,11 @@
                                                 :y y
                                                 :origin :local})))
 
-                  piece-move-chan 
-                  ([move] 
+                  piece-move-chan
+                  ([move]
                    (let [[x, y] (event-to-coord
-                                 move)]              
-                     (async/>! move-xy-chan {:player-id player-id 
+                                 move)]
+                     (async/>! move-xy-chan {:player-id player-id
                                              :player-piece-index player-piece-index
                                              :x x
                                              :y y})
@@ -100,6 +99,6 @@
   (async/pipe amble-client.game-play/move-local-chan move-local-chan)
   (async/pipe  amble-client.game-play/move-xy-chan move-xy-chan)
   (async/put! board-piece-closest-chan board-piece-closest)
-  {:handle-ui-event handle-ui-event}) 
+  {:handle-ui-event handle-ui-event})
 
 

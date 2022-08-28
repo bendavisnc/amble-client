@@ -62,8 +62,6 @@
     (let [items (:items @app-state)]
       (swap! app-state assoc :items (vec (butlast items))))))
 
-
-
 (defn home-builder [app-state]
   (fn []
     [:div
@@ -72,19 +70,18 @@
      [:button {:on-click (delete-item-builder app-state)} "delete"]
      [:style style]
      [:> TransitionGroup {:component "ul"}
-       (for [[i, x] 
-             (map-indexed vector (:items @app-state))]
-         [:> CSSTransition
-           {:key i 
-            :class-names "foo"
-            :timeout 500}
-           [:li (str "List Item " x)]])]]))
+      (for [[i, x]
+            (map-indexed vector (:items @app-state))]
+        [:> CSSTransition
+         {:key i
+          :class-names "foo"
+          :timeout 500}
+         [:li (str "List Item " x)]])]]))
 
 ;; (defn home-builder [app-state]
 ;;   (fn []
 ;;     [:div
 ;;      [:div (str "Total list items to date:  " "7")]]))
-
 
 (defmethod ig/init-key :amble/example [_ {:keys [app-atom]}]
   (try (do
@@ -92,9 +89,9 @@
          (swap! app-atom assoc :items-counter 0)
          (home-builder app-atom))
        (catch js/Object e
-         (do 
+         (do
            (.log js/console "welllp")
-           (println e))))) 
-      
+           (println e)))))
+
 
 

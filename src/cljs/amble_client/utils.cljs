@@ -16,7 +16,6 @@
       (throw (new js/Error "No game id found in browser url.")))
     game-id))
 
-
 ;https://stackoverflow.com/questions/29261304/how-to-get-the-click-coordinates-relative-to-svg-element-holding-the-onclick-lis
 
 ;var pt = svg.createSVGPoint();  // Created once for document

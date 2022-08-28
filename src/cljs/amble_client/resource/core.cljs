@@ -23,11 +23,6 @@
                                                     ;; (assoc-in [:request, :headers :mode] ;; Don't be bothered by cors for now.
                                                               ;; "no-cors")))})
 
-
-
-
-
-
 (defn api-chan* []
   (let [c (casync/chan)]
     (go

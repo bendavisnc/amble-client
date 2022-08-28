@@ -8,7 +8,7 @@
 
 (def client-ids (atom {}))
 
-(defn move-record-check 
+(defn move-record-check
   "Returns if this move is recorded as made, according to the list of client ids."
   [client-id]
   ((deref client-ids)
@@ -19,7 +19,6 @@
     (println (str "Recording new move, " (:client-id move) "."))
     (swap! client-ids assoc (:client-id move) true))
   (recur))
-
 
 (defmethod ig/init-key :amble/move-record-check [_ {:keys [move-local-chan]}]
   (async/pipe move-local-chan amble-client.move-record-check/move-chan)

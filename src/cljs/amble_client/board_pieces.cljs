@@ -20,14 +20,12 @@
   (fn []
     (let [pieces (:board-pieces @app-atom)]
       [:<>
-        (for [{:keys [x, y, is-active?, index]} pieces]
+       (for [{:keys [x, y, is-active?, index]} pieces]
          (piece :x x
                 :y y
                 :size piece-size
-                :id (str classname "-" index) ` 
-                :class (str classname 
-                            (if is-active? " active" ""))))]))) 
-
+                :id (str classname "-" index) `:class (str classname
+                                                           (if is-active? " active" ""))))])))
 
 (defmethod ig/init-key :amble/board-pieces [_, {:keys [app-atom]}]
   (board-pieces app-atom))

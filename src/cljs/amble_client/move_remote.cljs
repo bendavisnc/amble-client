@@ -27,7 +27,6 @@
       ;; (println move)
     (recur app-atom, move-record-check)))
 
-
 (defmethod ig/init-key :amble/move-remote [_ {:keys [app-atom, app-ready-chan, move-remote-chan, move-record-check]}]
   (async/pipe move-remote-chan amble-client.move-remote/move-chan)
   (async/put! move-record-check-chan move-record-check)

@@ -29,32 +29,30 @@
             :data-player-id player-id
             :data-player-piece-index index
             :class class
-            :on-mouse-down (fn [e] 
+            :on-mouse-down (fn [e]
                              (.persist e)
                              (.preventDefault e)
-                             (user-feedback-handler e)) 
-            :on-mouse-up (fn [e] 
+                             (user-feedback-handler e))
+            :on-mouse-up (fn [e]
                            (.persist e)
                            (.preventDefault e)
-                           (user-feedback-handler e)) 
-            :on-touch-start (fn [e] 
+                           (user-feedback-handler e))
+            :on-touch-start (fn [e]
                               (.persist e)
                               (.preventDefault e)
-                              (user-feedback-handler e)) 
-            :on-touch-end (fn [e] 
+                              (user-feedback-handler e))
+            :on-touch-end (fn [e]
                             (.persist e)
                             (.preventDefault e)
-                            (user-feedback-handler e)) 
-            :on-touch-move (fn [e] 
+                            (user-feedback-handler e))
+            :on-touch-move (fn [e]
                              (.persist e)
                              (.preventDefault e)
-                             (user-feedback-handler e))}]) 
-
+                             (user-feedback-handler e))}])
 
 (defn- player-pieces [app-atom, game-play]
   (fn []
-    (let [
-          game-id (:game-id @app-atom)
+    (let [game-id (:game-id @app-atom)
           player-pieces (:player-pieces @app-atom)]
       [:<>
        (for [player-id (keys player-pieces)
@@ -71,7 +69,7 @@
                    :index i
                    :game-id game-id
                    :player-id player-id
-                   :unique-key unique-key 
+                   :unique-key unique-key
                    :user-feedback-handler (:handle-ui-event game-play)))])])))
 
 ;; Pulls from xy moves and updates position state from the app atom.
