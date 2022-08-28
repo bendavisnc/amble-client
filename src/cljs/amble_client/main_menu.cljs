@@ -18,45 +18,30 @@
 
 (def menu-item-selected-atom (atom nil))
 
-(defmulti content (fn [menu-item, _]
-                    menu-item))
-
-(defmulti selected-class-name identity)
-
-(defmethod selected-class-name board [_]
-  "first-selected")
-
-(defmethod selected-class-name moves [_]
-  "second-selected")
-
-(defmethod selected-class-name settings [_]
-  "third-selected")
-
-(defmethod selected-class-name :default [menu-item-unknown]
-  "")
+(defn selected-class-name [menu-item]
+  (menu-item {board "first-selected", moves "second-selected", settings "third-selected"}))
 
 (defn highlight-item [menu-item]
-  (let [hi
-        (.getElementById js/document (str (name menu-item)
-                                          "-highlight-item"))]
-    ;; (assert (not (nil? hi))
-    ;;         (str "Couldn't find highlight-item in dom for menu-item, " menu-item "."))
-    hi))
+  (if-let [item
+           (.getElementById js/document (str (name menu-item)
+                                             "-highlight-item"))]
+    item
+    (println (str "Couldn't find highlight-item in dom for menu-item, " menu-item "."))))
 
 (defn set-selected! [app-atom, menu-item]
   (swap! app-atom assoc-in [:main-menu :menu-item-selected]
          menu-item))
 
-(defmethod content :default [thiz, app-atom]
+(defn content [menu-item, app-atom]
   [:div {:class (str "menu-item "
-                     (name thiz))
+                     (name menu-item))
          :on-click (fn [_]
-                     (cljs.core/reset! menu-item-selected-atom thiz)
-                     (set-selected! app-atom, thiz))
-         :on-mouse-enter (fn [_] (set-selected! app-atom, thiz))
+                     (cljs.core/reset! menu-item-selected-atom menu-item)
+                     (set-selected! app-atom, menu-item))
+         :on-mouse-enter (fn [_] (set-selected! app-atom, menu-item))
          :on-mouse-leave (fn [_] (set-selected! app-atom (deref menu-item-selected-atom)))}
 
-   (name thiz)])
+   (name menu-item)])
 
 (defn portrait-mode? [app-atom]
   (= :portrait (get-in (deref app-atom)

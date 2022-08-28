@@ -103,16 +103,8 @@
                 ;;  :amble/user-feedback-handler user-feedback-handler/handle-ui-event
 
 (defn mount-root []
-  ;; (println "Invoking reagent/react.")
   (let [app-config-initialized (ig/init app-config)
-        _ (.log js/console app-config-initialized)
-        _ (println app-config-initialized)]
-    ;; (.addEventListener (.-body js/document)
-    ;;                    "touchstart"       
-    ;;                    (fn [e] (.-preventDefault e))) 
-    ;; (.addEventListener (.-body js/document)
-    ;;                    "touchmove"       
-    ;;                    (fn [e] (.-preventDefault e))) 
+        _ (.log js/console app-config-initialized)]
     (reagent-dom/render [(:amble/app app-config-initialized)]
                         (.getElementById js/document "app")
                         (fn []

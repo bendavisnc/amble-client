@@ -59,6 +59,7 @@
               (.getElementById js/document "board")))))
 ;; A go loop for turning mouse dragging behavior into move events.
 ;; Invokes out to the chans that are provided as dependencies.
+
 (go-loop [board-piece-closest (async/<! board-piece-closest-chan)]
   (println "Waiting for game play.")
   (let [piece-grab-event (async/<! piece-grab-chan)
