@@ -3,11 +3,10 @@
 
 (def app-id "amble")
 
-(defn app [app-atom, board, main-menu]
+(defn app [board, main-menu]
   (fn []
     [:div {:id app-id}
-      [main-menu (get-in (deref app-atom)
-                         [:app, :orientation])]
+      [main-menu]
       [board]]))
 
 (defn portrait-mode? []
@@ -25,13 +24,18 @@
   ;;                      (println "neattttt?")
   ;;                      (swap! app-atom assoc-in [:app :orientation] (orientation))))
  
+  ;;  https://stackoverflow.com/questions/5498934/detect-change-in-orientation-using-javascript
   (.addListener (.matchMedia js/window
                              "(orientation: portrait)")
-                (fn [_]
-                  (swap! app-atom assoc-in [:app :orientation] (orientation))))
+                (fn [m]
+                  (swap! app-atom 
+                         assoc-in 
+                         [:app :orientation]
+                         (if (.-matches m) :portrait :landscape))))
+                                     
 
   (swap! app-atom assoc-in [:app :orientation] (orientation))
-  (app app-atom, board, main-menu))
+  (app board, main-menu))
 
 ;; window
 ;; .matchMedia('(orientation: portrait)')
