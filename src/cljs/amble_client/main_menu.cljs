@@ -75,29 +75,8 @@
               []))
           menu-items))
             
-
-;; (defn highlight-container-style [app-atom]
-;;   (let [offsets (offsets app-atom)]
-;;     (if (empty? offsets)
-;;       ""
-;;       (let [
-;;             offsets-with-menu-items (map vector offsets menu-items)]
-;;         (clojure.string/join "\n"
-;;                              (for [[offset, menu-item] offsets-with-menu-items]
-;;                               ;;  (str "body #amble #main-menu #highlight-container .highlight-item.")
-;;                                (str ".highlight-item."
-;;                                     (selected-class-name menu-item)
-;;                                     " { "
-;;                                     (if (portrait-mode? app-atom)
-;;                                       "left"
-;;                                       "top")
-;;                                     ": "
-;;                                     offset
-;;                                     "px;}")))))))
-
 (defn highlight-container [app-atom]
   [:div {:id "highlight-container"}
-        ;;  "STYLE" (highlight-container-style app-atom)}
    [:<>
     (doall
      (for [[i, menu-item]
@@ -134,49 +113,34 @@
 
 (defn update-styles! [app-atom]
   (let [offsets (offsets app-atom)]
-    (when-not (empty? offsets)
-       (let [
-             orientation (get-in (deref app-atom)
-                                 [:app :orientation])
-             offsets-with-menu-items (map vector offsets menu-items)
-             stylesheet (aget (.-styleSheets js/document)
-                              0)]
-         (println (str "Setting up css rules for main menu based off of offset values, \"" 
-                         offsets
-                         "\", that come from the css flex declarations."))
-        (doall
-          (for [[offset, menu-item] offsets-with-menu-items
-                :let [s
-                      ;; (gstring/format "body #amble #main-menu #highlight-container .highlight-item.%s { @media (orientation: %s) { %s: %spx;}}")
-                      ;; (gstring/format "body #amble #main-menu #highlight-container .highlight-item.%s { %s: %spx;}")
-                      (gstring/format "@media (orientation: %s) {body #amble #main-menu #highlight-container .highlight-item.%s { %s: %spx;}"
-                        (name orientation)
-                        (selected-class-name menu-item)
-                        (orientation {:portrait "left", :landscape "top"}) 
-                        offset)]]
-            (do
-              (println (str "Setting new style rule, " s))                      
-              ;; (try
-              ;;   (.deleteRule stylesheet 0)
-              ;;   (catch js/Object e
-              ;;     (do (println "Problem with managing styles dynamically.")
-              ;;         (println e))))
-              (.insertRule stylesheet s 0))))))))
-
-;; (go-loop [app-atom (async/<! app-atom-chan)
-;;           orientation-prior nil]
-;;   (let [o (async/<! app-orientation-chan)
-;;         _ (println (str "wut, " o))]    
-;;     (if (= o orientation-prior)
-;;       (recur app-atom o)
-;;       (do (update-styles! app-atom)
-;;           (recur app-atom o)))))
+    (if (empty? offsets)
+      (throw (new js/Error "`offsets` was passed as empty for updating style info."))
+      (let [
+            orientation (get-in (deref app-atom)
+                                [:app :orientation])
+            offsets-with-menu-items (map vector offsets menu-items)
+            stylesheet (aget (.-styleSheets js/document)
+                             0)]
+        (println (str "Setting up css rules for main menu based off of offset values, \"" 
+                        offsets
+                        "\", that come from the css flex declarations."))
+       (doall
+         (for [[offset, menu-item] offsets-with-menu-items
+               :let [s
+                     (gstring/format "@media (orientation: %s) {body #amble #main-menu #highlight-container .highlight-item.%s { %s: %spx;}"
+                       (name orientation)
+                       (selected-class-name menu-item)
+                       (orientation {:portrait "left", :landscape "top"}) 
+                       offset)]]
+           (do
+             (println (str "Setting new style rule, " s))                      
+             (.insertRule stylesheet s 0))))))))
 
 
 (defmethod ig/init-key :amble/main-menu [_ {:keys [app-atom, app-ready-chan]}]
-  ;; (async/put! app-atom-chan app-atom)
   (swap! app-atom assoc-in [:main-menu :menu-item-selected] board)
   (cljs.core/reset! menu-item-selected-atom board)
+  ;; `update-styles!` is called once per orientation change.
   (async/go
     (async/<! app-ready-chan)
     (async/<! app-orientation-chan)
