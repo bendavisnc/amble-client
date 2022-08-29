@@ -3,11 +3,14 @@
 
 (def app-id "amble")
 
-(defn app [board, main-menu]
+(defn app [app-atom, main-menu, board, moves, settings]
   (fn []
-    [:div {:id app-id}
-     [main-menu]
-     [board]]))
+    (let [menu-item-selected (get-in (deref app-atom)
+                                     [:main-menu :menu-item-selected])
+          content-selected (menu-item-selected {:board board, :moves moves, :settings settings})]
+      [:div {:id app-id}
+        [main-menu]
+        [content-selected]])))
 
 (defn portrait-mode? []
   (not (= -1
@@ -17,14 +20,8 @@
 (defn orientation []
   (if (portrait-mode?) :portrait :landscape))
 
-(defmethod ig/init-key :amble/app [_ {:keys [app-atom, board, main-menu]}]
-  ;; (.addEventListener (.-orientation js/screen)
-  ;;                    "change"
-  ;;                    (fn [_]
-  ;;                      (println "neattttt?")
-  ;;                      (swap! app-atom assoc-in [:app :orientation] (orientation))))
-
-  ;;  https://stackoverflow.com/questions/5498934/detect-change-in-orientation-using-javascript
+(defmethod ig/init-key :amble/app [_ {:keys [app-atom, main-menu, board, moves, settings]}]
+  ;; Make the app responsive by listening to the following and making global state reflect the change.
   (.addListener (.matchMedia js/window
                              "(orientation: portrait)")
                 (fn [m]
@@ -34,7 +31,7 @@
                          (if (.-matches m) :portrait :landscape))))
 
   (swap! app-atom assoc-in [:app :orientation] (orientation))
-  (app board, main-menu))
+  (app app-atom, main-menu, board, moves, settings))
 
 ;; window
 ;; .matchMedia('(orientation: portrait)')

@@ -5,6 +5,8 @@
             [reagent.ratom :as reagent-ratom]
             [amble-client.board-pieces]
             [amble-client.board :as amble-board]
+            [amble-client.moves]
+            [amble-client.settings]
             [amble-client.main-menu :as main-menu]
             [amble-client.board-piece-closest]
             [amble-client.board-piece-active]
@@ -59,11 +61,16 @@
 
 (def app-config {:amble/app {:app-atom app-atom
                              :main-menu (ig/ref :amble/main-menu)
-                             :board (ig/ref :amble/board)}
+                             :board (ig/ref :amble/board)
+                             :moves (ig/ref :amble/moves)
+                             :settings (ig/ref :amble/settings)}
 
                  :amble/board {:board-pieces (ig/ref :amble/board-pieces)
                                :player-pieces (ig/ref :amble/player-pieces)
                                :game-play (ig/ref :amble/game-play)}
+
+                 :amble/moves {}
+                 :amble/settings {}
 
                  :amble/main-menu {:app-atom app-atom
                                    :app-ready-chan (app-ready-chan-dup)}

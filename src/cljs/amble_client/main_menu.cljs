@@ -10,9 +10,9 @@
 (def app-orientation-chan (async/chan (async/dropping-buffer 1) 
                                       (dedupe)))
 
-(def board ::board)
-(def moves ::moves)
-(def settings ::settings)
+(def board :board)
+(def moves :moves)
+(def settings :settings)
 
 (def menu-items [board, moves, settings])
 
