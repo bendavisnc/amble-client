@@ -98,7 +98,7 @@
 
 (defmethod ig/init-key :amble/game-play [_ {:keys [move-local-chan, move-xy-chan, board-piece-closest]}]
   (async/pipe amble-client.game-play/move-local-chan move-local-chan)
-  (async/pipe  amble-client.game-play/move-xy-chan move-xy-chan)
+  (async/pipe amble-client.game-play/move-xy-chan move-xy-chan)
   (async/put! board-piece-closest-chan board-piece-closest)
   {:handle-ui-event handle-ui-event})
 

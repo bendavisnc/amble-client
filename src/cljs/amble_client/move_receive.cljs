@@ -2,7 +2,7 @@
   "Listens to moves from server."
   (:require [integrant.core :as ig]
             [cljs.core.async :as async])
-  (:require-macros [cljs.core.async :refer [go, go-loop]]))
+  (:require-macros [cljs.core.async :refer [go-loop]]))
 
 (def latest-move-index-chan (async/chan))
 (def move-resource-get!-chan (async/chan))
@@ -17,7 +17,7 @@
         latest-move-from-server (async/<! (move-resource-get! game-id, latest-move-index))
         latest-move (assoc latest-move-from-server :origin :remote)]
     (println "Requested latest move.")
-    (assert (not (empty? (:move latest-move)))
+    (assert (seq (:move latest-move))
             (str "Received invalid move!\n  "
                  latest-move))
     (async/>! move-chan latest-move)
@@ -26,9 +26,9 @@
 (defmethod ig/init-key :amble/move-receive [_ {:keys [app-atom, move-remote-chan, move-resource-get!, latest-move-index-chan]}]
   (async/pipe latest-move-index-chan
               amble-client.move-receive/latest-move-index-chan)
-  (async/pipe  amble-client.move-receive/move-chan
-               move-remote-chan)
-  (js/setTimeout (fn [& args]
+  (async/pipe amble-client.move-receive/move-chan
+              move-remote-chan)
+  (js/setTimeout (fn [& _]
                    (async/put! app-atom-chan app-atom))
                  1000)
 

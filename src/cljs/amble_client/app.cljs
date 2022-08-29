@@ -9,8 +9,8 @@
                                      [:main-menu :menu-item-selected])
           content-selected (menu-item-selected {:board board, :moves moves, :settings settings})]
       [:div {:id app-id}
-        [main-menu]
-        [content-selected]])))
+       [main-menu]
+       [content-selected]])))
 
 (defn portrait-mode? []
   (not (= -1

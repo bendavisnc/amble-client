@@ -15,7 +15,7 @@
 (defn url-openapi []
   (str "http://" (environment :host :client) ":" (environment :port :client) "/openapi.json"))
 
-(def interceptor-coors-dont-bother-me {:name  ::interceptor-coors-dont-bother-me
+(def interceptor-coors-dont-bother-me {:name ::interceptor-coors-dont-bother-me
                                        :leave (fn [req]
                                                 (-> req
                                                     (assoc-in [:request, :with-credentials?] ;; Don't be bothered by cors for now.
@@ -41,7 +41,7 @@
 (defn response-chan [{:keys [endpoint-key, param-map]}]
   (go
     (let [api (casync/<! (api-chan))
-          _ (aset api                                       ;; I'm unsure why this can't be done with assoc.
+          _ (aset api ;; I'm unsure why this can't be done with assoc.
                   "api_root"
                   (url-ambel))
           _ (assert (martian/explore api endpoint-key)

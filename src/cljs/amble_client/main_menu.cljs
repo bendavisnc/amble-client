@@ -7,7 +7,7 @@
             [cljsjs.react])
   (:require-macros [cljs.core.async :refer [go, go-loop]]))
 
-(def app-orientation-chan (async/chan (async/dropping-buffer 1) 
+(def app-orientation-chan (async/chan (async/dropping-buffer 1)
                                       (dedupe)))
 
 (def board :board)

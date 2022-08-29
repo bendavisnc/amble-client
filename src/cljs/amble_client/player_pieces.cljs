@@ -20,11 +20,11 @@
        index))
 
 (defn- piece [& {:keys [x, y, size, class, index, game-id, player-id, unique-key, user-feedback-handler]}]
-  [:circle {:cx     x,
-            :cy     y
-            :r      size
-            :key    unique-key
-            :id     unique-key
+  [:circle {:cx x,
+            :cy y
+            :r size
+            :key unique-key
+            :id unique-key
             :data-game-id game-id
             :data-player-id player-id
             :data-player-piece-index index
