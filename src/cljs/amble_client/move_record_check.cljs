@@ -2,7 +2,7 @@
   "Keeps a record of local moves made, so they don't get replayed later, asynchronously."
   (:require [integrant.core :as ig]
             [cljs.core.async :as async])
-  (:require-macros [cljs.core.async :refer [go, go-loop]]))
+  (:require-macros [cljs.core.async :refer [go-loop]]))
 
 (def move-chan (async/chan))
 

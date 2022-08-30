@@ -1,7 +1,6 @@
 (ns amble-client.utils
   (:require
-   [clojure.string :as string]
-   [clojure.string :as s]))
+   [clojure.string :as string]))
 
 (defn game-id-from-window
   "Returns the game id from the browser window."
@@ -39,28 +38,18 @@
   (swap! call-count inc)
   (let [pt (.createSVGPoint svg-element)]
     (fn [e]
-      (do
-        (aset pt "x" (or (aget e "clientX")
-                         (-> e
-                             ;(aget "originalEvent")
-                             (aget "touches")
-                             (aget 0)
-                             (aget "clientX"))))
-        (aset pt "y" (or (aget e "clientY")
-                         (-> e
-                             ;(aget "originalEvent")
-                             (aget "touches")
-                             (aget 0)
-                             (aget "clientY"))))
-        (let [cursor-pt (.matrixTransform pt (.inverse (.getScreenCTM svg-element)))]
-          [(aget cursor-pt "x")
-           (aget cursor-pt "y")])))))
-
-(defn num-to-word [i]
-  (get {0 "one"
-        1 "two"
-        2 "three"
-        3 "four"
-        4 "five"
-        5 "six"}
-       i))
+      (aset pt "x" (or (aget e "clientX")
+                       (-> e
+                           ;(aget "originalEvent")
+                           (aget "touches")
+                           (aget 0)
+                           (aget "clientX"))))
+      (aset pt "y" (or (aget e "clientY")
+                       (-> e
+                           ;(aget "originalEvent")
+                           (aget "touches")
+                           (aget 0)
+                           (aget "clientY"))))
+      (let [cursor-pt (.matrixTransform pt (.inverse (.getScreenCTM svg-element)))]
+        [(aget cursor-pt "x")
+         (aget cursor-pt "y")]))))

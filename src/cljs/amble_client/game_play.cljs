@@ -3,7 +3,7 @@
   (:require [integrant.core :as ig]
             [cljs.core.async :as async]
             [amble-client.utils :as utils])
-  (:require-macros [cljs.core.async :refer [go, go-loop]]))
+  (:require-macros [cljs.core.async :refer [go-loop]]))
 
 ;; channels, input
 (def piece-grab-chan (async/chan))
@@ -48,7 +48,7 @@
         (= "touchend"
            (.-type e))
         (async/put! piece-release-chan e)
-        true
+        :else
         (do
           (println "User event not handled!")
           (.log js/console e))))

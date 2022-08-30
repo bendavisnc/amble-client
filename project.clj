@@ -4,33 +4,27 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
-  :dependencies [[org.clojure/clojure "1.11.1"]
-                 [org.clojure/clojurescript "1.11.60"]
-                 [ring-server "0.5.0"]
-                 [reagent "1.1.1"]
-                ;;  [cljsjs/react "18.2.0-0"]
-                ;;  [cljsjs/react-dom "18.2.0-0"]
-                ;;  [cljsjs/react-with-addons "15.6.1-0" :exclusions [cljsjs/react]]
-                ;;  [cljsjs/react-with-addons "15.6.1-0"]
-                 [cljsjs/react "17.0.1-0"]
+  :dependencies [[cljsjs/react "17.0.1-0"]
                  [cljsjs/react-dom "17.0.1-0"]
                  [cljsjs/react-transition-group "4.3.0-0"]
-                 [reagent-utils "0.3.3"]
-                 [ring "1.8.1"]
-                 [ring/ring-defaults "0.3.2"]
+                 [haslett "0.1.6"]
                  [hiccup "1.0.5"]
-                 [yogthos/config "1.1.7"
-                  :scope "provided"]
-                 [metosin/reitit "0.5.1"]
-                 [metosin/jsonista "0.2.6"]
-                 [pez/clerk "1.0.0"]
-                 [venantius/accountant "0.2.5"
-                  :exclusions [org.clojure/tools.reader]]
+                 [integrant "0.8.0"]
                  [martian "0.1.15"]
                  [martian-cljs-http "0.1.12"]
+                 [metosin/jsonista "0.2.6"]
+                 [metosin/reitit "0.5.1"]
+                 [org.clojure/clojure "1.11.1"]
+                 [org.clojure/clojurescript "1.11.60"]
                  [org.clojure/core.async "1.2.603"]
-                 [integrant "0.8.0"]
-                 [haslett "0.1.6"]]
+                 [pez/clerk "1.0.0"]
+                 [reagent "1.1.1"]
+                 [reagent-utils "0.3.3"]
+                 [ring "1.8.1"]
+                 [ring-server "0.5.0"]
+                 [ring/ring-defaults "0.3.2"]
+                 [venantius/accountant "0.2.5" :exclusions [org.clojure/tools.reader]]
+                 [yogthos/config "1.1.7" :scope "provided"]]
 
 
   :plugins [[lein-environ "1.1.0"]
@@ -41,6 +35,9 @@
 
   :ring {:handler amble-client.handler/app
          :uberwar-name "amble-client.war"}
+
+  :cljfmt {:remove-multiple-non-indenting-spaces? true
+           :sort-ns-references true}
 
   :min-lein-version "2.5.0"
   :uberjar-name "amble-client.jar"
@@ -58,26 +55,29 @@
           :target "resources/public/css/site.min.css"}]]
 
   :cljsbuild
-  {:builds {:min
-            {:source-paths ["src/cljs" "src/cljc" "env/prod/cljs"]
-             :compiler
-             {:output-to        "target/cljsbuild/public/js/app.js"
-              :output-dir       "target/cljsbuild/public/js"
-              :source-map       "target/cljsbuild/public/js/app.js.map"
-              :optimizations :advanced
-              :infer-externs true
-              :pretty-print  false}}
-            :app
-            {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
-             :figwheel {:on-jsload "amble-client.core/mount-root"}
-             :compiler
-             {:main "amble-client.dev"
-              :asset-path "/js/out"
-              :output-to "target/cljsbuild/public/js/app.js"
-              :output-dir "target/cljsbuild/public/js/out"
-              :source-map true
-              :optimizations :none
-              :pretty-print  true}}}}
+  {:builds {:min {:source-paths ["src/cljs" "src/cljc" "env/prod/cljs"]
+                  :compiler {:output-to        "target/cljsbuild/public/js/app.js"
+                             :output-dir       "target/cljsbuild/public/js"
+                             :source-map       "target/cljsbuild/public/js/app.js.map"
+                             :optimizations :advanced
+                             :infer-externs true
+                             :pretty-print  false
+                             :language-out :es5
+                             :npm-deps {:react-settings-pane "0.1.5"}
+                             :install-deps true}} 
+            :app {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
+                  :figwheel {:on-jsload "amble-client.core/mount-root"}
+                  :compiler {:main "amble-client.dev"
+                             :asset-path "/js/out"
+                             :output-to "target/cljsbuild/public/js/app.js"
+                             :output-dir "target/cljsbuild/public/js/out"
+                             :source-map true
+                             :optimizations :none
+                        ;;   :optimizations :simple
+                             :language-out :es5
+                             :pretty-print  true
+                             :npm-deps {:react-settings-pane "0.1.5"}
+                             :install-deps true}}}} 
 
 
 
@@ -104,7 +104,7 @@
                                   [figwheel-sidecar "0.5.20"]
                                   [nrepl "0.7.0"]
                                   [pjstadig/humane-test-output "0.10.0"]]
-                                  
+
 
 
                    :source-paths ["env/dev/clj"]

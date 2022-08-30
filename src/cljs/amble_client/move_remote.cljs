@@ -12,7 +12,7 @@
 
 (go-loop [app-atom (async/<! app-atom-chan)
           move-record-check (async/<! move-record-check-chan)]
-  (let [{:keys [player-id, player-piece-index, x, y, move, client-id] :as move-remote} (async/<! move-chan)
+  (let [{:keys [player-id, player-piece-index, client-id] :as move-remote} (async/<! move-chan)
         player-id (keyword player-id)
         move-remote (assoc move-remote :player-id player-id)]
     (println "Handling remote move.")

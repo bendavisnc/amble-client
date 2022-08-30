@@ -1,16 +1,11 @@
 (ns amble-client.interpolate-function
   "Provides an api for calling a provided function `interpolation-discreet-count` number of times.
-   The function provided is always called with an x and y value derived from interpolating a given two coordinates."
-  (:require [cljs.core.async :as async])
-  (:require-macros [cljs.core.async :refer [go, go-loop]]))
+   The function provided is always called with an x and y value derived from interpolating a given two coordinates.")
 
 (def time-duration 250)
 
 ;; How many times the animation function provided is called
 (def interpolation-discreet-count 24)
-
-(def f-chan (async/chan))
-(def line-points-chan (async/chan))
 
 (defn loop-animation [f, x1, y1, x2, y2]
   (let [wait-time-amount

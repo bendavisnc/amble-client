@@ -2,7 +2,7 @@
   "Listens to moves to send off to the server."
   (:require [integrant.core :as ig]
             [cljs.core.async :as async])
-  (:require-macros [cljs.core.async :refer [go, go-loop]]))
+  (:require-macros [cljs.core.async :refer [go-loop]]))
 
 (def move-resource-add!-chan (async/chan))
 (def move-chan (async/chan))

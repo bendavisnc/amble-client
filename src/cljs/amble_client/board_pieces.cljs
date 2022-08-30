@@ -1,9 +1,6 @@
 (ns amble-client.board-pieces
   "Represents stationary pieces that map where player pieces can go."
-  (:require [integrant.core :as ig]
-            [cljs.core.async :as async])
-  (:require-macros
-   [cljs.core.async :refer [go]]))
+  (:require [integrant.core :as ig]))
 
 (def classname "board-piece")
 (def piece-size 0.023)

@@ -8,7 +8,6 @@
    (resource-core/response-chan {:endpoint-key :player-get-all-by-game-id
                                  :param-map {:game-id game-id}}))
   ([game-id id]
-   "Return a player's current state of a given game."
    (resource-core/response-chan {:endpoint-key :player-get
                                  :param-map {:game-id game-id
                                              :id id}})))

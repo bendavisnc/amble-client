@@ -1,10 +1,7 @@
 (ns amble-client.move-replay
   "Replays remote moves."
-  (:require [integrant.core :as ig]
-            [cljs.core.async :as async]
-            [amble-client.resource.environment :refer [environment]]
-            [haslett.client :as haslett-client])
-  (:require-macros [cljs.core.async :refer [go, go-loop]]))
+  (:require [cljs.core.async :as async])
+  (:require-macros [cljs.core.async :refer [go]]))
 
 ;; How long to wait between position updates
 (def discreet-wait-time 24)

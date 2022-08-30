@@ -2,7 +2,7 @@
   "Figures out which piece is closest, given some x y value."
   (:require [integrant.core :as ig]
             [cljs.core.async :as async])
-  (:require-macros [cljs.core.async :refer [go, go-loop]]))
+  (:require-macros [cljs.core.async :refer [go]]))
 
 (def board-pieces-atom (atom nil))
 

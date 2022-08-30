@@ -1,10 +1,8 @@
 (ns amble-client.player-pieces
   "Represents player pieces that can change position based on user feedback."
   (:require [integrant.core :as ig]
-            [reagent.core :as reagent]
-            [cljs.core.async :as async]
-            [amble-client.utils :as utils])
-  (:require-macros [cljs.core.async :refer [go, go-loop]]))
+            [cljs.core.async :as async])
+  (:require-macros [cljs.core.async :refer [go-loop]]))
 
 (def classname "player")
 (def piece-size 0.023)
