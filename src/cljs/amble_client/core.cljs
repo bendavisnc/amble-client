@@ -1,6 +1,7 @@
 (ns amble-client.core
   (:require [cljs.core.async :as async]
             [integrant.core :as ig]
+            ;; [react] 
             [reagent.dom :as reagent-dom]
             [reagent.ratom :as reagent-ratom]
             [amble-client.board-pieces]

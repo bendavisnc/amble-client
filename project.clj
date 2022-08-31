@@ -4,9 +4,9 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
-  :dependencies [[cljsjs/react "17.0.1-0"]
-                 [cljsjs/react-dom "17.0.1-0"]
-                 [cljsjs/react-transition-group "4.3.0-0"]
+  :dependencies [;;[cljsjs/react "17.0.1-0"]
+                 ;;[cljsjs/react-dom "17.0.1-0"]
+            ;;      [cljsjs/react-transition-group "4.3.0-0"]
                  [haslett "0.1.6"]
                  [hiccup "1.0.5"]
                  [integrant "0.8.0"]
@@ -18,8 +18,9 @@
                  [org.clojure/clojurescript "1.11.60"]
                  [org.clojure/core.async "1.2.603"]
                  [pez/clerk "1.0.0"]
-                 [reagent "1.1.1"]
-                 [reagent-utils "0.3.3"]
+                 [reagent "1.1.1" :exclude [cljsjs/react
+                                            cljsjs.react/dom]]
+                 [re-frame "0.9.4"]
                  [ring "1.8.1"]
                  [ring-server "0.5.0"]
                  [ring/ring-defaults "0.3.2"]
@@ -74,9 +75,9 @@
                              :source-map true
                              :optimizations :none
                         ;;   :optimizations :simple
-                             :language-out :es5
+                             :language-out :es6
                              :pretty-print  true
-                             :npm-deps {:react-settings-pane "0.1.5"}
+                        ;;      :npm-deps {:react-settings-pane "0.1.5"}
                              :install-deps true}}}} 
 
 

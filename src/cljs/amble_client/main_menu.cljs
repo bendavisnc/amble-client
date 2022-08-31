@@ -3,8 +3,7 @@
             [cljs.core.async :as async]
             [goog.string :as gstring :refer [unescapeEntities]]
             [goog.string.format]
-            [clojure.string]
-            [cljsjs.react]))
+            [clojure.string]))
 
 (def app-orientation-chan (async/chan (async/dropping-buffer 1)
                                       (dedupe)))

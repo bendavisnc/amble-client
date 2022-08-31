@@ -1,5 +1,5 @@
 
-rundevserver: styles openapi 
+rundevserver: styles openapi clean
 	lein figwheel
 
 openapi:
@@ -9,3 +9,7 @@ openapi:
 	
 styles:
 	lessc resources/public/less/amble.less resources/public/css/amble.css
+
+
+clean:
+	lein clean
