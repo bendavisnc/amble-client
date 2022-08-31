@@ -18,8 +18,10 @@
                  [org.clojure/clojurescript "1.11.60"]
                  [org.clojure/core.async "1.2.603"]
                  [pez/clerk "1.0.0"]
-                 [reagent "1.1.1" :exclude [cljsjs/react
-                                            cljsjs.react/dom]]
+                ; [reagent "1.1.1" :exclude [cljsjs/react
+                ;                            cljsjs.react/dom]
+
+                 [reagent "1.1.1"]
                  [re-frame "0.9.4"]
                  [ring "1.8.1"]
                  [ring-server "0.5.0"]
@@ -78,6 +80,8 @@
                              :language-out :es6
                              :pretty-print  true
                         ;;      :npm-deps {:react-settings-pane "0.1.5"}
+                             :npm-deps {:react "17.0.1"
+                                        :react-dom "17.0.1"}
                              :install-deps true}}}} 
 
 
