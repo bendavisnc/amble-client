@@ -1,7 +1,8 @@
 (ns amble-client.settings
-  (:require [integrant.core :as ig]
-            [reagent.core]))
-            ;; ["react-settings-pane" :refer [SettingsPane]]
+  (:require [integrant.core :as ig]))
+            ;; [reagent.core])) 
+            ;; [react]
+            ;; ["react-settings-pane" :refer [SettingsPane]]))
             ;; [cljsjs.react]))
 
 (defn settings []
