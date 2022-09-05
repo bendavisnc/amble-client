@@ -1,6 +1,6 @@
 
 rundevserver: styles openapi clean
-	npx shadow-cljs watch amble-client
+	npx shadow-cljs watch frontend
 
 openapi:
 	mkdir -p resources/public/json

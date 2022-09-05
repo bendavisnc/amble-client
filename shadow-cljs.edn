@@ -1,6 +1,13 @@
-{
+{:source-paths
+ ["src/dev"
+  "src/main"
+  "src/test"]
+
+ :dependencies
+ []
+
  :builds
- {:amble-client
+ {:frontend
   {:target :browser
-   :modules {:main {:init-fn amble-client/main}}}}}
+   :modules {:main {:init-fn acme.frontend.app/init}}}}}
    
