@@ -1,11 +1,6 @@
-;; shadow-cljs configuration
-{:source-paths
- ["src/dev"
-  "src/main"
-  "src/test"]
-
- :dependencies
- []
-
+{
  :builds
- {}}
+ {:amble-client
+  {:target :browser
+   :modules {:main {:init-fn amble-client/main}}}}}
+   

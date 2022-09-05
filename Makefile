@@ -1,6 +1,6 @@
 
 rundevserver: styles openapi clean
-	lein figwheel
+	npx shadow-cljs watch amble-client
 
 openapi:
 	mkdir -p resources/public/json
@@ -12,4 +12,4 @@ styles:
 
 
 clean:
-	lein clean
+	rm -rf target	
