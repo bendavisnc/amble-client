@@ -1,4 +1,4 @@
-(ns amble-client.app.main)
+(ns amble-client.app)
 
 (defn init []
   (println "Hello World"))
