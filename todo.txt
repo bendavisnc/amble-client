@@ -22,3 +22,5 @@
 - clean up environment vars
 
 - zoom tool
+
+- move portrait-mode from app to util

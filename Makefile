@@ -1,6 +1,8 @@
 
-rundevserver: styles openapi clean
+# Auto builds project and runs dev server.
+rundevserver: installnpmdeps styles openapi clean
 	npx shadow-cljs watch frontend
+
 
 openapi:
 	mkdir -p resources/public/json
@@ -13,3 +15,8 @@ styles:
 
 clean:
 	rm -rf target	
+	
+	
+installnpmdeps:
+	npm install react react-dom create-react-class
+
