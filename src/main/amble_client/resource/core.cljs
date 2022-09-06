@@ -13,7 +13,7 @@
   (str "http://" (environment :host :amble) ":" (environment :port :amble)))
 
 (defn url-openapi []
-  (str "http://" (environment :host :client) ":" (environment :port :client) "/openapi.json"))
+  (str "http://" (environment :host :client) ":" (environment :port :client) "/json/openapi.json"))
 
 (def interceptor-coors-dont-bother-me {:name ::interceptor-coors-dont-bother-me
                                        :leave (fn [req]

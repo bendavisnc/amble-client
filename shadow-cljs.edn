@@ -5,12 +5,17 @@
 
  :dependencies
  [[integrant "0.8.0"]
-  [reagent "1.1.1"]]
+  [haslett "0.1.6"]
+  [reagent "1.1.1"]
+  [martian "0.1.15"]
+  [martian-cljs-http "0.1.12"]]
 
- :dev-http {8080 "public"}
-
+  
+ :dev-http {8080 "resources/public"}
+ 
  :builds
  {:frontend
   {:target :browser
-   :modules {:main {:init-fn amble-client.core/init!}}}}}
+   :modules {:main {:init-fn amble-client.core/init!}}
+   :output-dir "resources/public/js/ambleout"}}}
    

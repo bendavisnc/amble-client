@@ -1,0 +1,5 @@
+/* https://www.userchrome.org/ */
+
+#main-window[chromehidden*="toolbar"] #nav-bar {
+  visibility: collapse;
+}

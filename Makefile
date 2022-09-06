@@ -15,6 +15,7 @@ styles:
 
 clean:
 	rm -rf target	
+	rm -rf public/js/ambleout
 	
 	
 installnpmdeps:
