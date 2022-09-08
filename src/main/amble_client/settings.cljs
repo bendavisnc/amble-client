@@ -26,8 +26,12 @@
                             :header true} 
         ;;  [:> SettingsPage {:handler "/wut/urlthing"                   
         ;;                    :options dynamic-stuff}]
-         [:> SettingsPage {:handler "/wut/urlthing"                   
-                           :options (new js/Object)}]]]))
+         [:> SettingsPage {:handler "/wut/urlthing"}                   
+           [:fieldset {:class "form-group"}                   
+             [:label {:for "wutt"}]                   
+             [:input {:type "text"                   
+                      :class" form-control"
+                      :name "amble-settings.game.otherwuttt"}]]]]]))
     ;; <SettingsContent closeButtonClass= "secondary" saveButtonClass= "primary" header= {true} >
       ;;  <SettingsPage handler="/settings/general">
       ;;   <fieldset className="form-group">
