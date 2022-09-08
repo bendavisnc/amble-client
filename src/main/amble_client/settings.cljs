@@ -8,10 +8,12 @@
 (def menu-config [{"title" "player", "url" "/wut/urlthing"} 
                   {"title" "wutotherthing", "url" "/wut/urlthingother"}])
                   
-(def dynamic-stuff[{"key" "playerkey", 
-                    "label" "playerrr"
-                    "type" "text"}]) 
-
+(def dynamic-stuff (clj->js [{:key "playerkey", 
+                              :label "playerrr"
+                              :type "text"} 
+                             {:key "playerkey1", 
+                              :label "playerrr2"
+                              :type "text"}]))
 (defn settings []
   (fn []
     [:> SettingsPane {:settings settings-config 
@@ -24,21 +26,8 @@
                             :header true} 
         ;;  [:> SettingsPage {:handler "/wut/urlthing"                   
         ;;                    :options dynamic-stuff}]
-         [:> SettingsPage {:handler "/wut/urlthing"}                   
-           [:div "apple"]
-           [:fieldset {:class" form-group"}
-            [:label {:for "player"}]
-            [:div "banana"]
-            [:input {:type "text"
-                     :class" form-control"
-                     :name "amble-settings.game.player" 
-                     :id "game.player"}]] 
-           [:fieldset {:class "form-group"}                   
-             [:label {:for "wutt"}]                   
-             [:input {:type "text"                   
-                      :class" form-control"
-                      :name "amble-settings.game.otherwuttt"}]]]]])) 
- 
+         [:> SettingsPage {:handler "/wut/urlthing"                   
+                           :options (new js/Object)}]]]))
     ;; <SettingsContent closeButtonClass= "secondary" saveButtonClass= "primary" header= {true} >
       ;;  <SettingsPage handler="/settings/general">
       ;;   <fieldset className="form-group">
