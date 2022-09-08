@@ -19,5 +19,5 @@ clean:
 	
 	
 installnpmdeps:
-	npm install react react-dom create-react-class
+	npm install
 
