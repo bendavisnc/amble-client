@@ -1,3 +1,44 @@
+#board {
+  background-color: #d3d3d3;
+}
+@media (orientation: portrait) {
+  #board {
+    min-width: 140vw;
+    width: 140vw;
+    height: auto;
+  }
+}
+@media (orientation: landscape) {
+  #board {
+    width: auto;
+    height: 120vh;
+    min-height: 120vh;
+  }
+}
+#board circle.board-piece {
+  fill: #ffffff;
+}
+#board circle.player-one {
+  fill: #6acac8;
+}
+#board circle.player-two {
+  fill: #6a81ca;
+}
+#board circle.player-three {
+  fill: #ca6ab8;
+}
+#board circle.player-four {
+  fill: #9a6aca;
+}
+#board circle.player-five {
+  fill: #97adc2;
+}
+#board circle.player-six {
+  fill: #ca936a;
+}
+#board circle.active {
+  fill: #b3b3b3;
+}
 html,
 body {
   overflow-x: hidden;
@@ -5,20 +46,6 @@ body {
 }
 body {
   position: relative;
-}
-@media (orientation: portrait) {
-  svg {
-    min-width: 140vw;
-    width: 140vw;
-    height: auto;
-  }
-}
-@media (orientation: landscape) {
-  svg {
-    width: auto;
-    height: 120vh;
-    min-height: 120vh;
-  }
 }
 html #amble,
 body #amble {
@@ -29,6 +56,10 @@ body #amble {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+}
+html #amble #main-menu,
+body #amble #main-menu {
+  flex-grow: 0;
 }
 html #amble #main-menu #menu-items-container,
 body #amble #main-menu #menu-items-container,
@@ -101,39 +132,8 @@ html #amble #main-menu #highlight-container .highlight-item.place-holder,
 body #amble #main-menu #highlight-container .highlight-item.place-holder {
   background-color: initial;
 }
-html #amble #board,
-body #amble #board {
-  background-color: #d3d3d3;
-}
-html #amble #board circle.board-piece,
-body #amble #board circle.board-piece {
-  fill: #ffffff;
-}
-html #amble #board circle.player-one,
-body #amble #board circle.player-one {
-  fill: #6acac8;
-}
-html #amble #board circle.player-two,
-body #amble #board circle.player-two {
-  fill: #6a81ca;
-}
-html #amble #board circle.player-three,
-body #amble #board circle.player-three {
-  fill: #ca6ab8;
-}
-html #amble #board circle.player-four,
-body #amble #board circle.player-four {
-  fill: #9a6aca;
-}
-html #amble #board circle.player-five,
-body #amble #board circle.player-five {
-  fill: #97adc2;
-}
-html #amble #board circle.player-six,
-body #amble #board circle.player-six {
-  fill: #ca936a;
-}
-html #amble #board circle.active,
-body #amble #board circle.active {
-  fill: #b3b3b3;
+html #amble .settings-pane,
+body #amble .settings-pane {
+  flex-grow: 1;
+  height: 90vh;
 }

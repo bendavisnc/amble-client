@@ -1,0 +1,49 @@
+#board {
+  @media (orientation: portrait) {
+    min-width: @board-width;
+    width: @board-width;
+    height: auto;
+  }
+
+  @media (orientation: landscape) {
+    width: auto;
+    height: @board-height-landscape;
+    min-height: @board-height-landscape;
+  }
+
+  background-color: @color-primary;
+
+  circle {
+    &.board-piece {
+      fill: @color-secondary;
+    }
+
+    &.player-one {
+      fill: @color-player-one;
+    }
+
+    &.player-two {
+      fill: @color-player-two;
+    }
+
+    &.player-three {
+      fill: @color-player-three;
+    }
+
+    &.player-four {
+      fill: @color-player-four;
+    }
+
+    &.player-five {
+      fill: @color-player-five;
+    }
+
+    &.player-six {
+      fill: @color-player-six;
+    }
+
+    &.active {
+      fill: @color-player-active;
+    }
+  }
+}

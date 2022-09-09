@@ -2,11 +2,10 @@
   (:require [integrant.core :as ig]
             ["react-settings-pane" :refer [SettingsPane, SettingsMenu, SettingsContent, SettingsPage]]))
 
-(def settings-config {"amble-settings.game.player" "player-one" 
-                      "amble-settings.game.otherwuttt" "wutvalue"}) 
+(def settings-config {"amble-settings.game.player" "player-one"}) 
 
-(def menu-config [{"title" "player", "url" "/wut/urlthing"} 
-                  {"title" "wutotherthing", "url" "/wut/urlthingother"}])
+(def menu-config [{"title" "player", "url" "#player"} 
+                  {"title" "about", "url" "#about"}]) 
                   
 (def dynamic-stuff (clj->js [{:key "playerkey", 
                               :label "playerrr"
@@ -19,25 +18,37 @@
     [:> SettingsPane {:settings settings-config 
                       :items menu-config
                       :on-pane-leave #(println "neat")
-                      :index "/wut/urlthing"} 
-      [:> SettingsMenu {:headline "wutheadlinewutbut"}]                   
+                      :index "#player"} 
+      [:> SettingsMenu {:headline "⚙ General Settings"}]                   
       [:> SettingsContent {:close-button-class "secondary"                   
                             :save-button-class "primary"
                             :header true} 
-        ;;  [:> SettingsPage {:handler "/wut/urlthing"                   
-        ;;                    :options dynamic-stuff}]
-         [:> SettingsPage {:handler "/wut/urlthing"}                   
+         [:> SettingsPage {:handler "#player"}                   
            [:fieldset {:class "form-group"}                   
-             [:label {:for "wutt"}]                   
-             [:input {:type "text"                   
-                      :class" form-control"
-                      :name "amble-settings.game.otherwuttt"}]]]]]))
+             [:label {:for "player-select"}]                   
+             [:select {
+                       :class "form-control"
+                       :id "player-select"
+                       :default-value "0"
+                       :name "amble-settings.game.player"}
+               [:option {:value "0"} "player one"]
+               [:option {:value "1"} "player two"]
+               [:option {:value "2"} "player three"]]]]
+         [:> SettingsPage {:handler "#about"}                   
+           [:div "\"amble\" is a web app to share a chinese checkers board amongst friends."]]]]))
     ;; <SettingsContent closeButtonClass= "secondary" saveButtonClass= "primary" header= {true} >
       ;;  <SettingsPage handler="/settings/general">
       ;;   <fieldset className="form-group">
       ;;   <label for="profileName">Name: </label>
       ;;   <input type="text" className="form-control" name="mysettings.general.name" placeholder="Name" id="general.ame" onChange={settingsChanged} defaultValue={settings['mysettings.general.name']} />
       ;;   </fieldset>]]))
+
+            ;;  <select name="mysettings.general.color-theme" id="profileColor" className="form-control" defaultValue={settings['mysettings.general.color-theme']}>
+            ;;    <option value="blue">Blue</option>
+            ;;    <option value="red">Red</option>
+            ;;    <option value="purple">Purple</option>
+            ;;    <option value="orange">Orange</option>
+            ;;  </select>]]]]))
 
 (defmethod ig/init-key :amble/settings [_ {:keys []}]
   (settings))
