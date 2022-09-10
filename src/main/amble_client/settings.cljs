@@ -4,32 +4,32 @@
 
 (def settings-config {"amble-settings.game.player" "player-one"}) 
 
-(def menu-config [{"title" "player", "url" "#player"} 
+(def menu-config [{"title" "game", "url" "#game"} 
                   {"title" "about", "url" "#about"}]) 
                   
-(def dynamic-stuff (clj->js [{:key "playerkey", 
-                              :label "playerrr"
-                              :type "text"} 
-                             {:key "playerkey1", 
-                              :label "playerrr2"
-                              :type "text"}]))
+(defn on-settings-change! [& args]
+  (println "noiceee")
+  (.log js/console args)
+  (println (str (first args))))
+
 (defn settings []
   (fn []
     [:> SettingsPane {:settings settings-config 
                       :items menu-config
                       :on-pane-leave #(println "neat")
-                      :index "#player"} 
+                      :index "#game"} 
       [:> SettingsMenu {:headline "⚙ General Settings"}]                   
       [:> SettingsContent {:close-button-class "secondary"                   
                             :save-button-class "primary"
                             :header true} 
-         [:> SettingsPage {:handler "#player"}                   
+         [:> SettingsPage {:handler "#game"}                   
            [:fieldset {:class "form-group"}                   
-             [:label {:for "player-select"}]                   
+             [:label {:for "player-select"} "Player :"]                   
              [:select {
                        :class "form-control"
                        :id "player-select"
                        :default-value "player one"
+                       :on-change on-settings-change!
                        :name "amble-settings.game.player"}
                [:option {:value "player-one", :selected "selected"} "player one"]
                [:option {:value "player-two"} "player two"]

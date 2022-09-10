@@ -114,6 +114,9 @@
 .settings-pane form {
   height: 66.66666667vh;
 }
+.settings-pane .settings-footer {
+  display: none;
+}
 html,
 body {
   overflow-x: hidden;
