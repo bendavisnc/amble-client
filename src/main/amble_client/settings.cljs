@@ -29,11 +29,14 @@
              [:select {
                        :class "form-control"
                        :id "player-select"
-                       :default-value "0"
+                       :default-value "player one"
                        :name "amble-settings.game.player"}
-               [:option {:value "0"} "player one"]
-               [:option {:value "1"} "player two"]
-               [:option {:value "2"} "player three"]]]]
+               [:option {:value "player-one", :selected "selected"} "player one"]
+               [:option {:value "player-two"} "player two"]
+               [:option {:value "player-three"} "player three"]
+               [:option {:value "player-four"} "player four"]
+               [:option {:value "player-five"} "player five"]
+               [:option {:value "player-six"} "player six"]]]]
          [:> SettingsPage {:handler "#about"}                   
            [:div "\"amble\" is a web app to share a chinese checkers board amongst friends."]]]]))
     ;; <SettingsContent closeButtonClass= "secondary" saveButtonClass= "primary" header= {true} >

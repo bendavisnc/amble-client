@@ -11,6 +11,9 @@ openapi:
 	
 styles:
 	lessc resources/public/less/amble.less resources/public/css/amble.css
+	
+watchstyles:
+	find . -name '*.less' | entr make styles
 
 
 clean:

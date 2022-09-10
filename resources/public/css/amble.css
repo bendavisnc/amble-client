@@ -1,3 +1,12 @@
+#amble {
+  background-color: #d3d3d3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
 #board {
   background-color: #d3d3d3;
 }
@@ -17,6 +26,9 @@
 }
 #board circle.board-piece {
   fill: #ffffff;
+}
+#board {
+  background-color: #d3d3d3;
 }
 #board circle.player-one {
   fill: #6acac8;
@@ -39,32 +51,11 @@
 #board circle.active {
   fill: #b3b3b3;
 }
-html,
-body {
-  overflow-x: hidden;
-  margin: 0;
-}
-body {
-  position: relative;
-}
-html #amble,
-body #amble {
-  background-color: #d3d3d3;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-}
-html #amble #main-menu,
-body #amble #main-menu {
+#main-menu {
   flex-grow: 0;
 }
-html #amble #main-menu #menu-items-container,
-body #amble #main-menu #menu-items-container,
-html #amble #main-menu #highlight-container,
-body #amble #main-menu #highlight-container {
+#main-menu #menu-items-container,
+#main-menu #highlight-container {
   position: absolute;
   left: 5vw;
   top: 3vh;
@@ -75,18 +66,14 @@ body #amble #main-menu #highlight-container {
   justify-content: space-between;
 }
 @media (orientation: landscape) {
-  html #amble #main-menu #menu-items-container,
-  body #amble #main-menu #menu-items-container,
-  html #amble #main-menu #highlight-container,
-  body #amble #main-menu #highlight-container {
+  #main-menu #menu-items-container,
+  #main-menu #highlight-container {
     flex-direction: column;
     left: 2vw;
   }
 }
-html #amble #main-menu #menu-items-container .menu-item,
-body #amble #main-menu #menu-items-container .menu-item,
-html #amble #main-menu #highlight-container .menu-item,
-body #amble #main-menu #highlight-container .menu-item {
+#main-menu #menu-items-container .menu-item,
+#main-menu #highlight-container .menu-item {
   text-align: left;
   font-size: 1.3em;
   font-family: sans-serif;
@@ -98,18 +85,14 @@ body #amble #main-menu #highlight-container .menu-item {
   justify-content: center;
 }
 @media (orientation: landscape) {
-  html #amble #main-menu #menu-items-container .menu-item,
-  body #amble #main-menu #menu-items-container .menu-item,
-  html #amble #main-menu #highlight-container .menu-item,
-  body #amble #main-menu #highlight-container .menu-item {
+  #main-menu #menu-items-container .menu-item,
+  #main-menu #highlight-container .menu-item {
     justify-content: initial;
     margin-left: 0.4em;
   }
 }
-html #amble #main-menu #menu-items-container .highlight-item,
-body #amble #main-menu #menu-items-container .highlight-item,
-html #amble #main-menu #highlight-container .highlight-item,
-body #amble #main-menu #highlight-container .highlight-item {
+#main-menu #menu-items-container .highlight-item,
+#main-menu #highlight-container .highlight-item {
   font-size: 1.3em;
   width: 5em;
   height: 1.5em;
@@ -119,21 +102,21 @@ body #amble #main-menu #highlight-container .highlight-item {
   transition: left 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 @media (orientation: landscape) {
-  html #amble #main-menu #menu-items-container .highlight-item,
-  body #amble #main-menu #menu-items-container .highlight-item,
-  html #amble #main-menu #highlight-container .highlight-item,
-  body #amble #main-menu #highlight-container .highlight-item {
+  #main-menu #menu-items-container .highlight-item,
+  #main-menu #highlight-container .highlight-item {
     transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
 }
-html #amble #main-menu #menu-items-container .highlight-item.place-holder,
-body #amble #main-menu #menu-items-container .highlight-item.place-holder,
-html #amble #main-menu #highlight-container .highlight-item.place-holder,
-body #amble #main-menu #highlight-container .highlight-item.place-holder {
+#main-menu #menu-items-container .highlight-item.place-holder,
+#main-menu #highlight-container .highlight-item.place-holder {
   background-color: initial;
 }
-html #amble .settings-pane,
-body #amble .settings-pane {
-  flex-grow: 1;
-  height: 90vh;
+.settings-pane form {
+  height: 66.66666667vh;
+}
+html,
+body {
+  overflow-x: hidden;
+  margin: 0;
+  position: relative;
 }
