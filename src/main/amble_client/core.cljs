@@ -66,12 +66,13 @@
                              :moves (ig/ref :amble/moves)
                              :settings (ig/ref :amble/settings)}
 
-                 :amble/board {:board-pieces (ig/ref :amble/board-pieces)
+                 :amble/board {:app-atom app-atom
+                               :board-pieces (ig/ref :amble/board-pieces)
                                :player-pieces (ig/ref :amble/player-pieces)
                                :game-play (ig/ref :amble/game-play)}
 
                  :amble/moves {}
-                 :amble/settings {}
+                 :amble/settings {:app-atom app-atom}
 
                  :amble/main-menu {:app-atom app-atom
                                    :app-ready-chan (app-ready-chan-dup)}

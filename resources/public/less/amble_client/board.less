@@ -1,4 +1,3 @@
-
 @board-width: 140vw;
 @board-height-landscape: 120vh;
 
@@ -13,6 +12,29 @@
     width: auto;
     height: @board-height-landscape;
     min-height: @board-height-landscape;
+  }
+
+  &.player-one-sixoclock {
+    transform: rotate(0deg);
+  }
+
+  &.player-two-sixoclock {
+    transform: rotate(-60deg);
+  }
+
+  &.player-three-sixoclock {
+    transform: rotate(-120deg);
+  }
+
+  &.player-four-sixoclock {
+    transform: rotate(-180deg);
+  }
+  &.player-five-sixoclock {
+    transform: rotate(-240deg);
+  }
+
+  &.player-six-sixoclock {
+    transform: rotate(-300deg);
   }
 
   background-color: @color-primary;

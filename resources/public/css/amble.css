@@ -24,6 +24,24 @@
     min-height: 120vh;
   }
 }
+#board.player-one-sixoclock {
+  transform: rotate(0deg);
+}
+#board.player-two-sixoclock {
+  transform: rotate(-60deg);
+}
+#board.player-three-sixoclock {
+  transform: rotate(-120deg);
+}
+#board.player-four-sixoclock {
+  transform: rotate(-180deg);
+}
+#board.player-five-sixoclock {
+  transform: rotate(-240deg);
+}
+#board.player-six-sixoclock {
+  transform: rotate(-300deg);
+}
 #board circle.board-piece {
   fill: #ffffff;
 }
@@ -112,7 +130,11 @@
   background-color: initial;
 }
 .settings-pane form {
+  width: 100vw;
   height: 66.66666667vh;
+}
+.settings-pane .settings-content {
+  border: none;
 }
 .settings-pane .settings-footer {
   display: none;

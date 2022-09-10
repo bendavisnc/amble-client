@@ -1,20 +1,25 @@
 (ns amble-client.board
   (:require [integrant.core :as ig]))
 
-(defn board [board-pieces, player-pieces, game-play]
+(defn board [app-atom, board-pieces, player-pieces, game-play]
   (fn []
-    [:div {:id "board-container"}
-      [:svg {:id "board"
-             "viewBox" "0 0 1 1"
-             :on-mouse-move (fn [e]
-                              (.preventDefault e)
-                              (.persist e)
-                              ((:handle-ui-event game-play)
-                               e))}
-       [board-pieces]
-       [player-pieces]]]))
+    (let [player-selected (or (get-in (deref app-atom) 
+                                      [:settings :player])
+                              :player-one)]
+      [:div {:id "board-container"}
+        [:svg {:id "board"
+               :class (str (name player-selected)
+                           "-sixoclock")
+               "viewBox" "0 0 1 1"
+               :on-mouse-move (fn [e]
+                                (.preventDefault e)
+                                (.persist e)
+                                ((:handle-ui-event game-play)
+                                 e))}
+         [board-pieces]
+         [player-pieces]]])))
 
-(defmethod ig/init-key :amble/board [_ {:keys [board-pieces, player-pieces, game-play]}]
-  (board board-pieces, player-pieces, game-play))
+(defmethod ig/init-key :amble/board [_ {:keys [app-atom, board-pieces, player-pieces, game-play]}]
+  (board app-atom, board-pieces, player-pieces, game-play))
 
 
