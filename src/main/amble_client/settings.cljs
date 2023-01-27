@@ -8,7 +8,8 @@
 
 (def app-atom-chan (async/chan))
 
-(def settings-config {"amble-settings.game.player" "player-one"}) 
+;; (def settings-config {"amble-settings.game.player" "player-one"}) 
+(def settings-config {}) 
 
 (def menu-config [{"title" "game", "url" "#game"} 
                   {"title" "about", "url" "#about"}]) 
@@ -21,7 +22,7 @@
   
 
 (defn option [k, on-click]
-  [:option {:value (name k)}
+  [:option {:key k}
             ;; :on-click on-click} 
            (name k)])
 
@@ -38,23 +39,28 @@
          [:> SettingsPage {:handler "#game"}                   
            [:fieldset {:class "form-group"}                   
              [:label {:for "player-select"} "Player :"]                   
-             [:select {
-                       :class "form-control"
-                       :id "player-select"
-                       ;; :value (name player-selected)
-                       :value (name (or (get-in (deref app-atom) 
-                                               [:settings :player])
-                                        :player-one))
-                       :on-change (fn [e]
-                                    (on-player-settings-change! app-atom 
-                                                                (keyword (.-value (.-target e)))
-                                                                e))
-                       :name "amble-settings.game.player"}
+             (let [selected
+                   (or (get-in (deref app-atom) 
+                               [:settings :player])
+                       :player-one)]
+               [:select {
+                         :key (str "player-select" "-" selected)
+                         :class "form-control"
+                         :id "player-select"
+                         ;; :value (name player-selected)
+                        ;;  :value selected
+                         :default-value selected
+                        ;;  :value selected
+                         :on-change (fn [e]
+                                      (on-player-settings-change! app-atom 
+                                                                  (keyword (.-value (.-target e)))
+                                                                  e))
+                         :name "amble-settings.game.player"}
 
-               (for [player-key [:player-one, :player-two, :player-three, :player-four, :player-five, :player-six]]
+                 (for [player-key [:player-one, :player-two, :player-three, :player-four, :player-five, :player-six]]
 
-                 ^{:key (str (name player-key) "-option")}
-                 [option player-key (partial on-player-settings-change! app-atom player-key)])]]]
+                   ^{:key (str (name player-key) "-option")}
+                   [option player-key (partial on-player-settings-change! app-atom player-key)])])]]
          [:> SettingsPage {:handler "#about"}                   
            [:div "\"amble\" iz a web app to share a chinese checkers board amongst friends."]]]]))
 

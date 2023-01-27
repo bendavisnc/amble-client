@@ -71,6 +71,7 @@
 }
 #main-menu {
   flex-grow: 0;
+  z-index: 1;
 }
 #main-menu #menu-items-container,
 #main-menu #highlight-container {
@@ -132,6 +133,11 @@
 .settings-pane form {
   width: 100vw;
   height: 66.66666667vh;
+}
+@media (orientation: landscape) {
+  .settings-pane form {
+    width: 80vw;
+  }
 }
 .settings-pane .settings-content {
   border: none;
