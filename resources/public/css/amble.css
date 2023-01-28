@@ -89,6 +89,7 @@
   #main-menu #highlight-container {
     flex-direction: column;
     left: 2vw;
+    width: initial;
   }
 }
 #main-menu #menu-items-container .menu-item,
