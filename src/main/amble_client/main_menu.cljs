@@ -1,4 +1,5 @@
 (ns amble-client.main-menu
+  "A high level menu to switch between the main user interfaces, the board, the moves, and the settings."
   (:require [integrant.core :as ig]
             [cljs.core.async :as async]
             [goog.string :as gstring :refer [unescapeEntities]]
@@ -88,7 +89,7 @@
                 (get-in (deref app-atom) [:app :orientation]))
     [:div {:id "main-menu"}
      [highlight-container app-atom]
-     [:div {:id "menu-items-container" :data-mode (name (get-in (deref app-atom) [:app :orientation]))}
+     [:div {:id "menu-items-container"}
       (for [menu-item menu-items]
         ^{:key (name menu-item)}
         [:<>

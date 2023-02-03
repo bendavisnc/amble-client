@@ -82,7 +82,8 @@
                                        :move-xy-chan (move-xy-chan-dup)}
                  :amble/game-play {:move-local-chan move-local-chan
                                    :move-xy-chan move-xy-chan
-                                   :board-piece-closest (ig/ref :amble/board-piece-closest)}
+                                   :board-piece-closest (ig/ref :amble/board-piece-closest)
+                                   :app-atom app-atom}
                  :amble/move-send {:move-local-chan (move-local-chan-dup)
                                    :move-resource-add! move-resource/add!}
                  :amble/move-receive {:move-resource-get! move-resource/get!
@@ -150,6 +151,7 @@
                                                   :index i
                                                   :is-active? false})))
       (swap! app-atom assoc :player-pieces player-pieces)
+      (swap! app-atom assoc-in [:settings :player] :player-one)
       (mount-root))))
 
 (defn post-game! []

@@ -16,6 +16,7 @@
 (def move-remote-chan (async/chan))
 (def move-local-chan (async/chan))
 (def move-xy-chan (async/chan))
+(def app-atom-chan (async/chan))
 
 (defn- element-to-game-id [element]
   (keyword (.getAttribute element
@@ -53,20 +54,26 @@
           (println "User event not handled!")
           (.log js/console e))))
 
-(def event-to-coord-cached
-  (memoize (fn []
-             (utils/coord-conv
-              (.getElementById js/document "board")))))
+(defn event-to-coord-cached [app-atom]
+  (let [cached-function-by-player (memoize (fn [_]
+                                             (utils/coord-conv (.getElementById js/document "board"))))]
+    (fn []
+     (let [player (get-in (deref app-atom)
+                          [:settings :player])]
+       (cached-function-by-player player)))))
+
+
 ;; A go loop for turning mouse dragging behavior into move events.
 ;; Invokes out to the chans that are provided as dependencies.
 
-(go-loop [board-piece-closest (async/<! board-piece-closest-chan)]
+(go-loop [board-piece-closest (async/<! board-piece-closest-chan)
+          app-atom (async/<! app-atom-chan)
+          event-to-coord (event-to-coord-cached app-atom)]
   (println "Waiting for game play.")
   (let [piece-grab-event (async/<! piece-grab-chan)
         game-id (element-to-game-id (.-target piece-grab-event))
         player-id (element-to-player-id (.-target piece-grab-event))
         player-piece-index (element-to-piece-index (.-target piece-grab-event))
-        event-to-coord (event-to-coord-cached)
         _ (async/poll! piece-move-chan)]
     (loop [moves []]
       (async/alt! piece-release-chan
@@ -86,7 +93,7 @@
 
                   piece-move-chan
                   ([move]
-                   (let [[x, y] (event-to-coord
+                   (let [[x, y] ((event-to-coord)
                                  move)]
                      (async/>! move-xy-chan {:player-id player-id
                                              :player-piece-index player-piece-index
@@ -94,11 +101,12 @@
                                              :y y})
 
                      (recur (conj moves [x, y])))))))
-  (recur board-piece-closest))
+  (recur board-piece-closest, app-atom, event-to-coord))
 
-(defmethod ig/init-key :amble/game-play [_ {:keys [move-local-chan, move-xy-chan, board-piece-closest]}]
+(defmethod ig/init-key :amble/game-play [_ {:keys [app-atom, move-local-chan, move-xy-chan, board-piece-closest]}]
   (async/pipe amble-client.game-play/move-local-chan move-local-chan)
   (async/pipe amble-client.game-play/move-xy-chan move-xy-chan)
+  (async/put! app-atom-chan app-atom)
   (async/put! board-piece-closest-chan board-piece-closest)
   {:handle-ui-event handle-ui-event})
 
