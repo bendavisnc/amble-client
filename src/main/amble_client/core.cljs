@@ -11,7 +11,6 @@
             [amble-client.board]
             [amble-client.moves]
             [amble-client.settings]
-            [amble-client.main-menu]
             [amble-client.board-piece-closest]
             [amble-client.board-piece-active]
             [amble-client.app]
@@ -64,10 +63,7 @@
     c))
 
 (def app-config {:amble/app {:app-atom app-atom
-                             :main-menu (ig/ref :amble/main-menu)
-                             :board (ig/ref :amble/board)
-                             :moves (ig/ref :amble/moves)
-                             :settings (ig/ref :amble/settings)}
+                             :board (ig/ref :amble/board)}
 
                  :amble/board {:app-atom app-atom
                                :board-pieces (ig/ref :amble/board-pieces)
@@ -76,9 +72,6 @@
 
                  :amble/moves {}
                  :amble/settings {:app-atom app-atom}
-
-                 :amble/main-menu {:app-atom app-atom
-                                   :app-ready-chan (app-ready-chan-dup)}
                  :amble/board-pieces {:app-atom app-atom}
                  :amble/player-pieces {:app-atom app-atom
                                        :game-play (ig/ref :amble/game-play)
@@ -125,13 +118,21 @@
     (let [config (js->clj config :keywordize-keys true)]
       (reagent/as-element [(:moves config)])))) 
 
+(defn SettingsElement []
+  (fn [config]
+    (let [config (js->clj config :keywordize-keys true)]
+      (reagent/as-element [(:settings config)])))) 
+
+
 
 (defn router [config]
   (react/createElement react-router-dom/RouterProvider 
                        (clj->js {:router (react-router-dom/createBrowserRouter (clj->js [{:path "/game/:gameId"
                                                                                           :element (reagent/as-element [:> (AppElement) config])}
                                                                                          {:path "/game/:gameId/moves"
-                                                                                          :element (reagent/as-element [:> (MovesElement) config])}]))})))
+                                                                                          :element (reagent/as-element [:> (MovesElement) config])}
+                                                                                         {:path "/game/:gameId/settings"
+                                                                                          :element (reagent/as-element [:> (SettingsElement) config])}]))})))
   
 (defn mount-root []
   (let [app-config-initialized (ig/init app-config)

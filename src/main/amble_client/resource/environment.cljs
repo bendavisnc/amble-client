@@ -1,10 +1,11 @@
 (ns amble-client.resource.environment)
+(def ip "192.168.50.72")
 
 (defn environment [& keys]
-  (let [e {:host {:client "0.0.0.0"
-                ;;   :client "192.168.1.193"
-                  :amble  "0.0.0.0"}
-                ;;   :amble "192.168.1.193"}
+  (let [e {:host {;;:client "0.0.0.0"
+                  :client ip
+                  ;; :amble  "0.0.0.0"}
+                  :amble ip}
            :port {; :client "3001"
                   :client "8080"
                   :amble "3000"}}
