@@ -67,7 +67,7 @@
   fill: #ca936a;
 }
 #board circle.active {
-  fill: #b3b3b3;
+  fill: #f1f1f1;
 }
 #main-menu {
   flex-grow: 0;

@@ -31,6 +31,7 @@
                               "data-player-piece-index")))
 
 (defn handle-ui-event [e]
+  ;; todo, condense
   (cond (= "mousedown"
            (.-type e))
         (async/put! piece-grab-chan e)

@@ -2,8 +2,11 @@
   (:require [cljs.core.async :as async]
             [integrant.core :as ig]
             ;; [react] 
+            ["react" :as react]
+            [reagent.core :as reagent]
             [reagent.dom :as reagent-dom]
             [reagent.ratom :as reagent-ratom]
+            ["react-router-dom" :as react-router-dom]
             [amble-client.board-pieces]
             [amble-client.board]
             [amble-client.moves]
@@ -112,10 +115,28 @@
 ;;  :amble/app-atom app-atom
                 ;;  :amble/user-feedback-handler user-feedback-handler/handle-ui-event
 
+(defn AppElement []
+  (fn [config]
+    (let [config (js->clj config :keywordize-keys true)]
+      (reagent/as-element [(:app config)])))) 
+
+(defn MovesElement []
+  (fn [config]
+    (let [config (js->clj config :keywordize-keys true)]
+      (reagent/as-element [(:moves config)])))) 
+
+
+(defn router [config]
+  (react/createElement react-router-dom/RouterProvider 
+                       (clj->js {:router (react-router-dom/createBrowserRouter (clj->js [{:path "/game/:gameId"
+                                                                                          :element (reagent/as-element [:> (AppElement) config])}
+                                                                                         {:path "/game/:gameId/moves"
+                                                                                          :element (reagent/as-element [:> (MovesElement) config])}]))})))
+  
 (defn mount-root []
   (let [app-config-initialized (ig/init app-config)
         _ (.log js/console app-config-initialized)]
-    (reagent-dom/render [(:amble/app app-config-initialized)]
+    (reagent-dom/render (router app-config-initialized)
                         (.getElementById js/document "app")
                         (fn []
                           (async/put! app-ready-chan true)))))
