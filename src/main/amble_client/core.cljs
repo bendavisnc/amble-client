@@ -3,6 +3,7 @@
             [integrant.core :as ig]
             ;; [react] 
             ["react" :as react]
+            ["react-burger-menu" :as react-burger-menu]
             [reagent.core :as reagent]
             [reagent.dom :as reagent-dom]
             [reagent.ratom :as reagent-ratom]
@@ -123,19 +124,33 @@
     (let [config (js->clj config :keywordize-keys true)]
       (reagent/as-element [(:settings config)])))) 
 
+(defn hamburger-menu [link]
+  [:> react-burger-menu/slide link]) 
 
+(defn settings-link [game-id]
+  [:> react-router-dom/Link {:id "settings-link"
+                             :to (str "/game/" game-id "/settings")}
+                            "⚙"])
+
+(defn RootElement []
+  (reagent/as-element [:div {:id "root"}
+                        [hamburger-menu [settings-link "TheMondayGame"]]
+                        [:> react-router-dom/Outlet]]))
 
 (defn router [config]
   (react/createElement react-router-dom/RouterProvider 
-                       (clj->js {:router (react-router-dom/createBrowserRouter (clj->js [{:path "/game/:gameId"
-                                                                                          :element (reagent/as-element [:> (AppElement) config])}
-                                                                                         {:path "/game/:gameId/moves"
-                                                                                          :element (reagent/as-element [:> (MovesElement) config])}
-                                                                                         {:path "/game/:gameId/settings"
-                                                                                          :element (reagent/as-element [:> (SettingsElement) config])}]))})))
+                       (clj->js {:router (react-router-dom/createBrowserRouter (clj->js [{:path "/"
+                                                                                          :element (reagent/as-element [:> RootElement])
+                                                                                          :children [{:path "/game/:gameId"
+                                                                                                      :element (reagent/as-element [:> (AppElement) config])}
+                                                                                                     {:path "/game/:gameId/moves"
+                                                                                                      :element (reagent/as-element [:> (MovesElement) config])}
+                                                                                                     {:path "/game/:gameId/settings"
+                                                                                                      :element (reagent/as-element [:> (SettingsElement) config])}]}]))})))
   
 (defn mount-root []
-  (let [app-config-initialized (ig/init app-config)
+  (let [_ (println "Initializing.")
+        app-config-initialized (ig/init app-config)
         _ (.log js/console app-config-initialized)]
     (reagent-dom/render (router app-config-initialized)
                         (.getElementById js/document "app")
