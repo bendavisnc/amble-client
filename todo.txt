@@ -23,6 +23,6 @@
 
 - zoom tool
 
-- move portrait-mode from app to util
+- remove portrait-mode in favor of react solution
 
 - disallow moves on occupied squares

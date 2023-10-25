@@ -125,17 +125,21 @@
       (reagent/as-element [(:settings config)])))) 
 
 (defn hamburger-menu [link]
-  [:> react-burger-menu/slide link]) 
+  [:> react-burger-menu/push {:outerContainerId "root" 
+                              :pageWrapId "content-outlet"}
+                              link])
+
 
 (defn settings-link [game-id]
   [:> react-router-dom/Link {:id "settings-link"
                              :to (str "/game/" game-id "/settings")}
-                            "⚙"])
+                            "settings"])
 
 (defn RootElement []
   (reagent/as-element [:div {:id "root"}
-                        [hamburger-menu [settings-link "TheMondayGame"]]
-                        [:> react-router-dom/Outlet]]))
+                        [hamburger-menu [settings-link "TheWednesdayGame"]]
+                        [:div {:id "content-outlet"}
+                          [:> react-router-dom/Outlet]]]))
 
 (defn router [config]
   (react/createElement react-router-dom/RouterProvider 

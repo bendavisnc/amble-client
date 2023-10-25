@@ -69,7 +69,17 @@
 #board circle.active {
   fill: #f1f1f1;
 }
+#app,
+#root,
+#content-outlet {
+  height: 100%;
+}
+.settings-pane {
+  display: flex;
+  height: 100%;
+}
 .settings-pane form {
+  align-self: flex-end;
   width: 100vw;
   height: 66.66666667vh;
 }
@@ -86,6 +96,7 @@
 }
 html,
 body {
+  height: 100%;
   overflow-x: hidden;
   margin: 0;
   position: relative;
