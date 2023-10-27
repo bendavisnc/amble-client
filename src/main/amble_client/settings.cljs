@@ -32,7 +32,7 @@
                      :items menu-config
                      :on-pane-leave #(println "neat")
                      :index "#game"} 
-      [:> SettingsMenu {:headline "⚙ General Settings"}]                   
+      [:> SettingsMenu {:headline "⚙"}]                   
       [:> SettingsContent {:close-button-class "secondary"                   
                            :save-button-class "primary"
                            :header true} 

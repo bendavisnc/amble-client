@@ -124,27 +124,43 @@
     (let [config (js->clj config :keywordize-keys true)]
       (reagent/as-element [(:settings config)])))) 
 
-(defn hamburger-menu [link]
+(defn hamburger-menu [links]
   [:> react-burger-menu/push {:outerContainerId "root" 
                               :pageWrapId "content-outlet"}
-                              link])
+                             links]) 
+                                    
 
 
-(defn settings-link [game-id]
-  [:> react-router-dom/Link {:id "settings-link"
-                             :to (str "/game/" game-id "/settings")}
-                            "settings"])
+(defn nav-link [name location]
+  [:> react-router-dom/NavLink {:to location
+                                :key location
+                                :end true
+                                :class (fn [params]
+                                         (let [{:keys [isActive, isPending]}
+                                               (js->clj params :keywordize-keys true)]
+                                           (if isActive
+                                             "active"
+                                             (if isPending
+                                               "pending"
+                                               ""))))}
+                               name])
+ 
+ 
 
 (defn RootElement []
-  (reagent/as-element [:div {:id "root"}
-                        [hamburger-menu [settings-link "TheWednesdayGame"]]
-                        [:div {:id "content-outlet"}
-                          [:> react-router-dom/Outlet]]]))
+  [:f> (fn [] 
+         (let [game-id (.-gameId (react-router-dom/useParams))]
+           [:div {:id "root"}
+             [hamburger-menu [:<> [nav-link "board" (str "/game/" game-id)] 
+                                  [nav-link "settings" (str "/game/" game-id "/settings")]]]
+                             
+             [:div {:id "content-outlet"}
+               [:> react-router-dom/Outlet]]]))])
 
 (defn router [config]
   (react/createElement react-router-dom/RouterProvider 
                        (clj->js {:router (react-router-dom/createBrowserRouter (clj->js [{:path "/"
-                                                                                          :element (reagent/as-element [:> RootElement])
+                                                                                          :element (reagent/as-element [RootElement])
                                                                                           :children [{:path "/game/:gameId"
                                                                                                       :element (reagent/as-element [:> (AppElement) config])}
                                                                                                      {:path "/game/:gameId/moves"

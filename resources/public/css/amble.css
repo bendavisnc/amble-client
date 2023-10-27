@@ -101,3 +101,23 @@ body {
   margin: 0;
   position: relative;
 }
+.bm-item-list a {
+  display: block;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: larger;
+  margin: 8px;
+}
+.bm-item-list a {
+  color: initial;
+  text-decoration: none;
+}
+.bm-item-list a.active {
+  background: #ffffff;
+}
+.bm-item-list a:hover {
+  background: #ffffff;
+}
+.bm-menu {
+  background: #f8f8f8;
+}
