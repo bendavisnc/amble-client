@@ -1,5 +1,6 @@
 (ns amble-client.move-receive
-  "Listens to moves from server."
+  "Listens to moves from server. 
+   Adds moves to `move-remote-chan`"
   (:require [integrant.core :as ig]
             [cljs.core.async :as async])
   (:require-macros [cljs.core.async :refer [go-loop]]))

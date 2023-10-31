@@ -10,11 +10,12 @@
             ["react-router-dom" :as react-router-dom]
             [amble-client.board-pieces]
             [amble-client.board]
-            [amble-client.moves]
+            [amble-client.moves-table]
             [amble-client.settings]
             [amble-client.board-piece-closest]
             [amble-client.board-piece-active]
             [amble-client.app]
+            [amble-client.moves]
             [amble-client.player-pieces]
             [amble-client.resource.board :as board-resource]
             [amble-client.resource.game :as game-resource]
@@ -71,7 +72,7 @@
                                :player-pieces (ig/ref :amble/player-pieces)
                                :game-play (ig/ref :amble/game-play)}
 
-                 :amble/moves {}
+                 :amble/moves-table {:app-atom app-atom}
                  :amble/settings {:app-atom app-atom}
                  :amble/board-pieces {:app-atom app-atom}
                  :amble/player-pieces {:app-atom app-atom
@@ -81,6 +82,8 @@
                                    :move-xy-chan move-xy-chan
                                    :board-piece-closest (ig/ref :amble/board-piece-closest)
                                    :app-atom app-atom}
+                 :amble/moves {:app-atom app-atom
+                               :move-remote-chan (move-remote-chan-dup)} 
                  :amble/move-send {:move-local-chan (move-local-chan-dup)
                                    :move-resource-add! move-resource/add!}
                  :amble/move-receive {:move-resource-get! move-resource/get!
@@ -117,7 +120,8 @@
 (defn MovesElement []
   (fn [config]
     (let [config (js->clj config :keywordize-keys true)]
-      (reagent/as-element [(:moves config)])))) 
+      (println config)
+      (reagent/as-element [(:movesTable config)])))) 
 
 (defn SettingsElement []
   (fn [config]
@@ -152,6 +156,7 @@
          (let [game-id (.-gameId (react-router-dom/useParams))]
            [:div {:id "root"}
              [hamburger-menu [:<> [nav-link "board" (str "/game/" game-id)] 
+                                  [nav-link "moves" (str "/game/" game-id "/moves")]
                                   [nav-link "settings" (str "/game/" game-id "/settings")]]]
                              
              [:div {:id "content-outlet"}

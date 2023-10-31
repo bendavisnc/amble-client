@@ -26,3 +26,5 @@
 - remove portrait-mode in favor of react solution
 
 - disallow moves on occupied squares
+
+- revisit replay timing

@@ -121,3 +121,13 @@ body {
 .bm-menu {
   background: #f8f8f8;
 }
+#grid-container {
+  height: 100%;
+  padding-top: 102px;
+}
+@media (orientation: landscape) {
+  #grid-container {
+    padding-top: initial;
+    padding-left: 108px;
+  }
+}
