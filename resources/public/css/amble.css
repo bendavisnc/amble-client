@@ -131,3 +131,6 @@ body {
     padding-left: 108px;
   }
 }
+#grid-container .ag-overlay-loading-center {
+  display: none;
+}

@@ -8,17 +8,20 @@
     [:f> (fn []
            (let [rows (:moves @app-atom)
                  columns [{:field "id"
-                           :headerName "#"},
+                           :headerName "#"
+                           :flex 1}
                           {:field "player"
                            :valueGetter (fn [e] 
                                           (let [e (js->clj (.-data e)
                                                            :keywordize-keys true)]
-                                            (:player-id e)))}
+                                            (:player-id e)))
+                           :flex 1}
                           {:field "piece"
                            :valueGetter (fn [e] 
                                           (let [e (js->clj (.-data e)
                                                            :keywordize-keys true)]
-                                            (:player-piece-index e)))}]]
+                                            (:player-piece-index e)))
+                           :flex 1}]]
              [:div {:class "ag-theme-alpine"     
                     :id "grid-container"} 
                [:> ag-grid-react/AgGridReact {:rowData rows 
