@@ -3,9 +3,10 @@
 
 (def app-id "amble")
 
-(defn app [board]
+(defn app [board, game-id]
   (fn []
     [:div {:id app-id}
+          [game-id]
           [board]]))
 
 (defn portrait-mode? []
@@ -16,7 +17,7 @@
 (defn orientation []
   (if (portrait-mode?) :portrait :landscape))
 
-(defmethod ig/init-key :amble/app [_ {:keys [app-atom, board]}]
+(defmethod ig/init-key :amble/app [_ {:keys [app-atom, board, game-id]}]
   ;; Make the app responsive by listening to the following and making global state reflect the change.
   (.addListener (.matchMedia js/window
                              "(orientation: portrait)")
@@ -27,4 +28,4 @@
                          (if (.-matches m) :portrait :landscape))))
 
   (swap! app-atom assoc-in [:app :orientation] (orientation))
-  (app board))
+  (app board, game-id))

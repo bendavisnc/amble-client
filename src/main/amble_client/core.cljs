@@ -1,7 +1,6 @@
 (ns amble-client.core
   (:require [cljs.core.async :as async]
             [integrant.core :as ig]
-            ;; [react] 
             ["react" :as react]
             ["react-burger-menu" :as react-burger-menu]
             [reagent.core :as reagent]
@@ -10,6 +9,7 @@
             ["react-router-dom" :as react-router-dom]
             [amble-client.board-pieces]
             [amble-client.board]
+            [amble-client.game-id]
             [amble-client.moves-table]
             [amble-client.settings]
             [amble-client.board-piece-closest]
@@ -65,25 +65,32 @@
     c))
 
 (def app-config {:amble/app {:app-atom app-atom
-                             :board (ig/ref :amble/board)}
+                             :board (ig/ref :amble/board)
+                             :game-id (ig/ref :amble/game-id)}
 
                  :amble/board {:app-atom app-atom
                                :board-pieces (ig/ref :amble/board-pieces)
                                :player-pieces (ig/ref :amble/player-pieces)
                                :game-play (ig/ref :amble/game-play)}
 
+
+                 :amble/game-id {:app-atom app-atom 
+                                 :app-ready-chan app-ready-chan}
                  :amble/moves-table {:app-atom app-atom}
                  :amble/settings {:app-atom app-atom}
-                 :amble/board-pieces {:app-atom app-atom}
+                 :amble/board-pieces {:app-atom app-atom
+                                      :app-ready-chan (app-ready-chan-dup)}
                  :amble/player-pieces {:app-atom app-atom
                                        :game-play (ig/ref :amble/game-play)
-                                       :move-xy-chan (move-xy-chan-dup)}
+                                       :move-xy-chan (move-xy-chan-dup)
+                                       :app-ready-chan (app-ready-chan-dup)}
                  :amble/game-play {:move-local-chan move-local-chan
                                    :move-xy-chan move-xy-chan
                                    :board-piece-closest (ig/ref :amble/board-piece-closest)
                                    :app-atom app-atom}
                  :amble/moves {:app-atom app-atom
-                               :move-remote-chan (move-remote-chan-dup)} 
+                               :move-remote-chan (move-remote-chan-dup) 
+                               :game-id (ig/ref :amble/game-id)} 
                  :amble/move-send {:move-local-chan (move-local-chan-dup)
                                    :move-resource-add! move-resource/add!}
                  :amble/move-receive {:move-resource-get! move-resource/get!
@@ -180,41 +187,11 @@
     (reagent-dom/render (router app-config-initialized)
                         (.getElementById js/document "app")
                         (fn []
-                          (async/put! app-ready-chan true)))))
+                          (println "App is mounted.")))))
 
 (defn init! []
-  ;; Set up board pieces from server game state.
-  (go
-    (let [game-response (let [game-id-from-window (utils/game-id-from-window)
-                              game-response-first-attempt (async/<! (game-resource/get! game-id-from-window))]
-                          (if (:game-id game-response-first-attempt)
-                            (do
-                              (println (str "Using game id provided from browser address, \"" game-id-from-window))
-                              game-response-first-attempt)
-                            (let [_ (println (str "Game not found with id, \"" game-id-from-window))
-                                  game-response-create-attempt (async/<! (game-resource/create!))
-                                  _ (println game-response-create-attempt)]
-                              game-response-create-attempt)))
-          game-id (:game-id game-response)
-          board-response (async/<! (board-resource/get! game-id))
-
-          players-response (async/<! (player-resource/get! game-id))
-          player-pieces (async/<! (async/into {}
-                                              (async/merge
-                                               (for [player-id players-response]
-                                                 (async/pipe (player-resource/get! game-id player-id)
-                                                             (async/chan 1
-                                                                         (map (fn [coordinates]
-                                                                                [(keyword player-id) coordinates]))))))))]
-      (swap! app-atom assoc :game-id game-id)
-      (swap! app-atom assoc :board-pieces (vec (for [[i, [x,y]] (map-indexed vector board-response)]
-                                                 {:x x
-                                                  :y y
-                                                  :index i
-                                                  :is-active? false})))
-      (swap! app-atom assoc :player-pieces player-pieces)
-      (swap! app-atom assoc-in [:settings :player] :player-one)
-      (mount-root))))
+  (swap! app-atom assoc-in [:settings :player] :player-one)
+  (mount-root))
 
 (defn post-game! []
   (async/take! (game-resource/create!)

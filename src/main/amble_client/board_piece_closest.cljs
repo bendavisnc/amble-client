@@ -1,27 +1,20 @@
 (ns amble-client.board-piece-closest
   "Figures out which piece is closest, given some x y value."
-  (:require [integrant.core :as ig]
-            [cljs.core.async :as async])
-  (:require-macros [cljs.core.async :refer [go]]))
+  (:require [integrant.core :as ig]))
 
-(def board-pieces-atom (atom nil))
+;; Looks at the kinda constant list of board coords (kinda because they're server values), and uses a 
+;; sort function to return the nearest coord in that list to the coord given."
+(defn board-piece-closest [app-atom]
+  (fn [x, y]
+    (first (sort-by (fn [board-piece]
+                      (let [xxx (- (:x board-piece) x)
+                            yyy (- (:y board-piece) y)]
+                        (Math/sqrt (+ (* xxx xxx)
+                                      (* yyy yyy)))))
+                    (:board-pieces (deref app-atom))))))
 
-(defn board-piece-closest 
-  "Looks at the kinda constant list of board coords (kinda because they're server values), and uses a 
-   sort function to return the nearest coord in that list to the coord given."
-  [x, y]
-  (first (sort-by (fn [board-piece]
-                    (let [xxx (- (:x board-piece) x)
-                          yyy (- (:y board-piece) y)]
-                      (Math/sqrt (+ (* xxx xxx)
-                                    (* yyy yyy)))))
-                  (deref board-pieces-atom))))
-
-(defmethod ig/init-key :amble/board-piece-closest [_ {:keys [app-atom, app-ready-chan]}]
-  (go
-    (async/<! app-ready-chan)
-    (reset! board-pieces-atom (:board-pieces (deref app-atom))))
-  board-piece-closest)
+(defmethod ig/init-key :amble/board-piece-closest [_ {:keys [app-atom]}]
+  (board-piece-closest app-atom))
 
 
 

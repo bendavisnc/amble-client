@@ -1,8 +1,9 @@
 (ns amble-client.player-pieces
   "Represents player pieces that can change position based on user feedback."
   (:require [integrant.core :as ig]
-            [cljs.core.async :as async])
-  (:require-macros [cljs.core.async :refer [go-loop]]))
+            [cljs.core.async :as async]
+            [amble-client.resource.player :as player-resource])
+  (:require-macros [cljs.core.async :refer [go-loop, go]]))
 
 (def classname "player")
 (def piece-size 0.023)
@@ -70,14 +71,28 @@
                    :unique-key unique-key
                    :user-feedback-handler (:handle-ui-event game-play)))])])))
 
+;; Gets the initial piece placement.
+(go (let [app-atom (async/<! app-atom-chan)
+          game-id (:game-id @app-atom)
+          players-response (async/<! (player-resource/get! game-id))
+          player-pieces (async/<! (async/into {}
+                                              (async/merge
+                                               (for [player-id players-response]
+                                                 (async/pipe (player-resource/get! game-id player-id)
+                                                             (async/chan 1
+                                                                         (map (fn [coordinates]
+                                                                                [(keyword player-id) coordinates]))))))))]
+      (swap! app-atom assoc :player-pieces player-pieces)))
+
 ;; Pulls from xy moves and updates position state from the app atom.
 (go-loop [app-atom (async/<! app-atom-chan)]
   (let [{:keys [player-id, player-piece-index, x, y]} (async/<! move-xy-chan)]
     (swap! app-atom assoc-in [:player-pieces player-id player-piece-index] [x, y]))
   (recur app-atom))
 
-(defmethod ig/init-key :amble/player-pieces [_, {:keys [app-atom, move-xy-chan, game-play]}]
-  (async/put! app-atom-chan app-atom)
-  (async/put! app-atom-chan app-atom)
+(defmethod ig/init-key :amble/player-pieces [_, {:keys [app-atom, move-xy-chan, game-play, app-ready-chan]}]
+  (go (async/<! app-ready-chan)
+      (async/>! app-atom-chan app-atom)
+      (async/>! app-atom-chan app-atom))
   (async/pipe move-xy-chan amble-client.player-pieces/move-xy-chan)
   (player-pieces app-atom game-play))
