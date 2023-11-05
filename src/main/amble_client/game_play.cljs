@@ -55,21 +55,12 @@
           (println "User event not handled!")
           (.log js/console e))))
 
-(defn event-to-coord-cached [app-atom]
-  (let [cached-function-by-player (memoize (fn [_]
-                                             (utils/coord-conv (.getElementById js/document "board"))))]
-    (fn []
-     (let [player (get-in (deref app-atom)
-                          [:settings :player])]
-       (cached-function-by-player player)))))
-
-
 ;; A go loop for turning mouse dragging behavior into move events.
 ;; Invokes out to the chans that are provided as dependencies.
 
 (go-loop [board-piece-closest (async/<! board-piece-closest-chan)
           app-atom (async/<! app-atom-chan)
-          event-to-coord (event-to-coord-cached app-atom)]
+          event-to-coord (utils/coord-conv)]
   (println "Waiting for game play.")
   (let [piece-grab-event (async/<! piece-grab-chan)
         game-id (element-to-game-id (.-target piece-grab-event))
@@ -94,7 +85,8 @@
 
                   piece-move-chan
                   ([move]
-                   (let [[x, y] ((event-to-coord)
+                   (let [[x, y] (event-to-coord
+                                 (.getElementById js/document "board")
                                  move)]
                      (async/>! move-xy-chan {:player-id player-id
                                              :player-piece-index player-piece-index

@@ -17,26 +17,25 @@
 
 ; e.originalEvent.touches[0].clientX
 
-(def call-count (atom 0))
-
-(defn coord-conv [svg-element]
-  (assert svg-element "No svg element provided to \"coord-conv\" util.")
+(defn coord-conv []
   ;; (assert (= 0 @call-count))
-  (swap! call-count inc)
-  (let [pt (.createSVGPoint svg-element)]
-    (fn [e]
-      (aset pt "x" (or (aget e "clientX")
-                       (-> e
-                           ;(aget "originalEvent")
-                           (aget "touches")
-                           (aget 0)
-                           (aget "clientX"))))
-      (aset pt "y" (or (aget e "clientY")
-                       (-> e
-                           ;(aget "originalEvent")
-                           (aget "touches")
-                           (aget 0)
-                           (aget "clientY"))))
-      (let [cursor-pt (.matrixTransform pt (.inverse (.getScreenCTM svg-element)))]
-        [(aget cursor-pt "x")
-         (aget cursor-pt "y")]))))
+    (fn [svg-element, e]
+      (let [pt (.createSVGPoint svg-element)]
+        (assert svg-element "No svg element provided to \"coord-conv\" util.")
+        (assert (= (.getElementById js/document "board")
+                   svg-element))
+        (aset pt "x" (or (aget e "clientX")
+                         (-> e
+                             ;(aget "originalEvent")
+                             (aget "touches")
+                             (aget 0)
+                             (aget "clientX"))))
+        (aset pt "y" (or (aget e "clientY")
+                         (-> e
+                             ;(aget "originalEvent")
+                             (aget "touches")
+                             (aget 0)
+                             (aget "clientY"))))
+        (let [cursor-pt (.matrixTransform pt (.inverse (.getScreenCTM svg-element)))]
+          [(aget cursor-pt "x")
+           (aget cursor-pt "y")]))))

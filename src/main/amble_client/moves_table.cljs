@@ -25,7 +25,9 @@
              [:div {:class "ag-theme-alpine"     
                     :id "grid-container"} 
                [:> ag-grid-react/AgGridReact {:rowData rows 
-                                              :columnDefs columns}]]))]))
+                                              :columnDefs columns
+                                              :pagination true
+                                              :paginationPageSize 5}]]))])) 
 
 (defmethod ig/init-key :amble/moves-table [_, {:keys [app-atom]}]
   (moves-table app-atom))
