@@ -2,10 +2,14 @@
   (:require
    [amble-client.resource.core :as resource-core]))
 
-(defn get! [game-id, move-id]
-  (resource-core/response-chan {:endpoint-key :move-get-by-id
-                                :param-map {:game-id game-id
-                                            :id move-id}}))
+(defn get! 
+  ([game-id]
+   (resource-core/response-chan {:endpoint-key :move-get-by-game-id
+                                 :param-map {:game-id game-id}}))
+  ([game-id, move-id]
+   (resource-core/response-chan {:endpoint-key :move-get-by-id
+                                 :param-map {:game-id game-id
+                                             :id move-id}})))
 
 (defn add! [game-id, player-id, player-piece-index, move, x, y, client-id]
   (resource-core/response-chan {:endpoint-key :move-add

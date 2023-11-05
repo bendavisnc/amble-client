@@ -2,19 +2,6 @@
   (:require
    [clojure.string :as string]))
 
-(defn game-id-from-window
-  "Returns the game id from the browser window."
-  []
-  (let [game-id
-        (-> js/window
-            (aget "location")
-            (aget "pathname")
-            (string/split "/")
-            last)]
-    (when (not game-id)
-      (throw (new js/Error "No game id found in browser url.")))
-    game-id))
-
 ;https://stackoverflow.com/questions/29261304/how-to-get-the-click-coordinates-relative-to-svg-element-holding-the-onclick-lis
 
 ;var pt = svg.createSVGPoint();  // Created once for document

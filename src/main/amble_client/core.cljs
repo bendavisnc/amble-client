@@ -90,7 +90,8 @@
                                    :app-atom app-atom}
                  :amble/moves {:app-atom app-atom
                                :move-remote-chan (move-remote-chan-dup) 
-                               :game-id (ig/ref :amble/game-id)} 
+                               :game-id (ig/ref :amble/game-id) 
+                               :app-ready-chan (app-ready-chan-dup)}
                  :amble/move-send {:move-local-chan (move-local-chan-dup)
                                    :move-resource-add! move-resource/add!}
                  :amble/move-receive {:move-resource-get! move-resource/get!

@@ -120,6 +120,29 @@
         "tags" : [ "move" ]
       }
     },
+    "/game/{gameId}/move" : {
+      "get" : {
+        "operationId" : "moveGetByGameId",
+        "parameters" : [ {
+          "description" : "The id of the game",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The list of moves made in the game."
+          }
+        },
+        "summary" : "Get moves by game id",
+        "tags" : [ "move" ]
+      }
+    },
     "/game/{gameId}/player/{playerId}/move/{playerPieceIndex}" : {
       "post" : {
         "operationId" : "moveAdd",
@@ -217,9 +240,6 @@
         "responses" : {
           "200" : {
             "description" : "All players associated with game with game id."
-          },
-          "404" : {
-            "description" : "No corresponding game or player found."
           }
         },
         "summary" : "Get player by game id",

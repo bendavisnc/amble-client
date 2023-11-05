@@ -9,7 +9,10 @@
 (def board-piece-closest-chan (async/chan))
 
 (defn set-active! [app-atom, board-piece, is-active?]
-  (swap! app-atom assoc-in [:board-pieces (:index board-piece)] (assoc board-piece :is-active? is-active?)))
+  (swap! app-atom assoc-in [:board-pieces 
+                            (:index board-piece) 
+                            :is-active?] 
+                           is-active?))
 
 (defn activate! [app-atom, board-piece]
   (set-active! app-atom board-piece true))
