@@ -78,6 +78,40 @@
       }
     },
     "/game/{gameId}/move/{id}" : {
+      "delete" : {
+        "operationId" : "moveDeleteById",
+        "parameters" : [ {
+          "description" : "The id of the game",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        }, {
+          "description" : "The id of the move",
+          "explode" : false,
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Empty response when successful."
+          },
+          "404" : {
+            "description" : "No corresponding move found."
+          }
+        },
+        "summary" : "Delete move by move id",
+        "tags" : [ "move" ]
+      },
       "get" : {
         "operationId" : "moveGetById",
         "parameters" : [ {

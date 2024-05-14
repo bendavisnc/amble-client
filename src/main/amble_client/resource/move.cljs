@@ -21,4 +21,11 @@
                                             :y y
                                             :client-id client-id}}))
 
+(defn delete! [game-id, id]
+  (resource-core/response-chan {:endpoint-key :move-delete-by-id
+                                :param-map {:game-id game-id
+                                            :id id}}))
+
+
+
 

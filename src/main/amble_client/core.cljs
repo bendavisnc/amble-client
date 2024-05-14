@@ -76,7 +76,8 @@
 
                  :amble/game-id {:app-atom app-atom 
                                  :app-ready-chan app-ready-chan}
-                 :amble/moves-table {:app-atom app-atom}
+                 :amble/moves-table {:app-atom app-atom
+                                     :move-resource-delete! move-resource/delete!}
                  :amble/settings {:app-atom app-atom}
                  :amble/board-pieces {:app-atom app-atom
                                       :app-ready-chan (app-ready-chan-dup)}
@@ -170,16 +171,23 @@
              [:div {:id "content-outlet"}
                [:> react-router-dom/Outlet]]]))])
 
+(defn neat-action [& args]
+  (println "neat")
+  (println args))
+
 (defn router [config]
   (react/createElement react-router-dom/RouterProvider 
-                       (clj->js {:router (react-router-dom/createBrowserRouter (clj->js [{:path "/"
-                                                                                          :element (reagent/as-element [RootElement])
-                                                                                          :children [{:path "/game/:gameId"
-                                                                                                      :element (reagent/as-element [:> (AppElement) config])}
-                                                                                                     {:path "/game/:gameId/moves"
-                                                                                                      :element (reagent/as-element [:> (MovesElement) config])}
-                                                                                                     {:path "/game/:gameId/settings"
-                                                                                                      :element (reagent/as-element [:> (SettingsElement) config])}]}]))})))
+                       (clj->js {:router 
+                                 (react-router-dom/createBrowserRouter (clj->js [{:path "/"
+                                                                                  :element (reagent/as-element [RootElement])
+                                                                                  :children [{:path "/game/:gameId"
+                                                                                              :element (reagent/as-element [:> (AppElement) config])}
+                                                                                             {:path "/game/:gameId/moves"
+                                                                                              :element (reagent/as-element [:> (MovesElement) config])}
+                                                                                             {:path "/game/:gameId/settings"
+                                                                                              :element (reagent/as-element [:> (SettingsElement) config])}
+                                                                                             {:path "/game/:gameId/moves/destroy"
+                                                                                              :action neat-action}]}]))})))
   
 (defn mount-root []
   (let [_ (println "Initializing.")

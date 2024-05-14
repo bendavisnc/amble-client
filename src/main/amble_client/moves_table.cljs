@@ -2,7 +2,22 @@
   (:require [integrant.core :as ig]
             ["react" :as react]
             ["react-router-dom" :as react-router-dom]
+            [reagent.core :as reagent]
             ["ag-grid-react" :as ag-grid-react]))
+
+(def move-resource-delete!-atom (atom nil))
+
+(defn move-action-cell [props]
+  ;;"neat")
+  (reagent/as-element [:f>
+                       (fn []
+                         [:button {:on-click (fn [_] 
+                                               (let [[game-id, id]
+                                                     (.-value props)
+                                                     move-resource-delete! (deref move-resource-delete!-atom)
+                                                     delete-response (move-resource-delete! game-id, id)]
+                                                 nil))}
+                                  "delete!"])]))
 
 (defn- moves-table [app-atom]
   (fn []
@@ -22,10 +37,20 @@
                                           (let [e (js->clj (.-data e)
                                                            :keywordize-keys true)]
                                             (:player-piece-index e)))
+                           :flex 1}
+                          {:field "piece-action"
+                           :valueGetter (fn [e] 
+                                          (let [e (js->clj (.-data e)
+                                                           :keywordize-keys true)]
+                                            [(:game-id e), (:id e)]))
+                           :cellRenderer move-action-cell
                            :flex 1}]]
              [:div {:id "moves-table-container"}
                [:> react-router-dom/Form {:id "moves-table-form"
-                                          :method "post"} 
+                                          :method "post" 
+                                          :on-submit (fn [e]
+                                                       (.preventDefault e))
+                                          :action "destroy"}
                  [:div {:class "ag-theme-alpine"     
                         :id "grid-container"} 
                    [:> ag-grid-react/AgGridReact {:rowData rows 
@@ -36,5 +61,6 @@
                    "Delete"]]]))]))
 
 
-(defmethod ig/init-key :amble/moves-table [_, {:keys [app-atom]}]
+(defmethod ig/init-key :amble/moves-table [_, {:keys [app-atom, move-resource-delete!]}]
+  (reset! move-resource-delete!-atom move-resource-delete!)
   (moves-table app-atom))
