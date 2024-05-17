@@ -42,7 +42,7 @@
 (def move-remote-chan-multicast (async/mult move-remote-chan))
 (def move-xy-chan (async/chan))
 (def move-xy-chan-multicast (async/mult move-xy-chan))
-(def latest-move-index-chan (async/chan))
+(def move-index-chan (async/chan))
 
 (defn move-local-chan-dup []
   (let [c (async/chan)]
@@ -96,10 +96,11 @@
                  :amble/move-send {:move-local-chan (move-local-chan-dup)
                                    :move-resource-add! move-resource/add!}
                  :amble/move-receive {:move-resource-get! move-resource/get!
-                                      :latest-move-index-chan latest-move-index-chan
+                                      :move-index-chan move-index-chan
                                       :move-remote-chan move-remote-chan
+                                      :move-record-check (ig/ref :amble/move-record-check)
                                       :app-atom app-atom}
-                 :amble/move-async {:latest-move-index-chan latest-move-index-chan
+                 :amble/move-async {:move-index-chan move-index-chan
                                     :app-atom app-atom
                                     :app-ready-chan (app-ready-chan-dup)}
                  :amble/move-local {:app-atom app-atom
@@ -107,8 +108,7 @@
                                     :app-ready-chan (app-ready-chan-dup)}
                  :amble/move-remote {:app-atom app-atom
                                      :app-ready-chan (app-ready-chan-dup)
-                                     :move-remote-chan (move-remote-chan-dup)
-                                     :move-record-check (ig/ref :amble/move-record-check)}
+                                     :move-remote-chan (move-remote-chan-dup)}
                  :amble/move-record-check {:move-local-chan (move-local-chan-dup)}
 
                  :amble/board-piece-closest {:app-atom app-atom

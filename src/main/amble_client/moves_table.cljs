@@ -3,21 +3,27 @@
             ["react" :as react]
             ["react-router-dom" :as react-router-dom]
             [reagent.core :as reagent]
+            [cljs.core.async :as async]
             ["ag-grid-react" :as ag-grid-react]))
 
 (def move-resource-delete!-atom (atom nil))
 
-(defn move-action-cell [props]
-  ;;"neat")
-  (reagent/as-element [:f>
-                       (fn []
-                         [:button {:on-click (fn [_] 
-                                               (let [[game-id, id]
-                                                     (.-value props)
-                                                     move-resource-delete! (deref move-resource-delete!-atom)
-                                                     delete-response (move-resource-delete! game-id, id)]
-                                                 nil))}
-                                  "delete!"])]))
+(defn delete-move! [app-atom, game-id, id]
+  (let [move-resource-delete! (deref move-resource-delete!-atom)]
+    (async/take! (move-resource-delete! game-id, id)
+                 (fn [move-delete-response]
+                   (println "Move deleted.")))))
+
+
+(defn move-action-cell [app-atom]
+  (fn [props]
+    (reagent/as-element [:f>
+                         (fn []
+                           [:button {:on-click (fn [_] 
+                                                 (let [[game-id, id]
+                                                       (.-value props)]
+                                                   (delete-move! app-atom, game-id, id)))}
+                                    "delete!"])])))
 
 (defn- moves-table [app-atom]
   (fn []
@@ -43,7 +49,7 @@
                                           (let [e (js->clj (.-data e)
                                                            :keywordize-keys true)]
                                             [(:game-id e), (:id e)]))
-                           :cellRenderer move-action-cell
+                           :cellRenderer (move-action-cell app-atom)
                            :flex 1}]]
              [:div {:id "moves-table-container"}
                [:> react-router-dom/Form {:id "moves-table-form"
@@ -56,10 +62,7 @@
                    [:> ag-grid-react/AgGridReact {:rowData rows 
                                                   :columnDefs columns
                                                   :pagination true
-                                                  :paginationPageSize 5}]] 
-                 [:button {:type "submit"}
-                   "Delete"]]]))]))
-
+                                                  :paginationPageSize 5}]]]]))])) 
 
 (defmethod ig/init-key :amble/moves-table [_, {:keys [app-atom, move-resource-delete!]}]
   (reset! move-resource-delete!-atom move-resource-delete!)
