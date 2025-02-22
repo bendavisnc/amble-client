@@ -207,3 +207,15 @@
                (fn [game-create-response]
                  (println "Requested new game.")
                  (println game-create-response))))
+
+;;(aset js/window "test"
+;;                (fn [] 
+;;                  (let [m {:moves [1, 2, 3]}
+;;                        mn (update m
+;;                                   :moves
+;;                                   (fn [acc, f]
+;;                                     (filter f acc))
+;;                                   (fn [i]
+;;                                     (not (= 3 i))))]
+;;                    (println mn))))
+                

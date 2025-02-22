@@ -3,6 +3,7 @@
    Adds moves to `move-remote-chan`."
   (:require [integrant.core :as ig]
             [cljs.core.async :as async]
+            [amble-client.move-helpers :refer [end-move-at-point!]]
             [goog.string :as gstring]
             [goog.string.format])
   (:require-macros [cljs.core.async :refer [go-loop]]))
@@ -21,7 +22,26 @@
   (first (filter (fn [m]
                    (= i (:id m)))
                  (:moves (deref app-atom)))))
-           
+
+(defn remove-move! [app-atom, move]
+  (println (gstring/format "Removing move, `%s`"
+                           (:id move)))
+  (swap! app-atom 
+         update 
+         :moves 
+         (fn [acc f]
+           (filter f acc))
+         (fn [m]
+           (not (= (:id move)
+                   (:id m)))))
+  (println move)
+  ;;(println (type (:player-id move))))
+  (let [[x, y] (first (:move move))]
+    (end-move-at-point! app-atom (-> move 
+                                     (update :player-id keyword)
+                                     (assoc :x x)
+                                     (assoc :y y)
+                                     (update :moves reverse)))))
 
 (go-loop [move-resource-get! (async/<! move-resource-get!-chan)
           move-record-check (async/<! move-record-check-chan)
@@ -38,10 +58,9 @@
                                    :is-remote?  
                                    (not (move-record-check (:client-id move-valid))))))
       (if-let [move-existing (existing? app-atom, move-id)]
-        (do (println "todo, remove move")
-            (.dir js/console move-existing))
-        (println (gstring/format "No move, `%s`"
-                                 move-id)))) 
+        (remove-move! app-atom move-existing)
+        (throw (new js/Error (gstring/format "Move request failed `%s`."
+                                             move-id)))))
     (recur move-resource-get!, move-record-check, app-atom, game-id)))
 
 (defmethod ig/init-key :amble/move-receive [_ {:keys [app-atom, move-remote-chan, move-resource-get!, move-index-chan, move-record-check]}]

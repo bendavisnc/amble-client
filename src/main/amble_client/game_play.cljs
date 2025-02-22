@@ -30,6 +30,12 @@
   (js/parseInt (.getAttribute element
                               "data-player-piece-index")))
 
+(defn- element-to-piece-coord [element]
+  [(js/parseFloat (.getAttribute element
+                              "cx")),
+   (js/parseFloat (.getAttribute element
+                              "cy"))])
+
 (defn handle-ui-event [e]
   ;; todo, condense
   (cond (= "mousedown"
@@ -66,8 +72,11 @@
         game-id (element-to-game-id (.-target piece-grab-event))
         player-id (element-to-player-id (.-target piece-grab-event))
         player-piece-index (element-to-piece-index (.-target piece-grab-event))
+        _ (println piece-grab-event)
+        _ (aset js/window "wut" piece-grab-event)
+        first-move-coord (element-to-piece-coord (.-target piece-grab-event)) 
         _ (async/poll! piece-move-chan)]
-    (loop [moves []]
+    (loop [moves [first-move-coord]]
       (async/alt! piece-release-chan
                   ([_]
                    (let [_ (println "Local move complete!")

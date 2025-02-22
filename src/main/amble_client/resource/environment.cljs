@@ -1,7 +1,7 @@
 (ns amble-client.resource.environment)
 ;; (def ip "192.168.50.72")
 ;;(def ip "192.168.86.21")
-(def ip "192.168.86.22")
+(def ip "192.168.86.23")
 
 (defn environment [& keys]
   (let [e {:host {;;:client "0.0.0.0"

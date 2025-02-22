@@ -1,5 +1,5 @@
 #amble {
-  background-color: #d3d3d3;
+  background-color: lightgrey;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -8,7 +8,7 @@
   overflow: hidden;
 }
 #board {
-  background-color: #d3d3d3;
+  background-color: lightgrey;
 }
 @media (orientation: portrait) {
   #board {
@@ -43,10 +43,10 @@
   transform: rotate(-300deg);
 }
 #board circle.board-piece {
-  fill: #ffffff;
+  fill: white;
 }
 #board {
-  background-color: #d3d3d3;
+  background-color: lightgrey;
 }
 #board circle.player-one {
   fill: #6acac8;
@@ -113,10 +113,10 @@ body {
   text-decoration: none;
 }
 .bm-item-list a.active {
-  background: #ffffff;
+  background: white;
 }
 .bm-item-list a:hover {
-  background: #ffffff;
+  background: white;
 }
 .bm-menu {
   background: #f8f8f8;
