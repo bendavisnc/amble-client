@@ -13,6 +13,6 @@
    (let [t (re-frame/subscribe [::model/amble])]
      (testing "initial state"
        (re-frame/dispatch [:initialize])
-       (is (= 2
+       (is (= {:player-selected :player-one}
               @t))
        (is (s/valid? ::spec/component @t))))))

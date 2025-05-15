@@ -2,5 +2,9 @@
   (:require
    [clojure.spec.alpha :as s]))
 
+(s/def ::player #{:player-one, :player-two})
+
+(s/def ::player-selected ::player)
+
 (s/def ::component
-  any?)
+  (s/keys :req-un [::player-selected]))
