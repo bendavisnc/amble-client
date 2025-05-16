@@ -1,0 +1,19 @@
+#board {
+  width: 61.80469716vw;
+  height: auto;
+}
+.board-piece {
+  fill: white;
+}
+html,
+body {
+  margin: 0;
+}
+#amble {
+  background-color: lightgrey;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+}
