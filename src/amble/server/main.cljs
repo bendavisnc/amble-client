@@ -9,9 +9,20 @@
 (re-frame/reg-event-fx
   ::server/post-game
   (fn [{:keys [db]} [_ on-success, on-failure]]
-    {:db (assoc db :posting-game? true)
+    {:db db
      :dispatch [::martian-reframe/request
                 :game-add          ;; Ensure this is the correct route id from your OpenAPI spec
+                {}
+                [on-success] ;; success callback event vector
+                [on-failure]]})) ;; failure callback event vector
+
+
+(re-frame/reg-event-fx
+  ::server/game-get-default-id
+  (fn [{:keys [db]} [_ on-success, on-failure]]
+    {:db db
+     :dispatch [::martian-reframe/request
+                :game-get-default-id 
                 {}
                 [on-success] ;; success callback event vector
                 [on-failure]]})) ;; failure callback event vector
