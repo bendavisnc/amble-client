@@ -1,7 +1,6 @@
 (ns amble.core
   (:require
    [amble.view :as view]
-   [amble.server.main]
    [amble.server.server]
    [amble.models.amble :as model]
    [re-frame.core :as re-frame]

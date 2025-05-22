@@ -7,7 +7,7 @@
  ::initialize
  (fn [{:keys [db]} [_]]
    (merge
-    {:db (assoc db :player-selected :player-one)}
+    {:db db}
     {:dispatch [::server/post-game ::on-post-game-success, ::on-post-game-failure]})))
 
 (re-frame/reg-event-fx
@@ -19,8 +19,8 @@
  ::on-game-id-success
  (fn [{:keys [db]} [_, event]]
    (let [game-id (keyword (:body event))]
-    (merge {:db db}
-           {:dispatch [::on-game-ready game-id]}))))
+     (merge {:db (assoc-in db [:game game-id] {})}
+            {:dispatch [::on-game-ready event]}))))
 
 (re-frame/reg-event-fx
  ::on-game-id-failure
@@ -40,6 +40,7 @@
          (throw (new js/Error ["unexpected response result on `:post-game`"
                                event])))))
 
+;; If we can't just post a new game from nothing, we need to get the default game id.
 (re-frame/reg-event-fx
  ::on-post-game-failure-conflict
  (fn [{:keys [db]} [_]]
@@ -48,9 +49,42 @@
     {:dispatch [::server/game-get-default-id ::on-game-id-success, ::on-game-id-failure]})))
 
 (re-frame/reg-event-fx
+ ::on-players-success
+ (fn [coeff, [_ event]]
+   (let [game-id (get-in coeff [:db :game-id])
+         players (mapv keyword (:body event))]
+     (merge {:db (:db coeff)
+             :dispatch [::server/player-get-by-id (first players) ::on-player-success, ::on-player-failure]}))))
+;; {:dispatch (mapv (fn [player]
+;;                    [::server/player-get-by-id  game-id player ::on-player-success, ::on-player-failure])
+;;                  players)})))) 
+
+
+(re-frame/reg-event-fx
+ ::on-players-failure
+ (fn [& args]
+   (throw (new js/Error ["unhandled `::on-players-failure`", args]))))
+
+(re-frame/reg-event-fx
+ ::on-player-success
+ (fn [coeff [_ id event]]
+    (let [player-id id
+          game-id (get-in coeff [:db :game-id])
+          position (:body event)]
+      (merge {:db (assoc-in (:db coeff) 
+                            [:game game-id player-id :position]
+                            position)}))))
+
+;; Once we know the game id, we can load player position
+(re-frame/reg-event-fx
  ::on-game-ready
  (fn [{:keys [db]} [_, event]]
-   (throw (new js/Error ["unhandled game ready", event]))))
+   (cond (and (= 200 (:status event))
+              (:game-id db))
+         (merge {:db db}
+                {:dispatch [::server/player-get-all-by-game-id ::on-players-success, ::on-players-failure]})
+         :else
+         (throw (new js/Error ["unhandled game ready", event])))))
 
 
 (re-frame/reg-sub
@@ -60,7 +94,5 @@
 
 (re-frame/reg-sub
  ::amble
- (fn []
-   [(re-frame/subscribe [::player-selected])])
- (fn [[player-selected]]
-   {:player-selected player-selected}))
+ (fn [db]
+   (:game db)))
