@@ -17,3 +17,12 @@ resources/public/css/style.css: less/amble.less
 
 
 lesscompile: resources/public/css/style.css
+	@echo Compiling css resource from less source.
+
+resources/public/json/openapi.json:
+	mkdir -p resources/public/json
+	cd ../amble-openapi; make clean; make openapi	
+	cp ../amble-openapi/target/openapi/openapi.json resources/public/json/openapi.json
+	
+openapi: resources/public/json/openapi.json
+	@echo Provisioning openapi spec.
