@@ -1,0 +1,393 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "Amble",
+    "version" : "0.0.0"
+  },
+  "servers" : [ {
+    "url" : "/"
+  } ],
+  "paths" : {
+    "/game" : {
+      "get" : {
+        "operationId" : "gameGetDefaultId",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            },
+            "description" : "Game id of default game."
+          }
+        },
+        "summary" : "Get default game id",
+        "tags" : [ "game" ]
+      },
+      "post" : {
+        "operationId" : "gameAdd",
+        "responses" : {
+          "201" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GameAdd"
+                }
+              }
+            },
+            "description" : "Successfully added game."
+          }
+        },
+        "summary" : "Add new game",
+        "tags" : [ "game" ]
+      }
+    },
+    "/game/{id}" : {
+      "get" : {
+        "operationId" : "gameGetById",
+        "parameters" : [ {
+          "description" : "The id of the game",
+          "explode" : false,
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GameGet"
+                }
+              }
+            },
+            "description" : "Game id of game that already exists."
+          },
+          "404" : {
+            "description" : "No corresponding game found."
+          }
+        },
+        "summary" : "Get game by id",
+        "tags" : [ "game" ]
+      }
+    },
+    "/game/{gameId}/move/{id}" : {
+      "delete" : {
+        "operationId" : "moveDeleteById",
+        "parameters" : [ {
+          "description" : "The id of the game",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        }, {
+          "description" : "The id of the move",
+          "explode" : false,
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Empty response when successful."
+          },
+          "404" : {
+            "description" : "No corresponding move found."
+          }
+        },
+        "summary" : "Delete move by move id",
+        "tags" : [ "move" ]
+      },
+      "get" : {
+        "operationId" : "moveGetById",
+        "parameters" : [ {
+          "description" : "The id of the game",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        }, {
+          "description" : "The id of the move",
+          "explode" : false,
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MoveGet"
+                }
+              }
+            },
+            "description" : "The move."
+          },
+          "404" : {
+            "description" : "No corresponding move found."
+          }
+        },
+        "summary" : "Get move by move id",
+        "tags" : [ "move" ]
+      }
+    },
+    "/game/{gameId}/move" : {
+      "get" : {
+        "operationId" : "moveGetByGameId",
+        "parameters" : [ {
+          "description" : "The id of the game",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "The list of moves made in the game."
+          }
+        },
+        "summary" : "Get moves by game id",
+        "tags" : [ "move" ]
+      }
+    },
+    "/game/{gameId}/player/{playerId}/move/{playerPieceIndex}" : {
+      "post" : {
+        "operationId" : "moveAdd",
+        "parameters" : [ {
+          "description" : "The id of the game that the move takes place",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        }, {
+          "description" : "The id of the game player that makes the move",
+          "explode" : false,
+          "in" : "path",
+          "name" : "playerId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        }, {
+          "description" : "The index of the player piece the player moved",
+          "explode" : false,
+          "in" : "path",
+          "name" : "playerPieceIndex",
+          "required" : true,
+          "schema" : {
+            "type" : "number"
+          },
+          "style" : "simple"
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Move"
+              }
+            }
+          },
+          "description" : "The move the player makes.",
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Successfully made move."
+          }
+        },
+        "summary" : "Adds player move to a game.",
+        "tags" : [ "game" ]
+      }
+    },
+    "/game/{gameId}/board" : {
+      "get" : {
+        "operationId" : "boardGetByGameId",
+        "parameters" : [ {
+          "description" : "The id of the game the board belongs to",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Coordinates that represent a game board."
+          },
+          "404" : {
+            "description" : "No corresponding game found."
+          }
+        },
+        "summary" : "Get board by game id",
+        "tags" : [ "game" ]
+      }
+    },
+    "/game/{gameId}/player" : {
+      "get" : {
+        "operationId" : "playerGetAllByGameId",
+        "parameters" : [ {
+          "description" : "The id of the game the players belong to",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "All players associated with game with game id."
+          }
+        },
+        "summary" : "Get player by game id",
+        "tags" : [ "game" ]
+      }
+    },
+    "/game/{gameId}/player/{id}" : {
+      "get" : {
+        "operationId" : "playerGet",
+        "parameters" : [ {
+          "description" : "The id of the game the players belong to",
+          "explode" : false,
+          "in" : "path",
+          "name" : "gameId",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        }, {
+          "description" : "The id of the player",
+          "explode" : false,
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Coordinates that represent the player's current state."
+          },
+          "404" : {
+            "description" : "No corresponding game found."
+          }
+        },
+        "summary" : "Get player",
+        "tags" : [ "game" ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "GameAdd" : {
+        "$ref" : "#/components/schemas/GameId"
+      },
+      "GameGet" : {
+        "$ref" : "#/components/schemas/GameId"
+      },
+      "GameId" : {
+        "properties" : {
+          "game-id" : {
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
+      "MoveGet" : {
+        "$ref" : "#/components/schemas/MoveGetResponse"
+      },
+      "MoveGetResponse" : {
+        "properties" : {
+          "game-id" : {
+            "type" : "string"
+          },
+          "player-id" : {
+            "type" : "string"
+          },
+          "player-piece-id" : {
+            "type" : "string"
+          },
+          "move" : {
+            "items" : {
+              "$ref" : "#/components/schemas/Coord"
+            },
+            "type" : "array"
+          },
+          "x" : {
+            "type" : "number"
+          },
+          "y" : {
+            "type" : "number"
+          }
+        },
+        "type" : "object"
+      },
+      "Coord" : {
+        "items" : {
+          "type" : "number"
+        },
+        "type" : "array"
+      },
+      "Move" : {
+        "properties" : {
+          "move" : {
+            "items" : {
+              "$ref" : "#/components/schemas/Coord"
+            },
+            "type" : "array"
+          },
+          "x" : {
+            "type" : "number"
+          },
+          "y" : {
+            "type" : "number"
+          },
+          "client-id" : {
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      }
+    }
+  }
+}

@@ -1,6 +1,9 @@
 (ns amble.core
   (:require
    [amble.view :as view]
+   [amble.server.main]
+   [amble.server.server]
+   [amble.models.amble :as model]
    [re-frame.core :as re-frame]
    [reagent.dom.client :as reagent-dom]))
 
@@ -12,8 +15,8 @@
     [view/ui]))
 
 (defn- init []
-  (mount-app))
-(re-frame/dispatch-sync [:initialize])
+  (mount-app)
+  (re-frame/dispatch-sync [::model/initialize]))
 
 (defn on-figwheel-reload []
   (mount-app))
