@@ -17,8 +17,10 @@
 
 (re-frame/reg-event-fx
  ::on-game-id-success
- (fn [{:keys [db]} [_]]
-   (throw (new js/Error "to do soon, game id"))))
+ (fn [{:keys [db]} [_, event]]
+   (let [game-id (keyword (:body event))]
+    (merge {:db db}
+           {:dispatch [::on-game-ready game-id]}))))
 
 (re-frame/reg-event-fx
  ::on-game-id-failure
@@ -44,6 +46,12 @@
    (merge
     {:db db}
     {:dispatch [::server/game-get-default-id ::on-game-id-success, ::on-game-id-failure]})))
+
+(re-frame/reg-event-fx
+ ::on-game-ready
+ (fn [{:keys [db]} [_, event]]
+   (throw (new js/Error ["unhandled game ready", event]))))
+
 
 (re-frame/reg-sub
  ::player-selected
