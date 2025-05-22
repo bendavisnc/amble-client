@@ -8,7 +8,17 @@
  (fn [{:keys [db]} [_]]
    (merge
     {:db (assoc db :player-selected :player-one)}
-    {:dispatch [::server/post-game ::server/post-game-success, ::server/post-game-failure]})))
+    {:dispatch [::server/post-game ::on-post-game-success, ::on-post-game-failure]})))
+
+(re-frame/reg-event-fx
+ ::on-post-game-success
+ (fn [{:keys [db]} [_]]
+   (throw (new js/Error "to do soon, also"))))
+
+(re-frame/reg-event-fx
+ ::on-post-game-failure
+ (fn [{:keys [db]} [_]]
+   (throw (new js/Error "to do soon"))))
 
 (re-frame/reg-sub
  ::player-selected
