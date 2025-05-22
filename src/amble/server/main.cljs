@@ -29,21 +29,21 @@
 
 (re-frame/reg-event-fx
   ::server/player-get-all-by-game-id
-  (fn [{:keys [db]} [_ on-success, on-failure]]
+  (fn [{:keys [db]} [_, game-id, on-success, on-failure]]
     {:db db
      :dispatch [::martian-reframe/request
                 :player-get-all-by-game-id
-                {:game-id (:game-id db)}
+                {:game-id game-id}
                 [on-success] 
                 [on-failure]]})) 
 
 (re-frame/reg-event-fx
   ::server/player-get-by-id
-  (fn [{:keys [db]} [_ id on-success, on-failure]]
+  (fn [{:keys [db]} [game-id, id, on-success, on-failure]]
     {:db db
      :dispatch [::martian-reframe/request
                 :player-get
-                {:game-id (:game-id db)
+                {:game-id game-id
                  :id id}
                 [on-success id] 
                 [on-failure id]]})) 

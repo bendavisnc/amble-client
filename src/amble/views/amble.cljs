@@ -27,6 +27,7 @@
 (defn amble []
   (let [model (re-frame/subscribe [::models/amble])]
     (fn []
-      [amble-component @model])))
+      (str @model))))
+      ;; [amble-component @model])))
 
 (comment (name :hello))

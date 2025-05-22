@@ -19,7 +19,7 @@
  ::on-game-id-success
  (fn [{:keys [db]} [_, event]]
    (let [game-id (keyword (:body event))]
-     (merge {:db (assoc-in db [:game game-id] {})}
+     (merge {:db (assoc-in db [:game game-id] {:game-id game-id})}
             {:dispatch [::on-game-ready event]}))))
 
 (re-frame/reg-event-fx
@@ -51,13 +51,13 @@
 (re-frame/reg-event-fx
  ::on-players-success
  (fn [coeff, [_ event]]
-   (let [game-id (get-in coeff [:db :game-id])
-         players (mapv keyword (:body event))]
-     (merge {:db (:db coeff)
-             :dispatch [::server/player-get-by-id (first players) ::on-player-success, ::on-player-failure]}))))
-;; {:dispatch (mapv (fn [player]
-;;                    [::server/player-get-by-id  game-id player ::on-player-success, ::on-player-failure])
-;;                  players)})))) 
+   (let [players (mapv keyword (:body event))]
+     (throw (new js/Error ["unhandled `::on-players-success`", event])))))
+    ;;  (merge {:db (:db coeff)
+    ;;          :dispatch [::server/player-get-by-id (first players) ::on-player-success, ::on-player-failure]}))))
+    ;;         ;;  :dispatch (mapv (fn [player]
+            ;;                    [::server/player-get-by-id player ::on-player-success, ::on-player-failure])
+            ;;                  players)})))) 
 
 
 (re-frame/reg-event-fx
@@ -80,9 +80,10 @@
  ::on-game-ready
  (fn [{:keys [db]} [_, event]]
    (cond (and (= 200 (:status event))
-              (:game-id db))
-         (merge {:db db}
-                {:dispatch [::server/player-get-all-by-game-id ::on-players-success, ::on-players-failure]})
+              (:game db))
+         (let [game-id (first (keys (:game db)))]
+           (merge {:db db}
+                  {:dispatch [::server/player-get-all-by-game-id game-id ::on-players-success, ::on-players-failure]}))
          :else
          (throw (new js/Error ["unhandled game ready", event])))))
 
@@ -94,5 +95,6 @@
 
 (re-frame/reg-sub
  ::amble
- (fn [db]
+ (fn [db, _]
    (:game db)))
+  ;;  (:game db)))
