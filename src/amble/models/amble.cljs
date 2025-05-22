@@ -50,20 +50,15 @@
 
 (re-frame/reg-event-fx
  ::on-players-success
- (fn [coeff, [_ event]]
-   (let [game-id (first (keys (:game (:db coeff))))
+ (fn [{:keys [db]} [_ event]]
+   (let [game-id (first (keys (:game db)))
          players (mapv keyword (:body event))]
-     ;;  (throw (new js/Error ["unhandled `::on-players-success`", [coeff, event]])))))
-     (merge {:db (:db coeff)
-             :dispatch [::server/player-get-by-id
-                        [game-id
-                         (first players)]
-                        ::on-player-success,
-                        ::on-player-failure]}))))
-;;         ;;  :dispatch (mapv (fn [player]
-;;                    [::server/player-get-by-id player ::on-player-success, ::on-player-failure])
-;;                  players)})))) 
-
+     {:db db
+      :fx (mapv (fn [player]
+                  [:dispatch [::server/player-get-by-id [game-id player]
+                              ::on-player-success
+                              ::on-player-failure]])
+                players)})))
 
 (re-frame/reg-event-fx
  ::on-players-failure
@@ -85,15 +80,6 @@
      (merge {:db (assoc-in (:db coeff)
                            [:game game-id player-id :position]
                            position)}))))
-
-;;  (fn [coeff [_ id event]]
-;;    (let [player-id id
-;;          game-id (first (keys (get-in coeff [:db :game])))
-;;          _ (println [game-id, player-id, nil])
-;;          position (:body event)]
-;;      (merge {:db (assoc-in (:db coeff)
-;;                            [:game game-id player-id :position]
-;;                            position)}))))
 
 ;; Once we know the game id, we can load player position
 (re-frame/reg-event-fx
