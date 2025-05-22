@@ -39,11 +39,12 @@
 
 (re-frame/reg-event-fx
   ::server/player-get-by-id
-  (fn [{:keys [db]} [game-id, id, on-success, on-failure]]
+  (fn [{:keys [db]} [_, [game-id, player-id], on-success, on-failure]]
+    (println [game-id, player-id])
     {:db db
      :dispatch [::martian-reframe/request
                 :player-get
                 {:game-id game-id
-                 :id id}
-                [on-success id] 
-                [on-failure id]]})) 
+                 :id player-id}
+                [on-success [game-id, player-id]] 
+                [on-failure]]})) 
