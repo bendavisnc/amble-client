@@ -30,12 +30,9 @@
 (re-frame/reg-event-fx
  ::on-post-game-failure
  (fn [coeff, [_ event]]
-   (println [(:status event)
-             (= 409 (:status event))])
    (cond (= 409 (:status event))
-         (do (println "Proceeding after game already exists conflict")
-             (merge {:db (:db coeff)
-                     :dispatch [::on-post-game-failure-conflict event]}))
+         (merge {:db (:db coeff)
+                 :dispatch [::on-post-game-failure-conflict event]})
          :else
          (throw (new js/Error ["unexpected response result on `:post-game`"
                                event])))))
@@ -48,17 +45,40 @@
     {:db db}
     {:dispatch [::server/game-get-default-id ::on-game-id-success, ::on-game-id-failure]})))
 
+;; list of players -> player info applied to game
 (re-frame/reg-event-fx
  ::on-players-success
  (fn [{:keys [db]} [_ event]]
+   ;;  (println (str "on-players-success " event))
    (let [game-id (first (keys (:game db)))
          players (mapv keyword (:body event))]
      {:db db
-      :fx (mapv (fn [player]
-                  [:dispatch [::server/player-get-by-id [game-id player]
-                              ::on-player-success
-                              ::on-player-failure]])
-                players)})))
+      :fx (let [player-get-dispatches (mapv (fn [player]
+                                              [:dispatch [::server/player-get-by-id [game-id player]
+                                                          ::on-player-success
+                                                          ::on-player-failure]])
+                                            players)
+                dispatches (concat player-get-dispatches
+                                   [[:dispatch [::on-players-success-all]]])
+                _ (assert (= (count dispatches)
+                             7))
+                _ (assert (= [:dispatch [::on-players-success-all]]
+                             (last dispatches)))]
+            dispatches)})))
+
+(re-frame/reg-event-fx
+ ::on-players-success-all
+ (fn [{:keys [db]} [_ event]]
+   ;;  (throw (new js/Error ["unhandled `::on-players-success-all`"]))))
+   ;;  (println "on-players-success-all")
+   {:db db}))
+
+(re-frame/reg-event-fx
+ ::on-player-six-success
+ (fn [{:keys [db]} [_ event]]
+  ;;  (throw (new js/Error ["unhandled `::on-players-success-all`"]))))
+   (println "on-player-six-success")
+   {:db db}))
 
 (re-frame/reg-event-fx
  ::on-players-failure
@@ -73,13 +93,17 @@
 
 (re-frame/reg-event-fx
  ::on-player-success
-;;  (fn [& args]
-  ;;  (throw (new js/Error ["unhandled `::on-player-success`", args]))))
+ ;;  (fn [& args]
+ ;;  (throw (new js/Error ["unhandled `::on-player-success`", args]))))
  (fn [coeff [_, [game-id, player-id], event]]
+    (println (str "on-player-success " [game-id, player-id]))
    (let [position (:body event)]
      (merge {:db (assoc-in (:db coeff)
                            [:game game-id player-id :position]
-                           position)}))))
+                           position)}
+            (if (= :player-six player-id)
+              {:fx [[:dispatch [::on-player-six-success event]]]}
+              {:fx []})))))
 
 ;; Once we know the game id, we can load player position
 (re-frame/reg-event-fx
@@ -103,5 +127,6 @@
  ::amble
  (fn [db, _]
    (dissoc db :martian.re-frame/martian)))
-  ;;  (:game db)))
 ;;  (:game db)))
+;;  (:game db)))
+

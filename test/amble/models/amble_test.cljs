@@ -11,10 +11,9 @@
 
 (deftest initial-state-test
   (rf-test/run-test-async
-  ;;  (martian-reframe/init "http://localhost:9500/json/openapi.json" {:server-url "http://localhost:3000"})
    (testing "initial state"
-     (re-frame/dispatch [::model/initialize])
-     (rf-test/wait-for [::model/on-player-success] 
-                       (let [t (re-frame/subscribe [::model/amble])]
-                         (is (= {:game {:TheThursdayGame {:game-id :TheThursdayGame, :player-one {:position [[0.425 0.7165] [0.475 0.7165] [0.525 0.7165] [0.575 0.7165] [0.45 0.7598] [0.5 0.7598] [0.55 0.7598] [0.475 0.8031] [0.525 0.8031] [0.5 0.8464]]}}}} 
-                                @t)))))))
+     (let [t (re-frame/subscribe [::model/amble])]
+       (re-frame/dispatch [::model/initialize])
+       [rf-test/wait-for [::model/on-player-six-success]
+            (is (= 2
+                  @t))]))))
