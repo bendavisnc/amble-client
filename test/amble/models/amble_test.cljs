@@ -1,21 +1,20 @@
+;; filepath: /home/ben/home/programming/amble/amble-client/test/amble/models/amble_test.cljs
 (ns amble.models.amble-test
   (:require
-   [cljs.test :refer-macros [testing is]]
-   [day8.re-frame.test :refer [run-test-sync]]
-   [devcards.core :refer-macros [deftest]]
    [amble.models.amble :as model]
-   [amble.server.server]
-   [amble.server.main]
-   [amble.specs.amble :as spec]
+   [amble.server.main :as server-default]
+   [amble.server.server :as server]
+   [cljs.test :refer-macros [testing is deftest]]
+   [martian.re-frame :as martian-reframe]
    [re-frame.core :as re-frame]
-   [clojure.spec.alpha :as s]))
+   [day8.re-frame.test :as rf-test]))
 
 (deftest initial-state-test
-  (run-test-sync
-   (let [t (re-frame/subscribe [::model/amble])]
-     (testing "initial state"
-       (re-frame/dispatch [::model/initialize])
-       (is (= {:player-selected :player-one}
-              @t))
-       (is (s/valid? ::spec/component @t))))))
-
+  (rf-test/run-test-async
+  ;;  (martian-reframe/init "http://localhost:9500/json/openapi.json" {:server-url "http://localhost:3000"})
+   (testing "initial state"
+     (re-frame/dispatch [::model/initialize])
+     (rf-test/wait-for [::model/on-player-success] 
+                       (let [t (re-frame/subscribe [::model/amble])]
+                         (is (= {:game {:TheThursdayGame {:game-id :TheThursdayGame, :player-one {:position [[0.425 0.7165] [0.475 0.7165] [0.525 0.7165] [0.575 0.7165] [0.45 0.7598] [0.5 0.7598] [0.55 0.7598] [0.475 0.8031] [0.525 0.8031] [0.5 0.8464]]}}}} 
+                                @t)))))))

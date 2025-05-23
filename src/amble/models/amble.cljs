@@ -102,5 +102,6 @@
 (re-frame/reg-sub
  ::amble
  (fn [db, _]
-   (:game db)))
+   (dissoc db :martian.re-frame/martian)))
+  ;;  (:game db)))
 ;;  (:game db)))
