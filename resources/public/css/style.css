@@ -1,9 +1,30 @@
 #board {
   width: 61.80469716vw;
-  height: auto;
+  height: 61.80469716vw;
 }
 .board-piece {
   fill: white;
+}
+.player-one {
+  fill: #6acac8;
+}
+.player-two {
+  fill: #6a81ca;
+}
+.player-three {
+  fill: #ca6ab8;
+}
+.player-four {
+  fill: #9a6aca;
+}
+.player-five {
+  fill: #97adc2;
+}
+.player-six {
+  fill: #ca936a;
+}
+.active {
+  fill: #f1f1f1;
 }
 html,
 body {
