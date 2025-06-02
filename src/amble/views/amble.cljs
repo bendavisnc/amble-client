@@ -2,14 +2,13 @@
   (:require
    [amble.models.amble :as models]
    [amble.specs.amble :as spec]
-   [amble.views.pieces.board :as board-pieces]
    [amble.static-content.board :as static-board]
+   [amble.views.pieces.board :as board-pieces]
    [cljs.math :as math]
    [clojure.spec.alpha :as s]
    [goog.string :as gstring]
    [goog.string.format]
    [re-frame.core :as re-frame]))
-
 
 (defn amble-component [{:keys [player-selected]}]
   (let [board-pieces (vec (for [[i, [x,y]] #_{:clj-kondo/ignore [:unresolved-var]}

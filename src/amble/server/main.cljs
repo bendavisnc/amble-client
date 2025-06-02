@@ -1,8 +1,8 @@
 (ns amble.server.main
-  (:require [re-frame.core :as re-frame]
-            [martian.re-frame :as martian-reframe]
-            [amble.server.server :as server]))  
-
+  (:require
+   [amble.server.server :as server]
+   [martian.re-frame :as martian-reframe]
+   [re-frame.core :as re-frame]))
 
 (martian-reframe/init "http://localhost:9500/json/openapi.json" {:server-url "http://localhost:3000"})
 
@@ -16,16 +16,15 @@
                 [on-success]
                 [on-failure]]}))
 
-
 (re-frame/reg-event-fx
   ::server/game-get-default-id
   (fn [{:keys [db]} [_ on-success, on-failure]]
     {:db db
      :dispatch [::martian-reframe/request
-                :game-get-default-id 
+                :game-get-default-id
                 {}
-                [on-success] 
-                [on-failure]]})) 
+                [on-success]
+                [on-failure]]}))
 
 (re-frame/reg-event-fx
   ::server/player-get-all-by-game-id
@@ -34,8 +33,8 @@
      :dispatch [::martian-reframe/request
                 :player-get-all-by-game-id
                 {:game-id game-id}
-                [on-success] 
-                [on-failure]]})) 
+                [on-success]
+                [on-failure]]}))
 
 (re-frame/reg-event-fx
   ::server/player-get-by-id
@@ -45,5 +44,5 @@
                 :player-get
                 {:game-id game-id
                  :id player-id}
-                [on-success [game-id, player-id]] 
-                [on-failure]]})) 
+                [on-success [game-id, player-id]]
+                [on-failure]]}))

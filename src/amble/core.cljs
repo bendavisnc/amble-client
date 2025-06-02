@@ -1,9 +1,9 @@
 (ns amble.core
   (:require
-   [amble.view :as view]
+   [amble.models.amble :as model]
    [amble.server.main]
    [amble.server.server]
-   [amble.models.amble :as model]
+   [amble.view :as view]
    [re-frame.core :as re-frame]
    [reagent.dom.client :as reagent-dom]))
 
