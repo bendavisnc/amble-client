@@ -11,9 +11,9 @@
    [re-frame.core :as re-frame]))
 
 
-(defn amble-component [model]
-  (let [player-selected (:player-selected model)
-        board-pieces (vec (for [[i, [x,y]] (map-indexed vector static-board/board)]
+(defn amble-component [{:keys [player-selected]}]
+  (let [board-pieces (vec (for [[i, [x,y]] #_{:clj-kondo/ignore [:unresolved-var]}
+                                           (map-indexed vector static-board/board)]
                             {:x x
                              :y y
                              :index i
@@ -27,7 +27,7 @@
 (defn amble []
   (let [model (re-frame/subscribe [::models/amble])]
     (fn []
-      (str @model))))
-      ;; [amble-component @model])))
+      ;; (str @model))))
+      [amble-component @model])))
 
 (comment (name :hello))

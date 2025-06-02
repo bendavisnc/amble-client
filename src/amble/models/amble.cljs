@@ -76,7 +76,7 @@
 (re-frame/reg-event-fx
  ::on-player-six-success
  (fn [{:keys [db]} [_ event]]
-  ;;  (throw (new js/Error ["unhandled `::on-players-success-all`"]))))
+   ;;  (throw (new js/Error ["unhandled `::on-players-success-all`"]))))
    (println "on-player-six-success")
    {:db db}))
 
@@ -96,10 +96,10 @@
  ;;  (fn [& args]
  ;;  (throw (new js/Error ["unhandled `::on-player-success`", args]))))
  (fn [coeff [_, [game-id, player-id], event]]
-    (println (str "on-player-success " [game-id, player-id]))
+   (println (str "on-player-success " [game-id, player-id]))
    (let [position (:body event)]
      (merge {:db (assoc-in (:db coeff)
-                           [:game game-id player-id :position]
+                           [:game :player player-id :position]
                            position)}
             (if (= :player-six player-id)
               {:fx [[:dispatch [::on-player-six-success event]]]}
@@ -121,12 +121,19 @@
 (re-frame/reg-sub
  ::player-selected
  (fn [db, _]
-   (:player-selected db)))
+   (or (:player-selected db)
+       :player-one)))
+
+(re-frame/reg-sub
+ ::players
+ (fn [db, _]
+   (get-in db [:game :player])))
 
 (re-frame/reg-sub
  ::amble
- (fn [db, _]
-   (dissoc db :martian.re-frame/martian)))
-;;  (:game db)))
-;;  (:game db)))
-
+ (fn []
+   [(re-frame/subscribe [::player-selected])
+    (re-frame/subscribe [::players])])
+ (fn [[player-selected, players]]
+   {:player-selected player-selected
+    :players players}))
