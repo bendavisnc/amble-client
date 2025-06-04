@@ -6,31 +6,20 @@
 
 (def classname "player-piece")
 
+(def dispatch-map
+  {"mousedown" ::move-start
+   "touchstart" ::move-start
+   "mousemove" ::move-update
+   "touchmove" ::move-update
+   "mouseup"   ::move-end
+   "touchend"  ::move-end})
+
 (defn userfeedback-handler [event]
-  (cond (= "mousedown"
-           (.-type event))
-        (re-frame/dispatch [::move-start event])
-        (= "mousemove"
-           (.-type event))
-        (re-frame/dispatch [::move-update event])
-        (= "mouseup"
-           (.-type event))
-        (re-frame/dispatch [::move-end event])
-        (= "mousemove"
-           (.-type event))
-        (re-frame/dispatch [::move-update event])
-        (= "touchstart"
-           (.-type event))
-        (re-frame/dispatch [::move-start event])
-        (= "touchmove"
-           (.-type event))
-        (re-frame/dispatch [::move-update event])
-        (= "touchend"
-           (.-type event))
-        (re-frame/dispatch [::move-end event])
-        :else
-          (throw (new js/Error
-                      (gstring/format "No user feedback handler defined for %s" (.-type event)))))) 
+  (let [event-type (.-type event)
+        action (get dispatch-map event-type)]
+    (if action
+      (re-frame/dispatch [action event])
+      (throw (js/Error. (str "No user feedback handler defined for " event-type))))))
 
 (defn pieces [players]
   [:<>
