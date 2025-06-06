@@ -1,4 +1,5 @@
 (ns amble.models.pieces.player
+  "Provides ui events that can cause a new move event to be sent to the server."
   (:require
    [amble.server.server :as server]
    [re-frame.core :as re-frame]))
@@ -25,14 +26,10 @@
         (assoc-in [:game :player player-id :move-in-progress :index]
                   index))))
 
-
-
 (defn db-to-game-id  [db]
   (let [game-id (get-in db [:game :game-id])
         _ (when (not game-id)
-            (println (:game db))
             (throw (new js/Error "No game id found.")))]
-    (println (:game db))
     game-id))
 
 (re-frame/reg-event-fx
