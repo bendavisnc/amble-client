@@ -1,6 +1,7 @@
 (ns amble.models.amble
   (:require
    [amble.server.server :as server]
+   [amble.models.models :refer [db-to-game-id]]
    [re-frame.core :as re-frame]))
 
 (re-frame/reg-event-fx
@@ -102,10 +103,6 @@
              (if (= :player-six player-id)
                {:fx [[:dispatch [::on-player-six-success event]]]}
                {:fx []})))))
-
-(defn db-to-game-id [db]
-  (println (get-in db [:game :game-id]))
-  (get-in db [:game :game-id]))
 
 ;; Once we know the game id, we can load player position
 (re-frame/reg-event-fx

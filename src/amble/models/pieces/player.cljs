@@ -2,6 +2,7 @@
   "Provides ui events that can cause a new move event to be sent to the server."
   (:require
    [amble.server.server :as server]
+   [amble.models.models :refer [db-to-game-id]]
    [re-frame.core :as re-frame]))
 
 (re-frame/reg-event-db
@@ -26,11 +27,7 @@
         (assoc-in [:game :player player-id :move-in-progress :index]
                   index))))
 
-(defn db-to-game-id  [db]
-  (let [game-id (get-in db [:game :game-id])
-        _ (when (not game-id)
-            (throw (new js/Error "No game id found.")))]
-    game-id))
+
 
 (re-frame/reg-event-fx
   ::move-end
