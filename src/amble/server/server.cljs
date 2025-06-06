@@ -21,3 +21,8 @@
   ::player-get-by-id
   (fn [& args]
     (throw (new js/Error "not implemented, player get"))))
+
+(re-frame/reg-event-fx
+  ::player-move-add
+  (fn [& args]
+    (throw (new js/Error "not implemented, player move add"))))

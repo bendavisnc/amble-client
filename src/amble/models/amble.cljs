@@ -15,11 +15,12 @@
   (fn [{:keys [db]} [_]]
     (throw (new js/Error "to do soon, also"))))
 
+;; `game id retrieved` -> `game ready`
 (re-frame/reg-event-fx
   ::on-game-id-success
   (fn [{:keys [db]} [_, event]]
     (let [game-id (keyword (:body event))]
-      (merge {:db (assoc-in db [:game game-id] {:game-id game-id})}
+      (merge {:db (assoc-in db [:game :game-id] game-id)}
              {:dispatch [::on-game-ready event]}))))
 
 (re-frame/reg-event-fx
@@ -50,7 +51,7 @@
   ::on-players-success
   (fn [{:keys [db]} [_ event]]
     ;;  (println (str "on-players-success " event))
-    (let [game-id (first (keys (:game db)))
+    (let [game-id (get-in db [:game :game-id])
           players (mapv keyword (:body event))]
       {:db db
        :fx (let [player-get-dispatches (mapv (fn [player]
@@ -92,8 +93,6 @@
 
 (re-frame/reg-event-fx
   ::on-player-success
-  ;;  (fn [& args]
-  ;;  (throw (new js/Error ["unhandled `::on-player-success`", args]))))
   (fn [coeff [_, [game-id, player-id], event]]
     (println (str "on-player-success " [game-id, player-id]))
     (let [position (:body event)]
@@ -104,13 +103,17 @@
                {:fx [[:dispatch [::on-player-six-success event]]]}
                {:fx []})))))
 
+(defn db-to-game-id [db]
+  (println (get-in db [:game :game-id]))
+  (get-in db [:game :game-id]))
+
 ;; Once we know the game id, we can load player position
 (re-frame/reg-event-fx
   ::on-game-ready
   (fn [{:keys [db]} [_, event]]
     (cond (and (= 200 (:status event))
                (:game db))
-          (let [game-id (first (keys (:game db)))]
+          (let [game-id (db-to-game-id db)]
             (merge {:db db}
                    {:dispatch [::server/player-get-all-by-game-id game-id ::on-players-success, ::on-players-failure]}))
           :else
