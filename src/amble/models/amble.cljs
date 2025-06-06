@@ -1,7 +1,7 @@
 (ns amble.models.amble
   (:require
-   [amble.server.server :as server]
    [amble.models.models :refer [db-to-game-id]]
+   [amble.server.server :as server]
    [re-frame.core :as re-frame]))
 
 (re-frame/reg-event-fx

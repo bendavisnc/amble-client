@@ -9,7 +9,7 @@
 
 (def event-to-coord-fn (piece-view/coord-conv))
 
-(defn event-to-coord* [board-elem, e] 
+(defn event-to-coord* [board-elem, e]
   (event-to-coord-fn board-elem e))
 
 (def dispatch-map
@@ -28,14 +28,14 @@
      :event-type (.-type e)}))
 
 (defn userfeedback-handler* [player-id, index, e]
-  (println [player-id, index, e])
+  ;; (println [player-id, index, e])
   (let [event (-> e
                   e-to-event
                   (assoc :player-id player-id)
                   (assoc :index index))
         event-type (.-type e)
         action (get dispatch-map event-type)]
-    (println [action event])
+    ;; (println [action event])
     (if action
       (re-frame/dispatch [action event])
       (throw (js/Error. (str "No user feedback handler defined for " event-type))))))
