@@ -27,7 +27,17 @@
         (assoc-in [:game :player player-id :move-in-progress :index]
                   index))))
 
-
+(re-frame/reg-event-db
+  ::move-update
+  (fn [db [_ {:keys [player-id, index, x, y]}]]
+    (when (not index)
+      (throw (new js/Error "No index found for player move, at move start.")))
+    (-> db
+        (update-in [:game :player player-id :move-in-progress :moves]
+                   concat 
+                   [[x, y]])
+        (assoc-in [:game :player player-id :position index] 
+                  [x, y]))))
 
 (re-frame/reg-event-fx
   ::move-end

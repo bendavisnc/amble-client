@@ -51,8 +51,7 @@
 (re-frame/reg-event-fx
   ::on-players-success
   (fn [{:keys [db]} [_ event]]
-    ;;  (println (str "on-players-success " event))
-    (let [game-id (get-in db [:game :game-id])
+    (let [game-id (db-to-game-id db)
           players (mapv keyword (:body event))]
       {:db db
        :fx (let [player-get-dispatches (mapv (fn [player]
@@ -79,7 +78,7 @@
   ::on-player-six-success
   (fn [{:keys [db]} [_ event]]
     ;;  (throw (new js/Error ["unhandled `::on-players-success-all`"]))))
-    (println "on-player-six-success")
+    ;; (println "on-player-six-success")
     {:db db}))
 
 (re-frame/reg-event-fx
@@ -95,7 +94,7 @@
 (re-frame/reg-event-fx
   ::on-player-success
   (fn [coeff [_, [game-id, player-id], event]]
-    (println (str "on-player-success " [game-id, player-id]))
+    ;; (println (str "on-player-success " [game-id, player-id]))
     (let [position (:body event)]
       (merge {:db (assoc-in (:db coeff)
                             [:game :player player-id :position]

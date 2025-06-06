@@ -7,6 +7,11 @@
 
 (def classname "player-piece")
 
+(def event-to-coord-fn (piece-view/coord-conv))
+
+(defn event-to-coord* [board-elem, e] 
+  (event-to-coord-fn board-elem e))
+
 (def dispatch-map
   {"mousedown" ::player/move-start
    "touchstart" ::player/move-start
@@ -16,9 +21,11 @@
    "touchend"  ::player/move-end})
 
 (defn e-to-event [e]
-  {:x (.-clientX e)
-   :y (.-clientY e)
-   :event-type (.-type e)})
+  (let [event-to-coord (partial event-to-coord* (.getElementById js/document "board"))
+        [x, y] (event-to-coord e)]
+    {:x x
+     :y y
+     :event-type (.-type e)}))
 
 (defn userfeedback-handler* [player-id, index, e]
   (println [player-id, index, e])
@@ -28,6 +35,7 @@
                   (assoc :index index))
         event-type (.-type e)
         action (get dispatch-map event-type)]
+    (println [action event])
     (if action
       (re-frame/dispatch [action event])
       (throw (js/Error. (str "No user feedback handler defined for " event-type))))))
@@ -47,6 +55,7 @@
                           :class [classname, "player", (name player-id)]
                           :extra-opts {:on-mouse-down userfeedback-handler
                                        :on-mouse-up userfeedback-handler
+                                       :on-mouse-move userfeedback-handler
                                        :on-touch-start userfeedback-handler
                                        :on-touch-end userfeedback-handler
                                        :on-touch-move userfeedback-handler}))])])
