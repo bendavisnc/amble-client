@@ -52,17 +52,15 @@
 (re-frame/reg-event-fx
   ::server/player-move-add
   (fn [{:keys [db]} [_, {:keys [game-id, player-id, index, move, x, y]}, on-success, on-failure]]
-    (println "welllp")
-    (println [game-id, player-id, index, move, x, y])
     {:db db
      :dispatch [::martian-reframe/request
                 :move-add
                 {:gameId game-id
                  :playerId player-id
                  :playerPieceIndex index
-                 :x x
-                 :y y
-                 :clientId "client-id-still-todo"
-                 :body {:move move}}
+                 :body {:move move
+                        :x x 
+                        :y y 
+                        :client-id "client-id-still-todo"}}
                 [on-success]
                 [on-failure]]}))

@@ -20,9 +20,12 @@
    :y (.-clientY e)
    :event-type (.-type e)})
 
-(defn userfeedback-handler* [player-id, e]
-  (let [event (assoc (e-to-event e)
-                     :player player-id)
+(defn userfeedback-handler* [player-id, index, e]
+  (println [player-id, index, e])
+  (let [event (-> e
+                  e-to-event
+                  (assoc :player-id player-id)
+                  (assoc :index index))
         event-type (.-type e)
         action (get dispatch-map event-type)]
     (if action
@@ -32,11 +35,11 @@
 (defn pieces [players]
   [:<>
    (for [player-id (keys players)
-         :let [positions (get-in players [player-id :position])
-               userfeedback-handler (partial userfeedback-handler* player-id)]]
+         :let [positions (get-in players [player-id :position])]]
      ^{:key player-id}
      [:<>
-      (for [[index, [x, y]] (map-indexed vector positions)]
+      (for [[index, [x, y]] (map-indexed vector positions)
+            :let [userfeedback-handler (partial userfeedback-handler* player-id, index)]]
         (piece-view/piece :x x
                           :y y
                           :size piece-view/piece-size

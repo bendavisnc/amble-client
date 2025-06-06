@@ -16,10 +16,16 @@
 
 (re-frame/reg-event-db
   ::move-start
-  (fn [db [_ {:keys [player, x, y]}]]
+  (fn [db [_ {:keys [player-id, index, x, y]}]]
+    (when (not index)
+      (throw (new js/Error "No index found for player move, at move start.")))
     (-> db
-        (assoc-in [:game :player player :move-in-progress :moves]
-                  [[x, y]]))))
+        (assoc-in [:game :player player-id :move-in-progress :moves]
+                  [[x, y]])
+        (assoc-in [:game :player player-id :move-in-progress :index]
+                  index))))
+
+
 
 (defn db-to-game-id  [db]
   (let [game-id (get-in db [:game :game-id])
@@ -31,17 +37,18 @@
 
 (re-frame/reg-event-fx
   ::move-end
-  (fn [{:keys [db]} [_ {:keys [player, x, y]}]]
-    (let [moves (-> db (get-in [:game :player player :move-in-progress :moves]))
-          move-event {:player-id player
+  (fn [{:keys [db]} [_ {:keys [player-id, x, y]}]]
+    (let [moves (get-in db [:game :player player-id :move-in-progress :moves])
+          index  (get-in db [:game :player player-id :move-in-progress :index])
+          move-event {:player-id player-id
                       :move moves
                       :x x
                       :y y
-                      :index 1 ;; todo 
+                      :index index
                       :client-id "stilltodoclientid"
                       :game-id (db-to-game-id db)}]
       {:dispatch [::server/player-move-add move-event ::on-player-move-add-success, ::on-player-move-add-failure]
        :db (update-in db
-                      [:game :player player]
+                      [:game :player player-id]
                       dissoc
                       :move-in-progress)})))
