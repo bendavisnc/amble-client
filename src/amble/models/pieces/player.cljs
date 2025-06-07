@@ -27,9 +27,19 @@
         (assoc-in [:game :player player-id :move-in-progress :index]
                   index))))
 
+(defn- redraw [db, {:keys [player-id, index, x, y]}]
+  (assoc-in db [:game :player player-id :position index]
+            [x, y]))
+
+(defn- move-event-progress [db, {:keys [player-id, x, y]}]
+  (update-in db
+             [:game :player player-id :move-in-progress :moves]
+             concat
+             [[x, y]]))
+
 (re-frame/reg-event-db
   ::move-update
-  (fn [db [_ {:keys [player-id, index, x, y]}]]
+  (fn [db [_ {:keys [player-id, index, x, y] :as move-event}]]
     (when (not index)
       (throw (new js/Error "No index found for player move, at move start.")))
     ;; (println [[player-id, index], (:game db)])
@@ -37,11 +47,8 @@
              (get-in db [:game :player player-id :move-in-progress :index]))
       (println "Updating move in progress for player" player-id "at index" index)
       (-> db
-          (update-in [:game :player player-id :move-in-progress :moves]
-            concat
-            [[x, y]])
-          (assoc-in [:game :player player-id :position index]
-                    [x, y])))))
+          (move-event-progress move-event)
+          (redraw move-event)))))
 
 (re-frame/reg-event-fx
   ::move-end
