@@ -34,3 +34,5 @@
 - fix bug when returning from moves list ✅
 
 - Address client timeout issue
+
+- add local moves to db

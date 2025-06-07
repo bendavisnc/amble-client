@@ -67,3 +67,9 @@
                       [:game :player player-id]
                       dissoc
                       :move-in-progress)})))
+
+(re-frame/reg-event-db
+  ::on-move-remote
+  (fn [db [_ args]]
+    (throw (new js/Error
+                (str "Remote move event not implemented yet: " args)))))
