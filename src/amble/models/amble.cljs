@@ -1,6 +1,7 @@
 (ns amble.models.amble
   (:require
    [amble.models.models :refer [db-to-game-id]]
+   [amble.server.async.server :as async-server]
    [amble.server.server :as server]
    [re-frame.core :as re-frame]))
 
@@ -106,14 +107,16 @@
 ;; Once we know the game id, we can load player position
 (re-frame/reg-event-fx
   ::on-game-ready
-  (fn [{:keys [db]} [_, event]]
-    (cond (and (= 200 (:status event))
-               (:game db))
-          (let [game-id (db-to-game-id db)]
-            (merge {:db db}
-                   {:dispatch [::server/player-get-all-by-game-id game-id ::on-players-success, ::on-players-failure]}))
-          :else
-          (throw (new js/Error ["unhandled game ready", event])))))
+  (fn [{:keys [db]} [_ event]]
+    (cond
+      (and (= 200 (:status event))
+           (:game db))
+      (let [game-id (db-to-game-id db)]
+        {:db db
+         :dispatch-n [[::async-server/initialize game-id]
+                      [::server/player-get-all-by-game-id game-id ::on-players-success ::on-players-failure]]})
+      :else
+      (throw (js/Error. (str "unhandled game ready: " event))))))
 
 (re-frame/reg-sub
   ::player-selected
