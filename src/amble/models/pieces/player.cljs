@@ -17,6 +17,17 @@
                 (str "Failed to add player move: " args)))))
 
 (re-frame/reg-event-db
+  ::on-player-move-get-success
+  (fn [db [_ args]]
+    (println "Player move requested successfully" args)))
+
+(re-frame/reg-event-db
+  ::on-player-move-get-failure
+  (fn [db [_ args]]
+    (throw (new js/Error
+                (str "Failed to request player move: " args)))))
+
+(re-frame/reg-event-db
   ::move-start
   (fn [db [_ {:keys [player-id, index, x, y]}]]
     (when (not index)
@@ -68,8 +79,7 @@
                       dissoc
                       :move-in-progress)})))
 
-(re-frame/reg-event-db
+(re-frame/reg-event-fx
   ::on-move-remote
-  (fn [db [_ args]]
-    (throw (new js/Error
-                (str "Remote move event not implemented yet: " args)))))
+  (fn [_ [_ [move-id]]]
+    {:dispatch [::server/player-move-get move-id ::on-player-move-get-success, ::on-player-move-get-failure]}))

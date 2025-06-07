@@ -1,6 +1,7 @@
 (ns amble.server.main
   "Implements the client api for server requests."
   (:require
+   [amble.models.models :refer [db-to-game-id]]
    [amble.server.server :as server]
    [martian.re-frame :as martian-reframe]
    [re-frame.core :as re-frame]))
@@ -72,5 +73,16 @@
                         :x x
                         :y y
                         :client-id (str now)}}
+                [on-success]
+                [on-failure]]}))
+
+(re-frame/reg-event-fx
+  ::server/player-move-get
+  (fn [{:keys [db]} [_ id on-success, on-failure]]
+    {:db db
+     :dispatch [::martian-reframe/request
+                :move-get-by-id
+                {:game-id (db-to-game-id db)
+                 :id id}
                 [on-success]
                 [on-failure]]}))

@@ -26,3 +26,8 @@
   ::player-move-add
   (fn [& args]
     (throw (new js/Error "not implemented, player move add"))))
+
+(re-frame/reg-event-fx
+  ::player-move-get
+  (fn [& args]
+    (throw (new js/Error "not implemented, player move get"))))
