@@ -5,6 +5,24 @@
    [amble.server.server :as server]
    [re-frame.core :as re-frame]))
 
+(defn- redraw [db, {:keys [player-id, index, x, y]}]
+  ;; (println [player-id, index, x, y])
+  ;; (println [(type player-id), (type index), (type x), (type y)])
+  (assert (= (type :k)
+             (type player-id))
+          (str "`player-id` is not a keyword: " [player-id, (type player-id)]))
+  (assert (= (type 0)
+             (type index))
+          (str "`index` is not a number: " [index, (type index)]))
+  (assoc-in db [:game :player player-id :position index]
+            [x, y]))
+
+(defn- move-event-progress [db, {:keys [player-id, x, y]}]
+  (update-in db
+             [:game :player player-id :move-in-progress :moves]
+             concat
+             [[x, y]]))
+
 (re-frame/reg-event-db
   ::on-player-move-add-success
   (fn [db [_ args]]
@@ -16,10 +34,49 @@
     (throw (new js/Error
                 (str "Failed to add player move: " args)))))
 
-(re-frame/reg-event-db
+(re-frame/reg-event-fx
+  ::do-move-replay
+  (fn [{:keys [db]}, [_ player-id, index, move-seq, wait-ms]]
+    (cond (not (get-in db [:game :player player-id :move-replay-in-progress]))
+          {:db (-> db
+                   (assoc-in [:game :player player-id :move-replay-in-progress :move]
+                             move-seq)
+                   (assoc-in [:game :player player-id :move-replay-in-progress :index]
+                             (js/parseInt index)))
+           :dispatch [::do-move-replay player-id, index, move-seq, wait-ms]}
+
+          (= []
+             (get-in db [:game :player player-id :move-replay-in-progress :move]))
+          {:db (update-in db
+                          [:game :player player-id]
+                          dissoc
+                          :move-replay-in-progress)}
+
+          :else
+          (let [move-seq (get-in db [:game :player player-id :move-replay-in-progress :move])]
+            ;; _ (println (get-in db [:game :player player-id]))] 
+            {:db
+             (-> db
+                 (update-in [:game :player player-id :move-replay-in-progress :move]
+                            (comp vec rest))
+                 (redraw {:player-id player-id
+                          :index (get-in db [:game :player player-id :move-replay-in-progress :index])
+                          :x (first (first move-seq))
+                          :y (second (first move-seq))}))
+
+             :dispatch-later [{:ms wait-ms
+                               :dispatch [::do-move-replay player-id, index, move-seq wait-ms]}]}))))
+
+(re-frame/reg-event-fx
   ::on-player-move-get-success
-  (fn [db [_ args]]
-    (println "Player move requested successfully" args)))
+  (fn [{:keys [db]}, [_ {:keys [body]}]]
+    (let [{:keys [player-id, player-piece-index, move]} body
+          move-seq move]
+      (when (not move-seq)
+        (throw (new js/Error (str "No move sequence found in player move get response."
+                                  body))))
+      {:db db
+       :dispatch [::do-move-replay (keyword player-id), (js/parseInt player-piece-index), move-seq, 24]})))
 
 (re-frame/reg-event-db
   ::on-player-move-get-failure
@@ -38,16 +95,6 @@
         (assoc-in [:game :player player-id :move-in-progress :index]
                   index))))
 
-(defn- redraw [db, {:keys [player-id, index, x, y]}]
-  (assoc-in db [:game :player player-id :position index]
-            [x, y]))
-
-(defn- move-event-progress [db, {:keys [player-id, x, y]}]
-  (update-in db
-             [:game :player player-id :move-in-progress :moves]
-             concat
-             [[x, y]]))
-
 (re-frame/reg-event-db
   ::move-update
   (fn [db [_ {:keys [player-id, index, x, y] :as move-event}]]
@@ -56,7 +103,7 @@
     ;; (println [[player-id, index], (:game db)])
     (when (= index
              (get-in db [:game :player player-id :move-in-progress :index]))
-      (println "Updating move in progress for player" player-id "at index" index)
+      ;; (println "Updating move in progress for player" player-id "at index" index)
       (-> db
           (move-event-progress move-event)
           (redraw move-event)))))
@@ -83,3 +130,5 @@
   ::on-move-remote
   (fn [_ [_ [move-id]]]
     {:dispatch [::server/player-move-get move-id ::on-player-move-get-success, ::on-player-move-get-failure]}))
+
+(comment (vec (rest [0 1 2])))
