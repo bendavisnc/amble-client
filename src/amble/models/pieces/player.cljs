@@ -2,6 +2,7 @@
   "Provides ui events that can cause a new move event to be sent to the server."
   (:require
    [amble.models.models :refer [db-to-game-id]]
+   [amble.models.pieces.board.board :as board]
    [amble.server.server :as server]
    [re-frame.core :as re-frame]))
 
@@ -72,13 +73,17 @@
 (re-frame/reg-event-fx
   ::on-player-move-get-success
   (fn [{:keys [db]}, [_ {:keys [body]}]]
-    (let [{:keys [player-id, player-piece-index, move]} body
+    (let [{:keys [player-id, player-piece-index, move, x, y]} body
           move-seq move]
       (when (not move-seq)
         (throw (new js/Error (str "No move sequence found in player move get response."
                                   body))))
       {:db db
-       :dispatch [::do-move-replay (keyword player-id), (js/parseInt player-piece-index), move-seq, 24]})))
+       :dispatch [::do-move-replay
+                  (keyword player-id)
+                  (js/parseInt player-piece-index)
+                  (concat move-seq [[x, y]])
+                  24]})))
 
 (re-frame/reg-event-db
   ::on-player-move-get-failure
@@ -112,9 +117,11 @@
 
 (re-frame/reg-event-fx
   ::move-end
-  (fn [{:keys [db]} [_ {:keys [player-id, x, y]}]]
+  (fn [{:keys [db]} [_ {:keys [player-id]}]]
     (let [moves (get-in db [:game :player player-id :move-in-progress :moves])
           index  (get-in db [:game :player player-id :move-in-progress :index])
+          [last-x last-y] (last moves)
+          [x, y] (board/closest last-x, last-y)
           move-event {:player-id player-id
                       :move moves
                       :x x
