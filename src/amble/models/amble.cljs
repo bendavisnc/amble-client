@@ -3,14 +3,23 @@
    [amble.models.models :refer [db-to-game-id]]
    [amble.server.async.server :as async-server]
    [amble.server.server :as server]
+   [amble.static-content.board :as static-board]
    [re-frame.core :as re-frame]))
 
 (re-frame/reg-event-fx
   ::initialize
   (fn [{:keys [db]} [_]]
-    (merge
-      {:db db}
-      {:dispatch [::server/post-game ::on-post-game-success, ::on-post-game-failure]})))
+    (let [board-pieces (vec (for [[i, [x,y]] #_{:clj-kondo/ignore [:unresolved-var]}
+                                  (map-indexed vector static-board/board)]
+                              {:x x
+                               :y y
+                               :index i
+                               :is-active? false}))]
+      (merge
+        {:db (assoc-in db
+                       [:game :board :pieces]
+                       board-pieces)}
+        {:dispatch [::server/post-game ::on-post-game-success, ::on-post-game-failure]}))))
 
 ;; `game id retrieved` -> `game ready`
 (re-frame/reg-event-fx
@@ -131,10 +140,17 @@
     (get-in db [:game :player])))
 
 (re-frame/reg-sub
+  ::board
+  (fn [db, _]
+    (get-in db [:game :board])))
+
+(re-frame/reg-sub
   ::amble
   (fn []
-    [(re-frame/subscribe [::player-selected])
+    [(re-frame/subscribe [::board])
+     (re-frame/subscribe [::player-selected])
      (re-frame/subscribe [::players])])
-  (fn [[player-selected, players]]
-    {:player-selected player-selected
+  (fn [[board, player-selected, players]]
+    {:board board
+     :player-selected player-selected
      :players players}))

@@ -11,19 +11,13 @@
    [goog.string.format]
    [re-frame.core :as re-frame]))
 
-(defn amble-component [{:keys [player-selected, players]}]
-  (let [board-pieces (vec (for [[i, [x,y]] #_{:clj-kondo/ignore [:unresolved-var]}
-                                (map-indexed vector static-board/board)]
-                            {:x x
-                             :y y
-                             :index i
-                             :is-active? false}))]
-    [:div#amble
-     [:div#board-container
-      [:svg#board {:class (gstring/format "%s-six-oclock" (name player-selected))
-                   :view-box "0 0 1 1"}
-       [board-pieces/pieces board-pieces]
-       [player-pieces/pieces players]]]]))
+(defn amble-component [{:keys [board, player-selected, players]}]
+  [:div#amble
+   [:div#board-container
+    [:svg#board {:class (gstring/format "%s-six-oclock" (name player-selected))
+                 :view-box "0 0 1 1"}
+     [board-pieces/pieces (board :pieces)]
+     [player-pieces/pieces players]]]])
 
 (defn amble []
   (let [model (re-frame/subscribe [::models/amble])]
