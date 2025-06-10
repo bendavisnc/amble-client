@@ -8,6 +8,11 @@
     (throw (new js/Error "not implemented, game post"))))
 
 (re-frame/reg-event-fx
+  ::delete-game
+  (fn [& args]
+    (throw (new js/Error "not implemented, game delete"))))
+
+(re-frame/reg-event-fx
   ::game-get-default-id
   (fn [& args]
     (throw (new js/Error "not implemented, id get"))))

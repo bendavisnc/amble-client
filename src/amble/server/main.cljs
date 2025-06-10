@@ -20,6 +20,16 @@
                 [on-failure]]}))
 
 (re-frame/reg-event-fx
+  ::server/delete-game
+  (fn [{:keys [db]} [_ game-id, on-success, on-failure]]
+    {:db db
+     :dispatch [::martian-reframe/request
+                :game-delete-by-id
+                {:id game-id}
+                [on-success]
+                [on-failure]]}))
+
+(re-frame/reg-event-fx
   ::server/game-get-default-id
   (fn [{:keys [db]} [_ on-success, on-failure]]
     {:db db

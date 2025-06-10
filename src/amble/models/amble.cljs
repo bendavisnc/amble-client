@@ -12,23 +12,29 @@
       {:db db}
       {:dispatch [::server/post-game ::on-post-game-success, ::on-post-game-failure]})))
 
-(re-frame/reg-event-fx
-  ::on-post-game-success
-  (fn [{:keys [db]} [_]]
-    (throw (new js/Error "to do soon, also"))))
-
 ;; `game id retrieved` -> `game ready`
 (re-frame/reg-event-fx
   ::on-game-id-success
   (fn [{:keys [db]} [_, event]]
     (let [game-id (keyword (:body event))]
       (merge {:db (assoc-in db [:game :game-id] game-id)}
-             {:dispatch [::on-game-ready event]}))))
+             {:dispatch [::on-game-ready nil]}))))
 
 (re-frame/reg-event-fx
   ::on-game-id-failure
   (fn [{:keys [db]} [_]]
     (throw (new js/Error "unhandled game id failure request"))))
+
+(re-frame/reg-event-fx
+  ::on-post-game-success
+  (fn [{:keys [db]}, [_ event]]
+    (cond (= 201 (:status event))
+          (let [game-id (keyword (get-in event [:body :game-id]))]
+            (merge {:db (assoc-in db [:game :game-id] game-id)}
+                   {:dispatch [::on-game-ready nil]}))
+          :else
+          (throw (new js/Error ["unexpected response result on `::on-post-game-failure`"
+                                event])))))
 
 (re-frame/reg-event-fx
   ::on-post-game-failure
@@ -37,10 +43,10 @@
           (merge {:db (:db coeff)
                   :dispatch [::on-post-game-failure-conflict event]})
           :else
-          (throw (new js/Error ["unexpected response result on `:post-game`"
+          (throw (new js/Error ["unexpected response result on `::on-post-game-failure`"
                                 event])))))
 
-;; If we can't just post a new game from nothing, we need to get the default game id.
+;; When a game post fails, just ask what `game-id` to go with.
 (re-frame/reg-event-fx
   ::on-post-game-failure-conflict
   (fn [{:keys [db]} [_]]
@@ -107,16 +113,11 @@
 ;; Once we know the game id, we can load player position
 (re-frame/reg-event-fx
   ::on-game-ready
-  (fn [{:keys [db]} [_ event]]
-    (cond
-      (and (= 200 (:status event))
-           (:game db))
-      (let [game-id (db-to-game-id db)]
-        {:db db
-         :dispatch-n [[::async-server/initialize game-id]
-                      [::server/player-get-all-by-game-id game-id ::on-players-success ::on-players-failure]]})
-      :else
-      (throw (js/Error. (str "unhandled game ready: " event))))))
+  (fn [{:keys [db]} [_ _]]
+    (let [game-id (db-to-game-id db)]
+      {:db db
+       :dispatch-n [[::async-server/initialize game-id]
+                    [::server/player-get-all-by-game-id game-id ::on-players-success ::on-players-failure]]})))
 
 (re-frame/reg-sub
   ::player-selected

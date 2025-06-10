@@ -34,6 +34,8 @@
     (throw (new js/Error
                 (str "Failed to add player move: " args)))))
 
+;; Recursive loop for drawing moves. 
+;; Used when remote moves happen.
 (re-frame/reg-event-fx
   ::do-move-replay
   (fn [{:keys [db]}, [_ player-id, index, move-seq, wait-ms]]
@@ -128,7 +130,8 @@
 
 (re-frame/reg-event-fx
   ::on-move-remote
-  (fn [_ [_ [move-id]]]
+  (fn [_ [_ move-id]]
+    (println "Received remote move with ID: " move-id)
     {:dispatch [::server/player-move-get move-id ::on-player-move-get-success, ::on-player-move-get-failure]}))
 
 (comment (vec (rest [0 1 2])))
