@@ -16,7 +16,7 @@
 
 (s/def ::is-active? boolean?)
 (s/def ::x number?)
-(s/def ::x number?)
+(s/def ::y number?)
 (s/def ::index nat-int?)
 
 (s/def ::piece
