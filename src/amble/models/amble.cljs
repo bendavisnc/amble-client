@@ -42,7 +42,7 @@
             (merge {:db (assoc-in db [:game :game-id] game-id)}
                    {:dispatch [::on-game-ready nil]}))
           :else
-          (throw (new js/Error ["unexpected response result on `::on-post-game-failure`"
+          (throw (new js/Error ["unexpected response result on `::on-post-game-success`"
                                 event])))))
 
 (re-frame/reg-event-fx

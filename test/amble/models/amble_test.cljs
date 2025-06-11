@@ -3,6 +3,7 @@
   (:require
    [amble.models.amble :as model]
    [amble.server.main]
+   [amble.server.async.main]
    [amble.specs.amble :as spec]
    [cljs.test :refer-macros [testing is deftest]]
    [clojure.spec.alpha :as s]

@@ -14,5 +14,22 @@
   (s/map-of ::player
             (s/keys :req-un [::position])))
 
+(s/def ::is-active? boolean?)
+(s/def ::x number?)
+(s/def ::x number?)
+(s/def ::index nat-int?)
+
+(s/def ::piece
+  (s/keys :req-un [::is-active?, ::x, ::y, ::index]))
+
+(s/def ::pieces (s/coll-of ::piece))
+
+(s/def ::board
+  (s/keys :req-un [::pieces]))
+
+
+
+
+
 (s/def ::component
-  (s/keys :req-un [::player-selected, ::players]))
+  (s/keys :req-un [::player-selected, ::players, ::board]))

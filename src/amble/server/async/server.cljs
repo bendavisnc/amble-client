@@ -20,9 +20,9 @@
 (re-frame/reg-event-fx
   ::on-error
   (fn [& args]
-    (throw (new js/Error "not implemented, on error"))))
+    (throw (new js/Error ["not implemented, on error", args]))))
 
 (re-frame/reg-event-fx
   ::initialize
   (fn [& args]
-    (throw (new js/Error "not implemented, on error"))))
+    (throw (new js/Error "not implemented, on initialize"))))
