@@ -27,9 +27,5 @@
 (s/def ::board
   (s/keys :req-un [::pieces]))
 
-
-
-
-
 (s/def ::component
   (s/keys :req-un [::player-selected, ::players, ::board]))

@@ -1,5 +1,6 @@
 (ns amble.models.pieces.board.board
   (:require
+   ;;  [amble.models.pieces.player :as player]
    [amble.static-content.board :as static-board]
    [re-frame.core :as re-frame]))
 
@@ -12,7 +13,21 @@
           (+ (* dx dx) (* dy dy)))) ; no need for Math/sqrt when just comparing distance
       static-board/board)))
 
-(re-frame/reg-event-db
+(re-frame/reg-event-fx
   ::move-update
-  (fn [db [_ {:keys [x, y] :as move-event}]]
-    (println ["todo: move-update" move-event])))
+  (fn [{:keys [db]} [_, event]]
+    (let [mip (some
+                identity
+                (for [player-id (keys (get-in db [:game :player]))
+                      :let [player (get-in db [:game :player player-id])]]
+                  (when (:move-in-progress player)
+                    {:player-id player-id
+                     :index (get-in player [:move-in-progress :index])
+                     :x (:x event)
+                     :y (:y event)})))]
+      (merge {:db db}
+             (if mip
+               {:dispatch [:amble.models.pieces.player/move-update mip]}
+               {})))))
+
+(comment (some identity [1, 2]))

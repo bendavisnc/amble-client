@@ -15,8 +15,8 @@
 (def dispatch-map
   {"mousedown" ::player/move-start
    "touchstart" ::player/move-start
-   "mousemove" ::player/move-update
-   "touchmove" ::player/move-update
+   ;;  "mousemove" ::player/move-update
+   ;;  "touchmove" ::player/move-update
    "mouseup"   ::player/move-end
    "touchend"  ::player/move-end})
 
@@ -36,9 +36,8 @@
         event-type (.-type e)
         action (get dispatch-map event-type)]
     ;; (println [action event])
-    (if action
-      (re-frame/dispatch [action event])
-      (throw (js/Error. (str "No user feedback handler defined for " event-type))))))
+    (when action
+      (re-frame/dispatch [action event]))))
 
 (defn pieces [players]
   [:<>
