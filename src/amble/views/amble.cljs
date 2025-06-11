@@ -48,7 +48,8 @@
     [:svg#board {:class (gstring/format "%s-six-oclock" (name player-selected))
                  :view-box "0 0 1 1"
                  :on-mouse-move userfeedback-handler}
-     [board-pieces/pieces (board :pieces)]
+     [board-pieces/pieces {:pieces-seq (board :pieces)
+                           :active-index (board :active-index)}]
      [player-pieces/pieces players]]]])
 
 (defn amble []

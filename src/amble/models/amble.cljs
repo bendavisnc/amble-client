@@ -9,16 +9,11 @@
 (re-frame/reg-event-fx
   ::initialize
   (fn [{:keys [db]} [_]]
-    (let [board-pieces (vec (for [[i, [x,y]] #_{:clj-kondo/ignore [:unresolved-var]}
-                                  (map-indexed vector static-board/board)]
-                              {:x x
-                               :y y
-                               :index i
-                               :is-active? false}))]
+    (let [board-pieces-seq (vec static-board/board)]
       (merge
         {:db (assoc-in db
                        [:game :board :pieces]
-                       board-pieces)}
+                       board-pieces-seq)}
         {:dispatch [::server/post-game ::on-post-game-success, ::on-post-game-failure]}))))
 
 ;; `game id retrieved` -> `game ready`

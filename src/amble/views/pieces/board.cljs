@@ -3,12 +3,12 @@
    [amble.views.pieces.piece :as piece]))
 (def classname "board-piece")
 
-(defn pieces [pieces-seq]
+(defn pieces [{:keys [pieces-seq, active-index]}]
   [:<>
-   (for [{:keys [x, y, is-active?, index]} pieces-seq]
-     (piece/piece :x x
-                  :y y
-                  :size piece/piece-size
-                  :id (str classname "-" index)
-                  :class (str classname
-                              (if is-active? " active" ""))))])
+   (for [[index, [x, y]] (map-indexed vector pieces-seq)
+         :let [is-active? (= index active-index)]]
+      (piece/piece :x x
+                   :y y
+                   :size piece/piece-size
+                   :id (str classname "-" index)
+                   :class (str classname (if is-active? " active" ""))))])
