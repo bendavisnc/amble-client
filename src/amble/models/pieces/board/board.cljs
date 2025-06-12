@@ -16,15 +16,14 @@
 (re-frame/reg-event-fx
   ::move-update
   (fn [{:keys [db]} [_, event]]
-    (let [mip (some
-                identity
-                (for [player-id (keys (get-in db [:game :player]))
-                      :let [player (get-in db [:game :player player-id])]]
-                  (when (:move-in-progress player)
-                    {:player-id player-id
-                     :index (get-in player [:move-in-progress :index])
-                     :x (:x event)
-                     :y (:y event)})))]
+    (let [mip (some (fn [[player-id player]]
+                      (when-let [move (:move-in-progress player)]
+                        {:player-id player-id
+                         :index (:index move)
+                         :x (:x event)
+                         :y (:y event)}))
+                    (get-in db [:game :player]))]
+
       (merge {:db db}
              (if mip
                {:dispatch [:amble.models.pieces.player/move-update mip]}
