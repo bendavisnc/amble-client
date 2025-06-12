@@ -20,7 +20,7 @@
 (s/def ::index nat-int?)
 
 (s/def ::piece
-  (s/keys :req-un [::is-active?, ::x, ::y, ::index]))
+  (s/cat :x ::x, :y ::y))
 
 (s/def ::pieces (s/coll-of ::piece))
 
@@ -29,3 +29,5 @@
 
 (s/def ::component
   (s/keys :req-un [::player-selected, ::players, ::board]))
+
+(comment (s/valid? number? 3.2))

@@ -109,7 +109,10 @@
     (let [position (:body event)]
       (merge {:db (assoc-in (:db coeff)
                             [:game :player player-id :position]
-                            position)}
+                            (mapv (fn [[xstr, ystr]]
+                                    [(js/parseFloat xstr)
+                                     (js/parseFloat ystr)])
+                                  position))}
              (if (= :player-six player-id)
                {:fx [[:dispatch [::on-player-six-success event]]]}
                {:fx []})))))
