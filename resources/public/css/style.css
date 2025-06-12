@@ -5,6 +5,9 @@
 .board-piece {
   fill: white;
 }
+.board-piece.active {
+  fill: darkgray;
+}
 .player-one {
   fill: #6acac8;
 }
@@ -22,9 +25,6 @@
 }
 .player-six {
   fill: #ca936a;
-}
-.active {
-  fill: #ADD8E6;
 }
 html,
 body {
