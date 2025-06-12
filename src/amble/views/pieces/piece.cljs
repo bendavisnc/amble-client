@@ -1,6 +1,6 @@
 (ns amble.views.pieces.piece
   (:require
-   [clojure.string :as string]))
+   [re-frame.core :as re-frame]))
 
 (def piece-size 0.023)
 
@@ -50,3 +50,19 @@
       (let [cursor-pt (.matrixTransform pt (.inverse (.getScreenCTM svg-element)))]
         [(aget cursor-pt "x")
          (aget cursor-pt "y")]))))
+
+(def event-to-coord-fn (coord-conv))
+
+(defn event-to-coord* [board-elem, e]
+  (event-to-coord-fn board-elem e))
+
+(defn e-to-event [e]
+  (let [event-to-coord (partial event-to-coord* (.getElementById js/document "board"))
+        [x, y] (event-to-coord e)]
+    {:x x
+     :y y
+     :event-type (.-type e)}))
+
+(defn userfeedback-handler* [dispatch-map, e]
+  (when-let [action (get dispatch-map (:event-type e))]
+    (re-frame/dispatch [action e])))

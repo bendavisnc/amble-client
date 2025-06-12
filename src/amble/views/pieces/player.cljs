@@ -1,16 +1,10 @@
 (ns amble.views.pieces.player
   (:require
    [amble.models.pieces.player :as player]
-   [amble.views.pieces.piece :as piece-view]
-   [goog.string :as gstring]
-   [re-frame.core :as re-frame]))
+   [amble.views.pieces.piece :as piece]
+   [goog.string :as gstring]))
 
 (def classname "player-piece")
-
-(def event-to-coord-fn (piece-view/coord-conv))
-
-(defn event-to-coord* [board-elem, e]
-  (event-to-coord-fn board-elem e))
 
 (def dispatch-map
   {"mousedown" ::player/move-start
@@ -20,25 +14,6 @@
    "mouseup"   ::player/move-end
    "touchend"  ::player/move-end})
 
-(defn e-to-event [e]
-  (let [event-to-coord (partial event-to-coord* (.getElementById js/document "board"))
-        [x, y] (event-to-coord e)]
-    {:x x
-     :y y
-     :event-type (.-type e)}))
-
-(defn userfeedback-handler* [player-id, index, e]
-  ;; (println [player-id, index, e])
-  (let [event (-> e
-                  e-to-event
-                  (assoc :player-id player-id)
-                  (assoc :index index))
-        event-type (.-type e)
-        action (get dispatch-map event-type)]
-    ;; (println [action event])
-    (when action
-      (re-frame/dispatch [action event]))))
-
 (defn pieces [players]
   [:<>
    (for [player-id (keys players)
@@ -46,17 +21,22 @@
      ^{:key player-id}
      [:<>
       (for [[index, [x, y]] (map-indexed vector positions)
-            :let [userfeedback-handler (partial userfeedback-handler* player-id, index)]]
-        (piece-view/piece :x x
-                          :y y
-                          :size piece-view/piece-size
-                          :id (gstring/format "%s-%s-%s" classname (name player-id), index)
-                          :class [classname, "player", (name player-id)]
-                          :extra-opts {:on-mouse-down userfeedback-handler
-                                       :on-mouse-up userfeedback-handler
-                                       :on-mouse-move userfeedback-handler
-                                       :on-touch-start userfeedback-handler
-                                       :on-touch-end userfeedback-handler
-                                       :on-touch-move userfeedback-handler}))])])
+            :let [userfeedback-handler (fn [e]
+                                         (piece/userfeedback-handler* dispatch-map
+                                                                      (-> e
+                                                                          piece/e-to-event
+                                                                          (assoc :player-id player-id)
+                                                                          (assoc :index index))))]]
+        (piece/piece :x x
+                     :y y
+                     :size piece/piece-size
+                     :id (gstring/format "%s-%s-%s" classname (name player-id), index)
+                     :class [classname, "player", (name player-id)]
+                     :extra-opts {:on-mouse-down userfeedback-handler
+                                  :on-mouse-up userfeedback-handler
+                                  :on-mouse-move userfeedback-handler
+                                  :on-touch-start userfeedback-handler
+                                  :on-touch-end userfeedback-handler
+                                  :on-touch-move userfeedback-handler}))])])
 
 (comment (gstring/format "player piece %s"))

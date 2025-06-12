@@ -1,10 +1,11 @@
 (ns amble.views.pieces.board
   (:require
+   [amble.models.pieces.board.board :as board]
    [amble.views.pieces.piece :as piece]))
 (def classname "board-piece")
 
-;; (def dispatch-map
-  ;;  {"mousemove" ::board/move-update})
+(def dispatch-map
+  {"mousemove" ::board/active-index})
 
 (defn pieces [{:keys [pieces-seq, active-index]}]
   [:<>
@@ -14,4 +15,5 @@
                   :y y
                   :size piece/piece-size
                   :id (str classname "-" index)
-                  :class (str classname (if is-active? " active" ""))))])
+                  :class (str classname (if is-active? " active" ""))
+                  :extra-opts {:on-mouse-move nil}))])
