@@ -13,11 +13,22 @@
           (+ (* dx dx) (* dy dy)))) ; no need for Math/sqrt when just comparing distance
       static-board/board)))
 
+(defn closest-index [x y]
+  (first
+    (first
+      (sort-by
+        (fn [[i, [x2 y2]]]
+          (let [dx (- x2 x)
+                dy (- y2 y)]
+            (+ (* dx dx) (* dy dy)))) ; no need for Math/sqrt when just comparing distance
+        (map-indexed vector static-board/board)))))
+
 (re-frame/reg-event-db
   ::active-index
   (fn [db [_ {:keys [index]}]]
     (assoc-in db [:game :board :active-index] index)))
 
+;; When a mouseevent happens on the svg board, include it in any move currently in progress.
 (re-frame/reg-event-fx
   ::move-update
   (fn [{:keys [db]} [_, event]]
@@ -31,7 +42,9 @@
 
       (merge {:db db}
              (if mip
-               {:dispatch [:amble.models.pieces.player/move-update mip]}
+               {:dispatch-n [[:amble.models.pieces.player/move-update mip]
+                             [::active-index {:index (closest-index (:x mip)
+                                                                    (:y mip))}]]}
                {})))))
 
 (comment (some identity [1, 2]))

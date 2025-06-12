@@ -14,19 +14,9 @@
    "touchmove" ::board/move-update})
 
 (defn userfeedback-handler [e]
-  (let [event (piece/e-to-event e)]
-    (doseq [element (.elementsFromPoint js/document (:client-x event) (:client-y event))]
-      (when (.contains (.-classList element)
-                       "board-piece")
-        (let [index-board-piece (some-> element
-                                        (.getAttribute "data-index")
-                                        js/parseInt)]
-          ;; Dispatch the active index to the board model
-          (if (int? index-board-piece)
-            (do (js/console.info "Setting active index for board piece:" index-board-piece) 
-                (re-frame/dispatch [::board/active-index {:index index-board-piece}]))
-            (js/console.warn "Invalid index for board piece:" index-board-piece)))))
-    (piece/userfeedback-handler* dispatch-map event)))
+  (piece/userfeedback-handler* dispatch-map
+                               (-> e
+                                   piece/e-to-event)))
 
 (defn amble-component [{:keys [board, player-selected, players]}]
   [:div#amble
