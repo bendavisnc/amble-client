@@ -16,4 +16,4 @@
                   :size piece/piece-size
                   :id (str classname "-" index)
                   :class (str classname (if is-active? " active" ""))
-                  :extra-opts {:on-mouse-move nil}))])
+                  :extra-opts {:data-index index}))])

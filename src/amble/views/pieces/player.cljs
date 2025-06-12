@@ -34,9 +34,9 @@
                      :class [classname, "player", (name player-id)]
                      :extra-opts {:on-mouse-down userfeedback-handler
                                   :on-mouse-up userfeedback-handler
-                                  :on-mouse-move userfeedback-handler
+                                  ;; :on-mouse-move userfeedback-handler
                                   :on-touch-start userfeedback-handler
-                                  :on-touch-end userfeedback-handler
-                                  :on-touch-move userfeedback-handler}))])])
+                                  :on-touch-end userfeedback-handler}))])])
+                                  ;; :on-touch-move userfeedback-handler}))])])
 
 (comment (gstring/format "player piece %s"))

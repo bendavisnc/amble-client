@@ -61,8 +61,11 @@
         [x, y] (event-to-coord e)]
     {:x x
      :y y
-     :event-type (.-type e)}))
+     :event-type (.-type e)
+     :client-x (.-clientX e)
+     :client-y (.-clientY e)}))
 
 (defn userfeedback-handler* [dispatch-map, e]
   (when-let [action (get dispatch-map (:event-type e))]
+    ;; (println [::userfeedback-handler* action e])
     (re-frame/dispatch [action e])))

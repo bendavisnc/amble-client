@@ -13,6 +13,11 @@
           (+ (* dx dx) (* dy dy)))) ; no need for Math/sqrt when just comparing distance
       static-board/board)))
 
+(re-frame/reg-event-db
+  ::active-index
+  (fn [db [_ {:keys [index]}]]
+    (assoc-in db [:game :board :active-index] index)))
+
 (re-frame/reg-event-fx
   ::move-update
   (fn [{:keys [db]} [_, event]]
