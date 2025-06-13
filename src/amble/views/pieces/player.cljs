@@ -14,7 +14,7 @@
    "mouseup"   ::player/move-end
    "touchend"  ::player/move-end})
 
-(defn pieces [players]
+(defn pieces [{:keys [players, landing-piece]}]
   [:<>
    (for [player-id (keys players)
          :let [positions (get-in players [player-id :position])]]
@@ -26,12 +26,18 @@
                                                                       (-> e
                                                                           piece/e-to-event
                                                                           (assoc :player-id player-id)
-                                                                          (assoc :index index))))]]
+                                                                          (assoc :index index))))
+                  landing? (= {:index index
+                               :player-id player-id}
+                              landing-piece)]]
         (piece/piece :x x
                      :y y
                      :size piece/piece-size
                      :id (gstring/format "%s-%s-%s" classname (name player-id), index)
-                     :class [classname, "player", (name player-id)]
+                     :class [classname
+                             "player"
+                             (name player-id)
+                             (when landing? "landing")]
                      :extra-opts {:on-mouse-down userfeedback-handler
                                   :on-mouse-up userfeedback-handler
                                   ;; :on-mouse-move userfeedback-handler

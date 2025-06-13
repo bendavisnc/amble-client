@@ -18,7 +18,7 @@
                                (-> e
                                    piece/e-to-event)))
 
-(defn amble-component [{:keys [board, player-selected, players]}]
+(defn amble-component [{:keys [board, player-selected, players, landing-piece]}]
   [:div#amble
    [:div#board-container
     [:svg#board {:class (gstring/format "%s-six-oclock" (name player-selected))
@@ -26,7 +26,8 @@
                  :on-mouse-move userfeedback-handler}
      [board-pieces/pieces {:pieces-seq (board :pieces)
                            :active-index (board :active-index)}]
-     [player-pieces/pieces players]]]])
+     [player-pieces/pieces {:players players
+                            :landing-piece landing-piece}]]]])
 
 (defn amble []
   (let [model (re-frame/subscribe [::models/amble])]

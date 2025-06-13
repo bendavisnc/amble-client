@@ -4,9 +4,6 @@
    [amble.views.pieces.piece :as piece]))
 (def classname "board-piece")
 
-(def dispatch-map
-  {"mousemove" ::board/active-index})
-
 (defn pieces [{:keys [pieces-seq, active-index]}]
   [:<>
    (for [[index, [x, y]] (map-indexed vector pieces-seq)

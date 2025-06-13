@@ -130,10 +130,13 @@
                       :client-id "stilltodoclientid"
                       :game-id (db-to-game-id db)}]
       {:dispatch [::server/player-move-add move-event ::on-player-move-add-success, ::on-player-move-add-failure]
-       :db (update-in db
-                      [:game :player player-id]
-                      dissoc
-                      :move-in-progress)})))
+       :db (-> db
+               (update-in [:game :player player-id]
+                          dissoc
+                          :move-in-progress)
+               (assoc-in [:game :landing-piece]
+                         {:player-id player-id
+                          :index index}))})))
 
 (re-frame/reg-event-fx
   ::on-move-remote

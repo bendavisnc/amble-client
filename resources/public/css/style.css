@@ -6,7 +6,7 @@
   fill: white;
 }
 .board-piece.active {
-  fill: darkgray;
+  fill: #f1f1f1;
 }
 .player-one {
   fill: #6acac8;
@@ -25,6 +25,12 @@
 }
 .player-six {
   fill: #ca936a;
+}
+.player {
+  transition: fill 2s 500ms;
+}
+.player.landing {
+  fill: green;
 }
 html,
 body {

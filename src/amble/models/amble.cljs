@@ -1,6 +1,7 @@
 (ns amble.models.amble
   (:require
    [amble.models.models :refer [db-to-game-id]]
+   [amble.models.pieces.player :as player]
    [amble.server.async.server :as async-server]
    [amble.server.server :as server]
    [amble.static-content.board :as static-board]
@@ -143,12 +144,19 @@
     (get-in db [:game :board])))
 
 (re-frame/reg-sub
+  ::landing-piece
+  (fn [db, _]
+    (get-in db [:game :landing-piece])))
+
+(re-frame/reg-sub
   ::amble
   (fn []
     [(re-frame/subscribe [::board])
      (re-frame/subscribe [::player-selected])
-     (re-frame/subscribe [::players])])
-  (fn [[board, player-selected, players]]
+     (re-frame/subscribe [::players])
+     (re-frame/subscribe [::landing-piece])])
+  (fn [[board, player-selected, players, landing-piece]]
     {:board board
      :player-selected player-selected
-     :players players}))
+     :players players
+     :landing-piece landing-piece}))
