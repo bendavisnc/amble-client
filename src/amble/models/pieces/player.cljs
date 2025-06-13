@@ -100,7 +100,10 @@
         (assoc-in [:game :player player-id :move-in-progress :moves]
                   [[x, y]])
         (assoc-in [:game :player player-id :move-in-progress :index]
-                  index))))
+                  index)
+        (update-in [:game]
+          dissoc
+          :landing-piece))))
 
 (re-frame/reg-event-db
   ::move-update
@@ -116,6 +119,19 @@
           (redraw move-event)))))
 
 (re-frame/reg-event-fx
+  ::move-land
+  (fn [{:keys [db]} [_ {:keys [player-id] :as move-event}]]
+    (let [index  (get-in db [:game :player player-id :move-in-progress :index])]
+      {:db (-> db
+               (update-in [:game :player player-id]
+                          dissoc
+                          :move-in-progress)
+               (assoc-in [:game :landing-piece]
+                         {:player-id player-id
+                          :index index})
+               (redraw move-event))})))
+
+(re-frame/reg-event-fx
   ::move-end
   (fn [{:keys [db]} [_ {:keys [player-id]}]]
     (let [moves (get-in db [:game :player player-id :move-in-progress :moves])
@@ -129,19 +145,15 @@
                       :index index
                       :client-id "stilltodoclientid"
                       :game-id (db-to-game-id db)}]
-      {:dispatch [::server/player-move-add move-event ::on-player-move-add-success, ::on-player-move-add-failure]
-       :db (-> db
-               (update-in [:game :player player-id]
-                          dissoc
-                          :move-in-progress)
-               (assoc-in [:game :landing-piece]
-                         {:player-id player-id
-                          :index index}))})))
+      {:dispatch-n [[::move-land move-event]
+                    [::server/player-move-add move-event ::on-player-move-add-success, ::on-player-move-add-failure]]
+       :db db})))
 
 (re-frame/reg-event-fx
   ::on-move-remote
   (fn [_ [_ move-id]]
     (println "Received remote move with ID: " move-id)
-    {:dispatch [::server/player-move-get move-id ::on-player-move-get-success, ::on-player-move-get-failure]}))
+    (println "todo, come back to")))
+    ;; {:dispatch [::server/player-move-get move-id ::on-player-move-get-success, ::on-player-move-get-failure]}))
 
 (comment (vec (rest [0 1 2])))

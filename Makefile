@@ -28,8 +28,14 @@ devbrowser:
 	@echo "Running dev browser (no cors)"
 	sudo -u ben -- google-chrome --disable-web-security --user-data-dir=/home/ben/Desktop/
 
-clean:
+clean: cleancss
 	@echo "Cleaning up..."
-	rm -rf resources/public/css/style.css
 	rm -rf resources/public/json/openapi.json
 	rm -rf target
+
+cleancss:
+	@echo "Removing compiled css..."
+	rm -rf resources/public/css
+
+gitadd:
+	git add ':!.gitignore' -u
