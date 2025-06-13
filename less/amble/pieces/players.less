@@ -22,6 +22,11 @@
     fill: @color-player-six;
 }
 
+@ease: cubic-bezier(0.33, 1, 0.68, 1);
+@ease-time: 0.333s;
+
 .player.landing {
-    transition: cx 1.5s ease, cy 1.5s ease;
+    transition: cx @ease-time @ease, cy @ease-time @ease;
 }
+
+

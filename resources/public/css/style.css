@@ -27,7 +27,7 @@
   fill: #ca936a;
 }
 .player.landing {
-  transition: cx 1.5s ease, cy 1.5s ease;
+  transition: cx 0.333s cubic-bezier(0.33, 1, 0.68, 1), cy 0.333s cubic-bezier(0.33, 1, 0.68, 1);
 }
 html,
 body {
