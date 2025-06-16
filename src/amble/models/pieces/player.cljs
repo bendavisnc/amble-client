@@ -70,20 +70,33 @@
              :dispatch-later [{:ms wait-ms
                                :dispatch [::do-move-replay player-id, index, move-seq wait-ms]}]}))))
 
+;; Coeffect handler that injects the current timestamp as :now
+(re-frame/reg-cofx
+  :now
+  (fn [coeffects _]
+    (assoc coeffects :now (js/Date.now))))
+
 (re-frame/reg-event-fx
   ::on-player-move-get-success
   (fn [{:keys [db]}, [_ {:keys [body]}]]
-    (let [{:keys [player-id, player-piece-index, move, x, y]} body
-          move-seq move]
+    (let [{:keys [player-id, player-piece-index, move, x, y, client-id]} body
+          move-seq move
+          move-from-this-client? ((get-in db [:game :player (keyword player-id) :moves-made])
+                                  client-id)]
       (when (not move-seq)
         (throw (new js/Error (str "No move sequence found in player move get response."
                                   body))))
-      {:db db
-       :dispatch [::do-move-replay
-                  (keyword player-id)
-                  (js/parseInt player-piece-index)
-                  (concat move-seq [[x, y]])
-                  24]})))
+      (if move-from-this-client?
+        (do
+          (println "Move from this client, skipping replay.")
+          {})
+        {:db db
+         :dispatch [::do-move-replay
+                    (keyword player-id)
+                    (js/parseInt player-piece-index)
+                    (concat move-seq [[x, y]])
+                    ;; todo, name
+                    24]}))))
 
 (re-frame/reg-event-db
   ::on-player-move-get-failure
@@ -133,27 +146,31 @@
 
 (re-frame/reg-event-fx
   ::move-end
-  (fn [{:keys [db]} [_ {:keys [player-id]}]]
+  [(re-frame/inject-cofx :now)]
+  (fn [{:keys [db, now]} [_ {:keys [player-id]}]]
     (let [moves (get-in db [:game :player player-id :move-in-progress :moves])
           index  (get-in db [:game :player player-id :move-in-progress :index])
           [last-x last-y] (last moves)
           [x, y] (board/closest last-x, last-y)
+          client-id (str now)
           move-event {:player-id player-id
                       :move moves
                       :x x
                       :y y
                       :index index
-                      :client-id "stilltodoclientid"
+                      :client-id client-id
                       :game-id (db-to-game-id db)}]
       {:dispatch-n [[::move-land move-event]
                     [::server/player-move-add move-event ::on-player-move-add-success, ::on-player-move-add-failure]]
-       :db db})))
+       :db (update-in db
+                      [:game :player player-id :moves-made]
+                      conj
+                      client-id)})))
 
 (re-frame/reg-event-fx
   ::on-move-remote
   (fn [_ [_ move-id]]
     (println "Received remote move with ID: " move-id)
-    (println "todo, come back to")))
-    ;; {:dispatch [::server/player-move-get move-id ::on-player-move-get-success, ::on-player-move-get-failure]}))
+    {:dispatch [::server/player-move-get move-id ::on-player-move-get-success, ::on-player-move-get-failure]}))
 
-(comment (vec (rest [0 1 2])))
+(comment (conj #{3} 2))

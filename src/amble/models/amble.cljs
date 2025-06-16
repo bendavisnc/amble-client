@@ -105,15 +105,16 @@
 
 (re-frame/reg-event-fx
   ::on-player-success
-  (fn [coeff [_, [game-id, player-id], event]]
-    ;; (println (str "on-player-success " [game-id, player-id]))
+  (fn [{:keys [db]}, [_, [_, player-id], event]]
     (let [position (:body event)]
-      (merge {:db (assoc-in (:db coeff)
-                            [:game :player player-id :position]
-                            (mapv (fn [[xstr, ystr]]
-                                    [(js/parseFloat xstr)
-                                     (js/parseFloat ystr)])
-                                  position))}
+      (merge {:db (-> db
+                      (assoc-in [:game :player player-id :moves-made]
+                                #{})
+                      (assoc-in [:game :player player-id :position]
+                                (mapv (fn [[xstr, ystr]]
+                                        [(js/parseFloat xstr)
+                                         (js/parseFloat ystr)])
+                                      position)))}
              (if (= :player-six player-id)
                {:fx [[:dispatch [::on-player-six-success event]]]}
                {:fx []})))))
