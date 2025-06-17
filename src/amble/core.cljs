@@ -1,7 +1,7 @@
 (ns amble.core
   (:require
    [amble.models.amble :as model]
-   [amble.models.dev]
+   [amble.dev]
    [amble.server.async.main]
    [amble.server.async.server]
    [amble.server.main]

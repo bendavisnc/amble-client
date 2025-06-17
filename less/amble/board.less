@@ -3,4 +3,36 @@
 #board {
   width: @board-width;
   height: @board-width;
+
+
+  &.player-one-sixoclock {
+    transform: rotate(0deg);
+  }
+
+  &.player-two-sixoclock {
+    transform: rotate(-60deg);
+  }
+
+  &.player-three-sixoclock {
+    transform: rotate(-120deg);
+  }
+
+  &.player-four-sixoclock {
+    transform: rotate(-180deg);
+  }
+  &.player-five-sixoclock {
+    transform: rotate(-240deg);
+  }
+
+  &.player-six-sixoclock {
+    transform: rotate(-300deg);
+  }
+
+
+  @ease: cubic-bezier(0.33, 1, 0.68, 1);
+  // cubic-bezier(0.4, 0, 1, 1)
+  @ease-time: 0.333s;
+
+  transition: transform @ease-time @ease, cy @ease-time @ease;
+
 }

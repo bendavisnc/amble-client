@@ -21,7 +21,7 @@
 (defn amble-component [{:keys [board, player-selected, players, landing-piece]}]
   [:div#amble
    [:div#board-container
-    [:svg#board {:class (gstring/format "%s-six-oclock" (name player-selected))
+    [:svg#board {:class (gstring/format "%s-sixoclock" (name player-selected))
                  :view-box "0 0 1 1"
                  :on-mouse-move userfeedback-handler}
      [board-pieces/pieces {:pieces-seq (board :pieces)

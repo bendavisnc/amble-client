@@ -11,11 +11,12 @@
   ::initialize
   (fn [{:keys [db]} [_]]
     (let [board-pieces-seq (vec static-board/board)]
-      (merge
-        {:db (assoc-in db
-                       [:game :board :pieces]
-                       board-pieces-seq)}
-        {:dispatch [::server/post-game ::on-post-game-success, ::on-post-game-failure]}))))
+      {:db (-> db
+               (assoc-in [:game :board :pieces]
+                         board-pieces-seq)
+               (assoc-in [:game :settings :player]
+                         :player-one)) 
+       :dispatch [::server/post-game ::on-post-game-success, ::on-post-game-failure]})))
 
 ;; `game id retrieved` -> `game ready`
 (re-frame/reg-event-fx
@@ -131,8 +132,7 @@
 (re-frame/reg-sub
   ::player-selected
   (fn [db, _]
-    (or (:player-selected db)
-        :player-one)))
+    (get-in db [:game :settings :player])))
 
 (re-frame/reg-sub
   ::players

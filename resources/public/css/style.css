@@ -1,6 +1,25 @@
 #board {
   width: 61.80469716vw;
   height: 61.80469716vw;
+  transition: transform 0.333s cubic-bezier(0.33, 1, 0.68, 1), cy 0.333s cubic-bezier(0.33, 1, 0.68, 1);
+}
+#board.player-one-sixoclock {
+  transform: rotate(0deg);
+}
+#board.player-two-sixoclock {
+  transform: rotate(-60deg);
+}
+#board.player-three-sixoclock {
+  transform: rotate(-120deg);
+}
+#board.player-four-sixoclock {
+  transform: rotate(-180deg);
+}
+#board.player-five-sixoclock {
+  transform: rotate(-240deg);
+}
+#board.player-six-sixoclock {
+  transform: rotate(-300deg);
 }
 .board-piece {
   fill: white;
