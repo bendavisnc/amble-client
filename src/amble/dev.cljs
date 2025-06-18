@@ -1,6 +1,8 @@
 ;; filepath: /home/ben/home/programming/amble/amble-client/src/amble/models/dev.cljs
 (ns amble.dev
   (:require
+   [amble.models.models :refer [db-to-game-id]]
+   [amble.server.server :as server]
    [re-frame.core :as re-frame]))
 
 (defn printdb
@@ -28,7 +30,27 @@
 (re-frame/reg-event-db
  ::setplayer
  (fn [db, [_ i]]
-   (assoc-in db 
+   (assoc-in db
              [:game :settings :player]
              (index-to-player i))))
    
+
+(re-frame/reg-event-fx
+  ::on-game-delete-failure
+  (fn [coeff, [_ event]]
+    (println "Failed to delete game: " event)))
+
+(re-frame/reg-event-fx
+  ::on-game-delete-success
+  (fn [_, [_ event]]
+    (println "Game deleted successfully: " event)))
+
+(re-frame/reg-event-fx
+  ::deletegame
+  (fn [cofx [_ _]]
+    (let [game-id (db-to-game-id (:db cofx))]
+      {:dispatch [::server/delete-game game-id ::on-game-delete-success, ::on-game-delete-failure]})))
+
+(defn deletegame [i]
+  (re-frame/dispatch [::deletegame]))
+
