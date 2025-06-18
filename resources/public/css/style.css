@@ -25,7 +25,7 @@
   fill: white;
 }
 .board-piece.active {
-  fill: #f1f1f1;
+  fill: #add8e6;
 }
 .player-one {
   fill: #6acac8;

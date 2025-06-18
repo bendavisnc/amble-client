@@ -11,9 +11,9 @@
   (re-frame/dispatch [::printdb]))
 
 (re-frame/reg-event-db
- ::printdb
- (fn [db, _]
-   (println (:game db))))
+  ::printdb
+  (fn [db, _]
+    (println (:game db))))
 
 (defn index-to-player [i]
   (case i
@@ -28,12 +28,11 @@
   (re-frame/dispatch [::setplayer i]))
 
 (re-frame/reg-event-db
- ::setplayer
- (fn [db, [_ i]]
-   (assoc-in db
-             [:game :settings :player]
-             (index-to-player i))))
-   
+  ::setplayer
+  (fn [db, [_ i]]
+    (assoc-in db
+              [:game :settings :player]
+              (index-to-player i))))
 
 (re-frame/reg-event-fx
   ::on-game-delete-failure
@@ -53,4 +52,3 @@
 
 (defn deletegame [i]
   (re-frame/dispatch [::deletegame]))
-

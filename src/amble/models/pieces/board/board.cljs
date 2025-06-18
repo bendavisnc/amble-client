@@ -13,15 +13,18 @@
           (+ (* dx dx) (* dy dy)))) ; no need for Math/sqrt when just comparing distance
       static-board/board)))
 
-(defn closest-index [x y]
-  (first
-    (first
-      (sort-by
-        (fn [[i, [x2 y2]]]
-          (let [dx (- x2 x)
-                dy (- y2 y)]
-            (+ (* dx dx) (* dy dy)))) ; no need for Math/sqrt when just comparing distance
-        (map-indexed vector static-board/board)))))
+(defn closest-index [{:keys [x, y, occupied]}]
+  (let [[i _]
+        (first
+          (filter (fn [[i, _]]
+                    (not (occupied i)))
+                  (sort-by
+                    (fn [[_ [x2 y2]]]
+                      (let [dx (- x2 x)
+                            dy (- y2 y)]
+                        (+ (* dx dx) (* dy dy))))
+                    (map-indexed vector static-board/board))))]
+    i))
 
 (re-frame/reg-event-db
   ::active-index
@@ -31,20 +34,22 @@
 ;; When a mouseevent happens on the svg board, include it in any move currently in progress.
 (re-frame/reg-event-fx
   ::move-update
-  (fn [{:keys [db]} [_, event]]
+  (fn [{:keys [db]} [_, {:keys [x, y]}]]
     (let [mip (some (fn [[player-id player]]
                       (when-let [move (:move-in-progress player)]
                         {:player-id player-id
                          :index (:index move)
-                         :x (:x event)
-                         :y (:y event)}))
+                         :x x
+                         :y y}))
                     (get-in db [:game :player]))]
 
       (merge {:db db}
              (if mip
                {:dispatch-n [[:amble.models.pieces.player/move-update mip]
-                             [::active-index {:index (closest-index (:x mip)
-                                                                    (:y mip))}]]}
+                             [::active-index {:index (closest-index {:x (:x mip)
+                                                                     :y (:y mip)
+                                                                     :occupied (get-in db [:game :board :occupied])})}]]}
                {})))))
 
-(comment (some identity [1, 2]))
+(comment ([1, 2]
+          1))

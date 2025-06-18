@@ -11,11 +11,11 @@
 
 - avoid remote moves from self ✅
 
-- remove subscribers correctly ✅
+- remove subscribers correctly 
 
 - add remote relay animation ✅
 
-- add move list ✅
+- add move list 
 
 - make public
 
@@ -36,3 +36,5 @@
 - Address client timeout issue
 
 - add local moves to db
+
+- address cors

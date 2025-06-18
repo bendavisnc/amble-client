@@ -35,6 +35,14 @@
     (throw (new js/Error
                 (str "Failed to add player move: " args)))))
 
+(re-frame/reg-event-db
+  ::board-piece-occupied
+  (fn [db [_ i]]
+    (update-in db
+               [:game :board :occupied]
+               conj
+               i)))
+
 ;; Recursive loop for drawing moves. 
 ;; Used when remote moves happen.
 (re-frame/reg-event-fx
@@ -91,12 +99,12 @@
           (println "Move from this client, skipping replay.")
           {})
         {:db db
-         :dispatch [::do-move-replay
-                    (keyword player-id)
-                    (js/parseInt player-piece-index)
-                    (concat move-seq [[x, y]])
-                    ;; todo, name
-                    24]}))))
+         :dispatch [[::do-move-replay
+                     (keyword player-id)
+                     (js/parseInt player-piece-index)
+                     (concat move-seq [[x, y]])
+                     ;; todo, name
+                     24]]}))))
 
 (re-frame/reg-event-db
   ::on-player-move-get-failure
@@ -115,8 +123,8 @@
         (assoc-in [:game :player player-id :move-in-progress :index]
                   index)
         (update-in [:game]
-          dissoc
-          :landing-piece))))
+                   dissoc
+                   :landing-piece))))
 
 (re-frame/reg-event-db
   ::move-update
@@ -133,8 +141,12 @@
 
 (re-frame/reg-event-fx
   ::move-land
-  (fn [{:keys [db]} [_ {:keys [player-id] :as move-event}]]
-    (let [index  (get-in db [:game :player player-id :move-in-progress :index])]
+  (fn [{:keys [db]} [_ {:keys [player-id, x, y] :as move-event}]]
+    (let [index  (get-in db [:game :player player-id :move-in-progress :index])
+          board-index (some (fn [[i [bx, by]]]
+                              (when (and (= bx x) (= by y))
+                                i))
+                            (map-indexed vector (get-in db [:game :board :pieces])))]
       {:db (-> db
                (update-in [:game :player player-id]
                           dissoc
@@ -142,7 +154,8 @@
                (assoc-in [:game :landing-piece]
                          {:player-id player-id
                           :index index})
-               (redraw move-event))})))
+               (redraw move-event))
+       :dispatch [::board-piece-occupied board-index]})))
 
 (re-frame/reg-event-fx
   ::move-end

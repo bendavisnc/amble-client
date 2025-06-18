@@ -15,7 +15,9 @@
                (assoc-in [:game :board :pieces]
                          board-pieces-seq)
                (assoc-in [:game :settings :player]
-                         :player-one)) 
+                         :player-one)
+               (assoc-in [:game :board :occupied]
+                         #{}))
        :dispatch [::server/post-game ::on-post-game-success, ::on-post-game-failure]})))
 
 ;; `game id retrieved` -> `game ready`
