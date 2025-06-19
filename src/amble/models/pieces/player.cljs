@@ -50,11 +50,17 @@
 
           (= []
              (get-in db [:game :player player-id :move-replay-in-progress :move]))
-          {:db (update-in db
-                          [:game :player player-id]
-                          dissoc
-                          :move-replay-in-progress)}
-
+          (let [[x-last, y-last] (last move-seq)
+                [x, y] (board/closest {:x x-last, :y y-last, :occupied #{}})]
+                       
+            {:db (-> db 
+                     (update-in [:game :player player-id]
+                                dissoc
+                                :move-replay-in-progress)
+                     (redraw {:player-id player-id
+                              :index index
+                              :x x
+                              :y y}))}) ;; todo, explain
           :else
           (let [move-seq (get-in db [:game :player player-id :move-replay-in-progress :move])]
             ;; _ (println (get-in db [:game :player player-id]))] 
@@ -82,21 +88,37 @@
     (let [{:keys [player-id, player-piece-index, move, x, y, client-id]} body
           move-seq move
           move-from-this-client? ((get-in db [:game :player (keyword player-id) :moves-made])
-                                  client-id)]
+                                  client-id)
+          [x-start, y-start] (first move-seq)
+          [x-end, y-end] (board/closest {:x x, :y y, :occupied #{}})
+          board-index-start (some (fn [[i [bx, by]]]
+                                    (when (and (= bx x-start) (= by y-start))
+                                      i))
+                                (map-indexed vector (get-in db [:game :board :pieces])))
+
+          board-index-end (some (fn [[i [bx, by]]]
+                                   (when (and (= bx x-end) (= by y-end))
+                                     i))
+                                (map-indexed vector (get-in db [:game :board :pieces])))]
       (when (not move-seq)
         (throw (new js/Error (str "No move sequence found in player move get response."
                                   body))))
+      (when (or (not board-index-start) (not board-index-end))
+        (throw (new js/Error (str "remote move related board indexs not found: "
+                                  [board-index-start, board-index-end]))))
       (if move-from-this-client?
         (do
           (println "Move from this client, skipping replay.")
           {})
         {:db db
-         :dispatch [[::do-move-replay
-                     (keyword player-id)
-                     (js/parseInt player-piece-index)
-                     (concat move-seq [[x, y]])
-                     ;; todo, name
-                     24]]}))))
+         :dispatch-n [[::do-move-replay
+                       (keyword player-id)
+                       (js/parseInt player-piece-index)
+                       (concat move-seq [[x, y]])
+                       ;; todo, name
+                       24]]
+                     [::board/piece-unoccupied board-index-start]
+                     [::board/piece-occupied board-index-end]}))))
 
 (re-frame/reg-event-db
   ::on-player-move-get-failure
@@ -104,19 +126,26 @@
     (throw (new js/Error
                 (str "Failed to request player move: " args)))))
 
-(re-frame/reg-event-db
+(re-frame/reg-event-fx
   ::move-start
-  (fn [db [_ {:keys [player-id, index, x, y]}]]
+  (fn [{:keys [db]}, [_ {:keys [player-id, index]}]]
     (when (not index)
       (throw (new js/Error "No index found for player move, at move start.")))
-    (-> db
-        (assoc-in [:game :player player-id :move-in-progress :moves]
-                  [[x, y]])
-        (assoc-in [:game :player player-id :move-in-progress :index]
-                  index)
-        (update-in [:game]
-                   dissoc
-                   :landing-piece))))
+    (let [[x, y] (get-in db [:game :player player-id :position index])
+          board-index (some (fn [[i [bx, by]]]
+                              (when (and (= bx x) (= by y))
+                                i))
+                            (map-indexed vector (get-in db [:game :board :pieces])))
+          _ (when (not board-index)
+              (throw (new js/Error
+                          (str "No board index found for piece at position: " [x, y]))))]
+      {:db (-> db
+               (assoc-in [:game :player player-id :move-in-progress :moves]
+                         [[x, y]])
+               (assoc-in [:game :player player-id :move-in-progress :index]
+                         index)
+               (update-in [:game] dissoc :landing-piece))
+       :dispatch [::board/piece-unoccupied board-index]})))
 
 (re-frame/reg-event-db
   ::move-update
@@ -167,10 +196,12 @@
                       :game-id (db-to-game-id db)}]
       {:dispatch-n [[::move-land move-event]
                     [::server/player-move-add move-event ::on-player-move-add-success, ::on-player-move-add-failure]]
-       :db (update-in db
-                      [:game :player player-id :moves-made]
-                      conj
-                      client-id)})))
+       :db (-> db 
+               (update-in [:game :player player-id :moves-made]
+                          conj
+                          client-id)
+            
+               (assoc-in [:game :board :active-index] nil))})))
 
 (re-frame/reg-event-fx
   ::on-move-remote
