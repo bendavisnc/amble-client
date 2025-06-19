@@ -35,14 +35,6 @@
     (throw (new js/Error
                 (str "Failed to add player move: " args)))))
 
-(re-frame/reg-event-db
-  ::board-piece-occupied
-  (fn [db [_ i]]
-    (update-in db
-               [:game :board :occupied]
-               conj
-               i)))
-
 ;; Recursive loop for drawing moves. 
 ;; Used when remote moves happen.
 (re-frame/reg-event-fx
@@ -155,7 +147,7 @@
                          {:player-id player-id
                           :index index})
                (redraw move-event))
-       :dispatch [::board-piece-occupied board-index]})))
+       :dispatch [::board/piece-occupied board-index]})))
 
 (re-frame/reg-event-fx
   ::move-end

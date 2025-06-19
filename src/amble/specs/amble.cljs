@@ -18,10 +18,10 @@
 
 (s/def ::players
   (s/map-of
-   ::player
-   (s/and
-    (s/keys :req-un [::position, ::moves-made])
-    #(= (set (keys %)) #{:position, :moves-made}))))
+    ::player
+    (s/and
+      (s/keys :req-un [::position, ::moves-made])
+      #(= (set (keys %)) #{:position, :moves-made}))))
 
 (s/def ::is-active? boolean?)
 (s/def ::x number?)
@@ -39,15 +39,15 @@
 
 (s/def ::board
   (s/and
-   (s/keys :req-un [::pieces, ::occupied])
-   #(= (set (keys %)) #{:pieces, :occupied})))
+    (s/keys :req-un [::pieces, ::occupied])
+    #(= (set (keys %)) #{:pieces, :occupied})))
 
 (s/def ::landing-piece
   (s/nilable any?)) ;; todo
 
 (s/def ::component
   (s/and
-   (s/keys :req-un [::player-selected ::players ::board, ::landing-piece])
-   #(= (set (keys %)) #{:player-selected :players :board :landing-piece})))
+    (s/keys :req-un [::player-selected ::players ::board, ::landing-piece])
+    #(= (set (keys %)) #{:player-selected :players :board :landing-piece})))
 
 (comment (s/explain-str ::moves-made #{}))

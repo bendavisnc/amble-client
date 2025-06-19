@@ -1,7 +1,7 @@
 (ns amble.models.amble
   (:require
    [amble.models.models :refer [db-to-game-id]]
-   [amble.models.pieces.player :as player]
+   [amble.models.pieces.board.board :as board]
    [amble.server.async.server :as async-server]
    [amble.server.server :as server]
    [amble.static-content.board :as static-board]
@@ -109,18 +109,26 @@
 (re-frame/reg-event-fx
   ::on-player-success
   (fn [{:keys [db]}, [_, [_, player-id], event]]
-    (let [position (:body event)]
+    (let [position* (:body event)
+          position (mapv (fn [[xstr, ystr]]
+                           [(js/parseFloat xstr)
+                            (js/parseFloat ystr)])
+                         position*)]
       (merge {:db (-> db
                       (assoc-in [:game :player player-id :moves-made]
                                 #{})
                       (assoc-in [:game :player player-id :position]
-                                (mapv (fn [[xstr, ystr]]
-                                        [(js/parseFloat xstr)
-                                         (js/parseFloat ystr)])
-                                      position)))}
+                                position))}
              (if (= :player-six player-id)
                {:fx [[:dispatch [::on-player-six-success event]]]}
-               {:fx []})))))
+               {:fx []})
+             {:dispatch-n (mapv (fn [[x, y]]
+                                  (let [board-index (some (fn [[i [bx, by]]]
+                                                            (when (and (= bx x) (= by y))
+                                                              i))
+                                                      (map-indexed vector (get-in db [:game :board :pieces])))]
+                                    [::board/piece-occupied board-index]))
+                                position)}))))
 
 ;; Once we know the game id, we can load player position
 (re-frame/reg-event-fx

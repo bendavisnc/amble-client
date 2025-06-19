@@ -27,6 +27,14 @@
     i))
 
 (re-frame/reg-event-db
+  ::piece-occupied
+  (fn [db [_ i]]
+    (update-in db
+               [:game :board :occupied]
+               conj
+               i)))
+
+(re-frame/reg-event-db
   ::active-index
   (fn [db [_ {:keys [index]}]]
     (assoc-in db [:game :board :active-index] index)))
