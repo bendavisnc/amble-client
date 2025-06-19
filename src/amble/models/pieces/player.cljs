@@ -156,7 +156,7 @@
     (let [moves (get-in db [:game :player player-id :move-in-progress :moves])
           index  (get-in db [:game :player player-id :move-in-progress :index])
           [last-x last-y] (last moves)
-          [x, y] (board/closest last-x, last-y)
+          [x, y] (board/closest {:x last-x, :y last-y :occupied (get-in db [:game :board :occupied])})
           client-id (str now)
           move-event {:player-id player-id
                       :move moves

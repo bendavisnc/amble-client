@@ -4,14 +4,18 @@
    [amble.static-content.board :as static-board]
    [re-frame.core :as re-frame]))
 
-(defn closest [x y]
-  (first
-    (sort-by
-      (fn [[x2 y2]]
-        (let [dx (- x2 x)
-              dy (- y2 y)]
-          (+ (* dx dx) (* dy dy)))) ; no need for Math/sqrt when just comparing distance
-      static-board/board)))
+(defn closest [{:keys [x, y, occupied]}]
+  (let [[_ xy]
+        (first
+          (filter (fn [[i, _]]
+                    (not (occupied i)))
+                  (sort-by
+                    (fn [[_ [x2 y2]]]
+                      (let [dx (- x2 x)
+                            dy (- y2 y)]
+                        (+ (* dx dx) (* dy dy))))
+                    (map-indexed vector static-board/board))))]
+    xy))
 
 (defn closest-index [{:keys [x, y, occupied]}]
   (let [[i _]
