@@ -1,6 +1,5 @@
 (ns amble.views.pieces.board
   (:require
-   [amble.models.pieces.board.board :as board]
    [amble.views.pieces.piece :as piece]))
 (def classname "board-piece")
 

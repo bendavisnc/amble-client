@@ -2,7 +2,8 @@
   "Provides ui events that can cause a new move event to be sent to the server."
   (:require
    [amble.models.models :refer [db-to-game-id]]
-   [amble.models.pieces.board.board :as board]
+   [amble.models.pieces.board.board :refer [closest]]
+   [amble.models.pieces.board.pieces :as board-pieces]
    [amble.server.server :as server]
    [re-frame.core :as re-frame]))
 
@@ -51,9 +52,8 @@
           (= []
              (get-in db [:game :player player-id :move-replay-in-progress :move]))
           (let [[x-last, y-last] (last move-seq)
-                [x, y] (board/closest {:x x-last, :y y-last, :occupied #{}})]
-                       
-            {:db (-> db 
+                [x, y] (closest {:x x-last, :y y-last, :occupied #{}})]
+            {:db (-> db
                      (update-in [:game :player player-id]
                                 dissoc
                                 :move-replay-in-progress)
@@ -90,15 +90,15 @@
           move-from-this-client? ((get-in db [:game :player (keyword player-id) :moves-made])
                                   client-id)
           [x-start, y-start] (first move-seq)
-          [x-end, y-end] (board/closest {:x x, :y y, :occupied #{}})
+          [x-end, y-end] (closest {:x x, :y y, :occupied #{}})
           board-index-start (some (fn [[i [bx, by]]]
                                     (when (and (= bx x-start) (= by y-start))
                                       i))
-                                (map-indexed vector (get-in db [:game :board :pieces])))
+                              (map-indexed vector (get-in db [:game :board :pieces])))
 
           board-index-end (some (fn [[i [bx, by]]]
-                                   (when (and (= bx x-end) (= by y-end))
-                                     i))
+                                  (when (and (= bx x-end) (= by y-end))
+                                    i))
                                 (map-indexed vector (get-in db [:game :board :pieces])))]
       (when (not move-seq)
         (throw (new js/Error (str "No move sequence found in player move get response."
@@ -117,8 +117,8 @@
                        (concat move-seq [[x, y]])
                        ;; todo, name
                        24]
-                      [::board/piece-unoccupied board-index-start]
-                      [::board/piece-occupied board-index-end]]}))))
+                      [::board-pieces/piece-unoccupied board-index-start]
+                      [::board-pieces/piece-occupied board-index-end]]}))))
 
 (re-frame/reg-event-db
   ::on-player-move-get-failure
@@ -145,7 +145,7 @@
                (assoc-in [:game :player player-id :move-in-progress :index]
                          index)
                (update-in [:game] dissoc :landing-piece))
-       :dispatch [::board/piece-unoccupied board-index]})))
+       :dispatch [::board-pieces/piece-unoccupied board-index]})))
 
 (re-frame/reg-event-db
   ::move-update
@@ -176,7 +176,7 @@
                          {:player-id player-id
                           :index index})
                (redraw move-event))
-       :dispatch [::board/piece-occupied board-index]})))
+       :dispatch [::board-pieces/piece-occupied board-index]})))
 
 (re-frame/reg-event-fx
   ::move-end
@@ -185,7 +185,7 @@
     (let [moves (get-in db [:game :player player-id :move-in-progress :moves])
           index  (get-in db [:game :player player-id :move-in-progress :index])
           [last-x last-y] (last moves)
-          [x, y] (board/closest {:x last-x, :y last-y :occupied (get-in db [:game :board :occupied])})
+          [x, y] (closest {:x last-x, :y last-y :occupied (get-in db [:game :board :occupied])})
           client-id (str now)
           move-event {:player-id player-id
                       :move moves
@@ -196,11 +196,10 @@
                       :game-id (db-to-game-id db)}]
       {:dispatch-n [[::move-land move-event]
                     [::server/player-move-add move-event ::on-player-move-add-success, ::on-player-move-add-failure]]
-       :db (-> db 
+       :db (-> db
                (update-in [:game :player player-id :moves-made]
                           conj
                           client-id)
-            
                (assoc-in [:game :board :active-index] nil))})))
 
 (re-frame/reg-event-fx

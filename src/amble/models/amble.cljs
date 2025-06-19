@@ -1,7 +1,7 @@
 (ns amble.models.amble
   (:require
    [amble.models.models :refer [db-to-game-id]]
-   [amble.models.pieces.board.board :as board]
+   [amble.models.pieces.board.pieces :as board-pieces]
    [amble.server.async.server :as async-server]
    [amble.server.server :as server]
    [amble.static-content.board :as static-board]
@@ -127,7 +127,7 @@
                                                             (when (and (= bx x) (= by y))
                                                               i))
                                                       (map-indexed vector (get-in db [:game :board :pieces])))]
-                                    [::board/piece-occupied board-index]))
+                                    [::board-pieces/piece-occupied board-index]))
                                 position)}))))
 
 ;; Once we know the game id, we can load player position

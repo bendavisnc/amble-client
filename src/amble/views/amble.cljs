@@ -1,7 +1,7 @@
 (ns amble.views.amble
   (:require
    [amble.models.amble :as models]
-   [amble.models.pieces.board.board :as board]
+   [amble.models.pieces.board.pieces :as board-pieces-model]
    [amble.views.pieces.board :as board-pieces]
    [amble.views.pieces.piece :as piece]
    [amble.views.pieces.player :as player-pieces]
@@ -10,8 +10,8 @@
    [re-frame.core :as re-frame]))
 
 (def dispatch-map
-  {"mousemove" ::board/move-update
-   "touchmove" ::board/move-update})
+  {"mousemove" ::board-pieces-model/move-update
+   "touchmove" ::board-pieces-model/move-update})
 
 (defn userfeedback-handler [e]
   (piece/userfeedback-handler* dispatch-map

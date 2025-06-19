@@ -35,7 +35,7 @@
   (s/coll-of ::piece))
 
 (s/def ::occupied
-  (s/coll-of pos-int?))
+  (s/coll-of int?))
 
 (s/def ::board
   (s/and
