@@ -116,9 +116,9 @@
                        (js/parseInt player-piece-index)
                        (concat move-seq [[x, y]])
                        ;; todo, name
-                       24]]
-                     [::board/piece-unoccupied board-index-start]
-                     [::board/piece-occupied board-index-end]}))))
+                       24]
+                      [::board/piece-unoccupied board-index-start]
+                      [::board/piece-occupied board-index-end]]}))))
 
 (re-frame/reg-event-db
   ::on-player-move-get-failure
