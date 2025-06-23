@@ -52,7 +52,7 @@
           (= []
              (get-in db [:game :player player-id :move-replay-in-progress :move]))
           (let [[x-last, y-last] (last move-seq)
-                [x, y] (closest {:x x-last, :y y-last, :occupied #{}})]
+                [x, y] (closest {:x x-last, :y y-last})]
             {:db (-> db
                      (update-in [:game :player player-id]
                                 dissoc
@@ -90,7 +90,7 @@
           move-from-this-client? ((get-in db [:game :player (keyword player-id) :moves-made])
                                   client-id)
           [x-start, y-start] (first move-seq)
-          [x-end, y-end] (closest {:x x, :y y, :occupied #{}})
+          [x-end, y-end] (closest {:x x, :y y})
           board-index-start (some (fn [[i [bx, by]]]
                                     (when (and (= bx x-start) (= by y-start))
                                       i))

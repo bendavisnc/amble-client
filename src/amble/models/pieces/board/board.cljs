@@ -2,28 +2,24 @@
   (:require
    [amble.static-content.board :as static-board]))
 
-(defn closest [{:keys [x, y, occupied]}]
-  (let [[_ xy]
-        (first
-          (filter (fn [[i, _]]
-                    (not (occupied i)))
-                  (sort-by
-                    (fn [[_ [x2 y2]]]
-                      (let [dx (- x2 x)
-                            dy (- y2 y)]
-                        (+ (* dx dx) (* dy dy))))
-                    (map-indexed vector static-board/board))))]
-    xy))
+(defn- distance-squared [{:keys [x y]} [x2 y2]]
+  (let [dx (- x2 x)
+        dy (- y2 y)]
+    (+ (* dx dx) (* dy dy))))
 
-(defn closest-index [{:keys [x, y, occupied]}]
-  (let [[i _]
-        (first
-          (filter (fn [[i, _]]
-                    (not (occupied i)))
-                  (sort-by
-                    (fn [[_ [x2 y2]]]
-                      (let [dx (- x2 x)
-                            dy (- y2 y)]
-                        (+ (* dx dx) (* dy dy))))
-                    (map-indexed vector static-board/board))))]
-    i))
+(defn- available-squares-by-distance [{:keys [x y occupied]}]
+  (let [occupied (or occupied #{})]
+    (->> static-board/board
+      (map-indexed vector)
+      (remove (fn [[i _]] (occupied i)))
+      (sort-by (fn [[_ pos]] (distance-squared {:x x :y y} pos))))))
+
+(defn closest [state]
+  (some-> (available-squares-by-distance state)
+          first
+          second))
+
+(defn closest-index [state]
+  (some-> (available-squares-by-distance state)
+          first
+          first))
