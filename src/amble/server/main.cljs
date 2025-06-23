@@ -1,13 +1,15 @@
 (ns amble.server.main
   "Implements the client api for server requests."
   (:require
+   [amble.config :as amble-config]
    [amble.models.models :refer [db-to-game-id]]
    [amble.server.server :as server]
+   [goog.string :as gstring]
    [martian.re-frame :as martian-reframe]
    [re-frame.core :as re-frame]))
 
-;; todo, remove constants
-(martian-reframe/init "http://localhost:9500/json/openapi.json" {:server-url "http://localhost:3000"})
+(let [openapi-url (gstring/format "%s/json/openapi.json" amble-config/CLIENT_URL)]
+  (martian-reframe/init openapi-url {:server-url amble-config/SERVER_URL}))
 
 (re-frame/reg-event-fx
   ::server/post-game
