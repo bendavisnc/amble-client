@@ -14,12 +14,23 @@
       (remove (fn [[i _]] (occupied i)))
       (sort-by (fn [[_ pos]] (distance-squared {:x x :y y} pos))))))
 
-(defn closest [state]
+(defn closest
+  "Returns an x, y coordinate of the closest available square to the given state."
+  [{:keys [x y occupied] :as state}]
+  [state]
   (some-> (available-squares-by-distance state)
           first
           second))
 
-(defn closest-index [state]
+(defn closest-index
+  "Returns an x, y coordinate's corresponding index of the closest available square to the given state."
+  [state]
   (some-> (available-squares-by-distance state)
           first
           first))
+
+(defn index [{:keys [x, y]}]
+  (some (fn [[i [bx, by]]]
+          (when (and (= bx x) (= by y))
+            i))
+        (map-indexed vector static-board/board)))

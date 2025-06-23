@@ -1,6 +1,7 @@
 (ns amble.models.amble
   (:require
    [amble.models.models :refer [db-to-game-id]]
+   [amble.models.pieces.board.board :as board]
    [amble.models.pieces.board.pieces :as board-pieces]
    [amble.server.async.server :as async-server]
    [amble.server.server :as server]
@@ -123,10 +124,7 @@
                {:fx [[:dispatch [::on-player-six-success event]]]}
                {:fx []})
              {:dispatch-n (mapv (fn [[x, y]]
-                                  (let [board-index (some (fn [[i [bx, by]]]
-                                                            (when (and (= bx x) (= by y))
-                                                              i))
-                                                      (map-indexed vector (get-in db [:game :board :pieces])))]
+                                  (let [board-index (board/index {:x x, :y y})]
                                     [::board-pieces/piece-occupied board-index]))
                                 position)}))))
 

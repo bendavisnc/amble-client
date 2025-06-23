@@ -3,6 +3,7 @@
   (:require
    [amble.models.models :refer [db-to-game-id]]
    [amble.models.pieces.board.board :refer [closest]]
+   [amble.models.pieces.board.board :as board]
    [amble.models.pieces.board.pieces :as board-pieces]
    [amble.server.server :as server]
    [re-frame.core :as re-frame]))
@@ -91,15 +92,8 @@
                                   client-id)
           [x-start, y-start] (first move-seq)
           [x-end, y-end] (closest {:x x, :y y})
-          board-index-start (some (fn [[i [bx, by]]]
-                                    (when (and (= bx x-start) (= by y-start))
-                                      i))
-                              (map-indexed vector (get-in db [:game :board :pieces])))
-
-          board-index-end (some (fn [[i [bx, by]]]
-                                  (when (and (= bx x-end) (= by y-end))
-                                    i))
-                                (map-indexed vector (get-in db [:game :board :pieces])))]
+          board-index-start (board/index {:x x-start, :y y-start})
+          board-index-end (board/index {:x x-end, :y y-end})]
       (when (not move-seq)
         (throw (new js/Error (str "No move sequence found in player move get response."
                                   body))))
@@ -164,10 +158,7 @@
   ::move-land
   (fn [{:keys [db]} [_ {:keys [player-id, x, y] :as move-event}]]
     (let [index  (get-in db [:game :player player-id :move-in-progress :index])
-          board-index (some (fn [[i [bx, by]]]
-                              (when (and (= bx x) (= by y))
-                                i))
-                            (map-indexed vector (get-in db [:game :board :pieces])))]
+          board-index (board/index {:x x, :y y})]
       {:db (-> db
                (update-in [:game :player player-id]
                           dissoc
