@@ -1,14 +1,19 @@
 (ns amble.server.async.main
   (:require
+   [amble.config :as amble-config]
    [amble.models.pieces.player :as player-model]
    [amble.server.async.server :as async-server]
+   [goog.string :as gstring]
+   [goog.string.format]
    [re-frame.core :as re-frame]))
 
 (defonce socket-atom (atom nil))
 
 (defn websockets-url [game-id]
-  ;;   (str "ws://" (environment :host :amble) ":" (environment :port :amble) "/move/" "async/" "?game-id=" game-id))
-  (str "ws://" "localhost"  ":" 3000 "/move/" "async/" "?game-id=" (name game-id)))
+  (gstring/format "ws://%s:%d/move/async/?game-id=%s"
+                  amble-config/SERVER_HOST
+                  amble-config/SERVER_PORT
+                  (name game-id)))
 
 (defn connect-websocket! [url]
   (let [ws (js/WebSocket. url)]

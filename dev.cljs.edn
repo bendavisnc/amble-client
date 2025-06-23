@@ -3,4 +3,8 @@
   :auto-testing true
   :extra-main-files {:cards {:main amble.cards}}}
 {:main amble.core
- :devcards true}
+ :devcards true
+ :closure-defines {amble.config/CLIENT_URL "http://192.168.86.23:9500"
+                   amble.config/SERVER_URL "http://192.168.86.23:3000"
+                   amble.config/SERVER_HOST "192.168.86.23"
+                   amble.config/SERVER_PORT 3000}}
