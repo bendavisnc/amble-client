@@ -29,8 +29,9 @@
           first
           first))
 
-(defn index [{:keys [x, y]}]
-  (some (fn [[i [bx, by]]]
-          (when (and (= bx x) (= by y))
-            i))
-        (map-indexed vector static-board/board)))
+(defn index [{:keys [x y]}]
+  (->> static-board/board
+       (map-indexed vector)
+       (some (fn [[i xy]]
+               (when (= xy [x y])
+                 i)))))
