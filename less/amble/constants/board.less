@@ -1,4 +1,6 @@
-@board-width: 100vw * (1 / @phi);
+// @board-width: ~"max(100vw, 100vh)" * (1 / @phi);
+@board-width: calc(~"max(100vw, 100vh) * (1 / @{phi})");
+
 
 // @color-active: #f1f1f1;
 @color-active: #add8e6;

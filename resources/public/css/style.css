@@ -1,6 +1,6 @@
 #board {
-  width: 61.80469716vw;
-  height: 61.80469716vw;
+  width: calc(max(100vw, 100vh) * (1 / 1.618));
+  height: calc(max(100vw, 100vh) * (1 / 1.618));
   transition: transform 0.333s cubic-bezier(0.33, 1, 0.68, 1), cy 0.333s cubic-bezier(0.33, 1, 0.68, 1);
 }
 #board.player-one-sixoclock {
