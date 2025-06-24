@@ -11,7 +11,7 @@
   (fn [{:keys [db]} [_ game-id]]
     ;; Use the connection module to create a websocket connection.
     (connection/connect-websocket! game-id)
-    {:db (assoc db :game-id game-id)}))
+    nil))
 
 (re-frame/reg-event-fx
   ::async-server/on-message
@@ -19,15 +19,13 @@
     {:db db
      :dispatch [::player-model/on-move-remote message]}))
 
-
 (re-frame/reg-event-fx
   ::async-server/on-open
   (fn [_ _]))
 
 (re-frame/reg-event-fx
   ::async-server/on-close
-  (fn [{:keys [db]} _]
-    {:db db}))
+  (fn [_ _]))
 
 (re-frame/reg-event-fx
   ::async-server/on-error
