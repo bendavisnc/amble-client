@@ -9,8 +9,6 @@
 (def dispatch-map
   {"mousedown" ::player/move-start
    "touchstart" ::player/move-start
-   ;;  "mousemove" ::player/move-update
-   ;;  "touchmove" ::player/move-update
    "mouseup"   ::player/move-end
    "touchend"  ::player/move-end})
 
@@ -40,9 +38,7 @@
                              (when landing? "landing")]
                      :extra-opts {:on-mouse-down userfeedback-handler
                                   :on-mouse-up userfeedback-handler
-                                  ;; :on-mouse-move userfeedback-handler
                                   :on-touch-start userfeedback-handler
                                   :on-touch-end userfeedback-handler}))])])
-                                  ;; :on-touch-move userfeedback-handler}))])])
 
 (comment (gstring/format "player piece %s"))

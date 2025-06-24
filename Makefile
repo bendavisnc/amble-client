@@ -24,10 +24,6 @@ resources/public/json/openapi.json:
 openapi: resources/public/json/openapi.json
 	@echo Provisioning openapi spec.
 
-devbrowser:
-	@echo "Running dev browser (no cors)"
-	sudo -u ben -- google-chrome --disable-web-security --user-data-dir=/home/ben/Desktop/
-
 clean: cleancss
 	@echo "Cleaning up..."
 	rm -rf resources/public/json/openapi.json

@@ -23,7 +23,8 @@
    [:div#board-container
     [:svg#board {:class (gstring/format "%s-sixoclock" (name player-selected))
                  :view-box "0 0 1 1"
-                 :on-mouse-move userfeedback-handler}
+                 :on-mouse-move userfeedback-handler
+                 :on-touch-move userfeedback-handler}
      [board-pieces/pieces {:pieces-seq (board :pieces)
                            :active-index (board :active-index)}]
      [player-pieces/pieces {:players players

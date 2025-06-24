@@ -37,6 +37,6 @@
 
 - add local moves to db
 
-- address cors
+- address cors ✅
 
 - add to umbrella project
