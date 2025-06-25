@@ -53,7 +53,10 @@
           (= []
              (get-in db [:game :player player-id :move-replay-in-progress :move]))
           (let [[x-last, y-last] (last move-seq)
-                [x, y] (closest {:x x-last, :y y-last})]
+                board (get-in db [:game :board :pieces])
+                [x, y] (closest {:x x-last
+                                 :y y-last
+                                 :board board})]
             {:db (-> db
                      (update-in [:game :player player-id]
                                 dissoc
@@ -91,9 +94,16 @@
           move-from-this-client? ((get-in db [:game :player (keyword player-id) :moves-made])
                                   client-id)
           [x-start, y-start] (first move-seq)
-          [x-end, y-end] (closest {:x x, :y y})
-          board-index-start (board/index {:x x-start, :y y-start})
-          board-index-end (board/index {:x x-end, :y y-end})]
+          board (get-in db [:game :board :pieces])
+          [x-end, y-end] (closest {:x x
+                                   :y y
+                                   :board board})
+          board-index-start (board/index {:board board
+                                          :x x-start
+                                          :y y-start})
+          board-index-end (board/index {:board board
+                                        :x x-end
+                                        :y y-end})]
       (when (not move-seq)
         (throw (new js/Error (str "No move sequence found in player move get response."
                                   body))))
@@ -158,7 +168,10 @@
   ::move-land
   (fn [{:keys [db]} [_ {:keys [player-id, x, y] :as move-event}]]
     (let [index  (get-in db [:game :player player-id :move-in-progress :index])
-          board-index (board/index {:x x, :y y})]
+          board (get-in db [:game :board :pieces])
+          board-index (board/index {:board board
+                                    :x x
+                                    :y y})]
       {:db (-> db
                (update-in [:game :player player-id]
                           dissoc
@@ -176,7 +189,11 @@
     (let [moves (get-in db [:game :player player-id :move-in-progress :moves])
           index  (get-in db [:game :player player-id :move-in-progress :index])
           [last-x last-y] (last moves)
-          [x, y] (closest {:x last-x, :y last-y :occupied (get-in db [:game :board :occupied])})
+          board (get-in db [:game :board :pieces])
+          [x, y] (closest {:x last-x
+                           :y last-y
+                           :board board
+                           :occupied (get-in db [:game :board :occupied])})
           client-id (str now)
           move-event {:player-id player-id
                       :move moves

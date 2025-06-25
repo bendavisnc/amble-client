@@ -34,13 +34,15 @@
                          :index (:index move)
                          :x x
                          :y y}))
-                    (get-in db [:game :player]))]
+                    (get-in db [:game :player]))
+          board (get-in db [:game :board :pieces])]
 
       (merge {:db db}
              (if mip
                {:dispatch-n [[:amble.models.pieces.player/move-update mip]
                              [::active-index {:index (closest-index {:x (:x mip)
                                                                      :y (:y mip)
+                                                                     :board board
                                                                      :occupied (get-in db [:game :board :occupied])})}]]}
                {})))))
 

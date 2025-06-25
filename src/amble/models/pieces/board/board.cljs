@@ -1,15 +1,17 @@
 (ns amble.models.pieces.board.board
   (:require
-   [amble.static-content.board :as static-board]))
+   [goog.string :as gstring]))
 
 (defn- distance-squared [{:keys [x y]} [x2 y2]]
   (let [dx (- x2 x)
         dy (- y2 y)]
     (+ (* dx dx) (* dy dy))))
 
-(defn- available-squares-by-distance [{:keys [x y occupied]}]
+(defn- available-squares-by-distance [{:keys [x y board occupied]}]
+  (assert (pos-int? (count board))
+          (gstring/format "Bogus board, %s" board))
   (let [occupied (or occupied #{})]
-    (->> static-board/board
+    (->> board
       (map-indexed vector)
       (remove (fn [[i _]] (occupied i)))
       (sort-by (fn [[_ pos]] (distance-squared {:x x :y y} pos))))))
@@ -28,8 +30,10 @@
           first
           first))
 
-(defn index [{:keys [x y]}]
-  (->> static-board/board
+(defn index [{:keys [x y board]}]
+  (assert (pos-int? (count board))
+          (gstring/format "Bogus board, %s" board))
+  (->> board
        (map-indexed vector)
        (some (fn [[i xy]]
                (when (= xy [x y])

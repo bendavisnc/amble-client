@@ -152,7 +152,8 @@
           position (mapv (fn [[xstr, ystr]]
                            [(js/parseFloat xstr)
                             (js/parseFloat ystr)])
-                         position*)]
+                         position*)
+          board (get-in db [:game :board :pieces])]
       (merge {:db (-> db
                       (assoc-in [:game :player player-id :moves-made]
                                 #{})
@@ -162,7 +163,9 @@
                {:fx [[:dispatch [::on-player-six-success event]]]}
                {:fx []})
              {:dispatch-n (mapv (fn [[x, y]]
-                                  (let [board-index (board/index {:x x, :y y})]
+                                  (let [board-index (board/index {:board board
+                                                                  :x x
+                                                                  :y y})]
                                     [::board-pieces/piece-occupied board-index]))
                                 position)}))))
 
