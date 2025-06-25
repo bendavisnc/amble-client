@@ -6,13 +6,23 @@
    [amble.server.async.server :as async-server]
    [amble.server.server :as server]
    [amble.static-content.board :as static-board]
+   [clojure.string :as string]
+   [goog.string :as gstring]
    [re-frame.core :as re-frame]))
 
-;; (re-frame/reg-cofx
-;;  :hash-params
-;;  (fn [cofx _]
-;;    (assoc cofx :hash-params
-;;           (parse-hash-params (.-hash js/location)))))
+(defn- parse-hash-params [hash]
+  (let [cleaned (subs hash 1)
+        pairs (string/split cleaned #"&")]
+    (into {}
+          (map #(let [[k v] (string/split % #"=")]
+                  [(keyword k) v])
+               pairs))))
+
+(re-frame/reg-cofx
+  :hash-params
+  (fn [cofx _]
+    (assoc cofx :hash-params
+           (parse-hash-params (.-hash js/location)))))
 
 (re-frame/reg-cofx
   :board
@@ -22,14 +32,20 @@
 
 (re-frame/reg-event-fx
   ::initialize
-  [(re-frame/inject-cofx :board)]
-  (fn [{:keys [db, board]} [_]]
-    (let [board-pieces-seq board]
+  [(re-frame/inject-cofx :board)
+   (re-frame/inject-cofx :hash-params)]
+  (fn [{:keys [db, board, hash-params]} [_]]
+    (let [board-pieces-seq board
+          player-id (if-let [player-id-from-addressbar (:player hash-params)]
+                      (do (println (gstring/format "Using player selected from address bar, `%s`"
+                                                   player-id-from-addressbar))
+                          player-id-from-addressbar)
+                      (do (println "No player selection found, using default `:player-one`.")
+                          :player-one))]
       {:db (-> db
                (assoc-in [:game :board :pieces]
                          board-pieces-seq)
-               (assoc-in [:game :settings :player]
-                         :player-one)
+               (assoc-in [:game :settings :player] player-id)
                (assoc-in [:game :board :occupied]
                          #{}))
        :dispatch [::server/post-game ::on-post-game-success, ::on-post-game-failure]})))
