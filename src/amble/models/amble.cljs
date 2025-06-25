@@ -24,11 +24,20 @@
     (assoc cofx :hash-params
            (parse-hash-params (.-hash js/location)))))
 
+(re-frame/reg-event-fx
+  :update-hash-params
+  [(re-frame/inject-cofx :hash-params)]
+  (fn [{:keys [db, hash-params]} [_]]
+    {:db
+     (if-let [player-id-from-addressbar (some-> hash-params :player keyword)]
+       (assoc-in db [:game :settings :player] player-id-from-addressbar)
+       db)}))
+
 (re-frame/reg-cofx
   :board
   (fn [cofx _]
     (assoc cofx :board
-                (vec static-board/board))))
+           (vec static-board/board))))
 
 (re-frame/reg-event-fx
   ::initialize
@@ -36,7 +45,7 @@
    (re-frame/inject-cofx :hash-params)]
   (fn [{:keys [db, board, hash-params]} [_]]
     (let [board-pieces-seq board
-          player-id (if-let [player-id-from-addressbar (:player hash-params)]
+          player-id (if-let [player-id-from-addressbar (some-> hash-params :player keyword)]
                       (do (println (gstring/format "Using player selected from address bar, `%s`"
                                                    player-id-from-addressbar))
                           player-id-from-addressbar)
@@ -169,7 +178,13 @@
 (re-frame/reg-sub
   ::player-selected
   (fn [db, _]
-    (get-in db [:game :settings :player])))
+    (let [player-id
+          (get-in db [:game :settings :player])]
+      (assert (or (nil? player-id)
+                  (keyword? player-id))
+              (str "Expected player-selected to be a keyword, got: " [(type player-id)
+                                                                      player-id]))
+      player-id)))
 
 (re-frame/reg-sub
   ::players

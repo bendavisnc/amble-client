@@ -19,7 +19,11 @@
 
 (defn- init []
   (mount-app)
-  (re-frame/dispatch-sync [::model/initialize]))
+  (re-frame/dispatch-sync [::model/initialize])
+  (.addEventListener js/window "hashchange"
+                     (fn [_]
+                       (re-frame/dispatch [:update-hash-params])))
+  nil)
 
 (defn on-figwheel-reload []
   (mount-app))

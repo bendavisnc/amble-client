@@ -21,7 +21,9 @@
 (defn amble-component [{:keys [board, player-selected, players, landing-piece]}]
   [:div#amble
    [:div#board-container
-    [:svg#board {:class (gstring/format "%s-sixoclock" (name player-selected))
+    [:svg#board {:class (some->> player-selected
+                                 name
+                                 (gstring/format "%s-sixoclock"))
                  :view-box "0 0 1 1"
                  :on-mouse-move userfeedback-handler
                  :on-touch-move userfeedback-handler}
@@ -36,4 +38,5 @@
       ;; (str @model))))
       [amble-component @model])))
 
-(comment (name :hello))
+(comment (some->> nil
+                  name))
