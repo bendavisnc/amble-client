@@ -16,7 +16,6 @@
 
 (defn closest
   "Returns an x, y coordinate of the closest available square to the given state."
-  [{:keys [x y occupied] :as state}]
   [state]
   (some-> (available-squares-by-distance state)
           first
