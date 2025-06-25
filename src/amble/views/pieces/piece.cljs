@@ -61,8 +61,8 @@
   (event-to-coord-fn board-elem e))
 
 (defn e-to-event [e]
-  (.persist e)
-  (.preventDefault e)
+  ;; (.persist e)
+  ;; (.preventDefault e)
   (let [event-to-coord (partial event-to-coord* (.getElementById js/document "board"))
         [x, y] (event-to-coord e)]
     {:x x

@@ -8,10 +8,23 @@
    [amble.static-content.board :as static-board]
    [re-frame.core :as re-frame]))
 
+;; (re-frame/reg-cofx
+;;  :hash-params
+;;  (fn [cofx _]
+;;    (assoc cofx :hash-params
+;;           (parse-hash-params (.-hash js/location)))))
+
+(re-frame/reg-cofx
+  :board
+  (fn [cofx _]
+    (assoc cofx :board
+                (vec static-board/board))))
+
 (re-frame/reg-event-fx
   ::initialize
-  (fn [{:keys [db]} [_]]
-    (let [board-pieces-seq (vec static-board/board)]
+  [(re-frame/inject-cofx :board)]
+  (fn [{:keys [db, board]} [_]]
+    (let [board-pieces-seq board]
       {:db (-> db
                (assoc-in [:game :board :pieces]
                          board-pieces-seq)
