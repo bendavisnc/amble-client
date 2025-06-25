@@ -25,8 +25,11 @@
                                  name
                                  (gstring/format "%s-sixoclock"))
                  :view-box "0 0 1 1"
-                 :on-mouse-move userfeedback-handler
-                 :on-touch-move userfeedback-handler}
+                 :ref (fn [target]
+                        (when target
+                          (println "Setting up board event listeners for: " target)
+                          (.addEventListener target "mousemove" userfeedback-handler)
+                          (.addEventListener target "touchmove" userfeedback-handler)))}
      [board-pieces/pieces {:pieces-seq (board :pieces)
                            :active-index (board :active-index)}]
      [player-pieces/pieces {:players players

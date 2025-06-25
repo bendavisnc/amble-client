@@ -61,10 +61,15 @@
   (event-to-coord-fn board-elem e))
 
 (defn e-to-event [e]
-  ;; (.persist e)
-  ;; (.preventDefault e)
-  (let [event-to-coord (partial event-to-coord* (.getElementById js/document "board"))
+  (let [is-pinch? (some-> e
+                          (.-touches)
+                          (.-length)
+                          (= 2))
+        event-to-coord (partial event-to-coord* (.getElementById js/document "board"))
         [x, y] (event-to-coord e)]
+    (when-not is-pinch?
+      (.stopPropagation e)
+      (.preventDefault e))
     {:x x
      :y y
      :event-type (.-type e)
