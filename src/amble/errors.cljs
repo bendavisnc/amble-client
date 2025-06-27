@@ -1,0 +1,18 @@
+(ns amble.errors
+  (:require
+   [re-frame.core :as re-frame]))
+
+(aset js/window
+      "onerror"
+      (fn [message, source, lineno, colno, error]
+        (re-frame/dispatch [::error message error])))
+(re-frame/reg-event-db
+  ::error
+  (fn [db [_ message error]]
+    (let [error-entry {:message message
+                       :error error}]
+      (.dir js/console (clj->js error-entry))
+      (update db ::errors conj error-entry))))
+
+(defn errors? [db]
+  (boolean (seq (::errors db))))

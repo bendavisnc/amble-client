@@ -2,6 +2,7 @@
   (:require
    [amble.models.amble :as models]
    [amble.models.pieces.board.pieces :as board-pieces-model]
+   [amble.views.error :as error]
    [amble.views.pieces.board :as board-pieces]
    [amble.views.pieces.piece :as piece]
    [amble.views.pieces.player :as player-pieces]
@@ -36,10 +37,11 @@
                             :landing-piece landing-piece}]]]])
 
 (defn amble []
-  (let [model (re-frame/subscribe [::models/amble])]
+  (let [model (re-frame/subscribe [::models/amble])
+        errors (re-frame/subscribe [::models/errors])]
     (fn []
-      ;; (str @model))))
-      [amble-component @model])))
+      (if-let [error (first @errors)]
+        [error/component error]
+        [amble-component @model]))))
 
-(comment (some->> nil
-                  name))
+(comment (first nil))

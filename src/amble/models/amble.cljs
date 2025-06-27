@@ -1,5 +1,6 @@
 (ns amble.models.amble
   (:require
+   [amble.errors :as errors]
    [amble.models.hash-params :as hash-params]
    [amble.models.models :refer [db-to-game-id]]
    [amble.models.pieces.board.board :as board]
@@ -180,6 +181,11 @@
   ::landing-piece
   (fn [db, _]
     (get-in db [:game :landing-piece])))
+
+(re-frame/reg-sub
+  ::errors
+  (fn [db, _]
+    (::errors/errors db)))
 
 (re-frame/reg-sub
   ::amble
