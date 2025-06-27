@@ -1,37 +1,14 @@
 (ns amble.models.amble
   (:require
+   [amble.models.hash-params :as hash-params]
    [amble.models.models :refer [db-to-game-id]]
    [amble.models.pieces.board.board :as board]
    [amble.models.pieces.board.pieces :as board-pieces]
    [amble.server.async.server :as async-server]
    [amble.server.server :as server]
    [amble.static-content.board :as static-board]
-   [clojure.string :as string]
    [goog.string :as gstring]
    [re-frame.core :as re-frame]))
-
-(defn- parse-hash-params [hash]
-  (let [cleaned (subs hash 1)
-        pairs (string/split cleaned #"&")]
-    (into {}
-          (map #(let [[k v] (string/split % #"=")]
-                  [(keyword k) v])
-               pairs))))
-
-(re-frame/reg-cofx
-  :hash-params
-  (fn [cofx _]
-    (assoc cofx :hash-params
-           (parse-hash-params (.-hash js/location)))))
-
-(re-frame/reg-event-fx
-  :update-hash-params
-  [(re-frame/inject-cofx :hash-params)]
-  (fn [{:keys [db, hash-params]} [_]]
-    {:db
-     (if-let [player-id-from-addressbar (some-> hash-params :player keyword)]
-       (assoc-in db [:game :settings :player] player-id-from-addressbar)
-       db)}))
 
 (re-frame/reg-cofx
   :board
@@ -42,7 +19,7 @@
 (re-frame/reg-event-fx
   ::initialize
   [(re-frame/inject-cofx :board)
-   (re-frame/inject-cofx :hash-params)]
+   ::hash-params/interceptor]
   (fn [{:keys [db, board, hash-params]} [_]]
     (let [board-pieces-seq board
           player-id (if-let [player-id-from-addressbar (some-> hash-params :player keyword)]

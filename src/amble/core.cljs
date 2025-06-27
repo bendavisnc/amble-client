@@ -2,6 +2,7 @@
   (:require
    [amble.dev]
    [amble.models.amble :as model]
+   [amble.models.hash-params :as hash-params]
    [amble.server.async.main]
    [amble.server.async.server]
    [amble.server.main]
@@ -22,7 +23,7 @@
   (re-frame/dispatch-sync [::model/initialize])
   (.addEventListener js/window "hashchange"
                      (fn [_]
-                       (re-frame/dispatch [:update-hash-params])))
+                       (re-frame/dispatch [::hash-params/update])))
   nil)
 
 (defn on-figwheel-reload []
