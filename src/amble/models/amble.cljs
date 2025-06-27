@@ -19,7 +19,7 @@
 (re-frame/reg-event-fx
   ::initialize
   [(re-frame/inject-cofx :board)
-   ::hash-params/interceptor]
+   hash-params/interceptor]
   (fn [{:keys [db, board, hash-params]} [_]]
     (let [board-pieces-seq board
           player-id (if-let [player-id-from-addressbar (some-> hash-params :player keyword)]
