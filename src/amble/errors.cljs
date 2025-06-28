@@ -12,8 +12,4 @@
   (fn [db [_ message error]]
     (let [error-entry {:message message
                        :error error}]
-      (.dir js/console (clj->js error-entry))
       (update db ::errors conj error-entry))))
-
-(defn errors? [db]
-  (boolean (seq (::errors db))))

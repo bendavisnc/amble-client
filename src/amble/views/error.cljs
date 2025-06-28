@@ -1,17 +1,14 @@
 (ns amble.views.error)
 
-;; 🪿🔥
+;; 🪿
 
 (defn error-rep [{:keys [error, message]}]
   (let [http-error? (some-> message
                             (.includes "http-error"))
         reps (cond http-error?
-                   (str "🚨"
-                        "📡"
-                        "🪿")
+                   "🚨📡🪿"
                    :else
-                   (str "🚨"
-                        "🪿"))]
+                   "🗑🔥🪿")]
     [:svg {:view-box "0 0 1 1"}
      [:text {:text-anchor "middle"
              :x "0.5"
