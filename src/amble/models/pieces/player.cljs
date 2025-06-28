@@ -124,11 +124,14 @@
                       [::board-pieces/piece-unoccupied board-index-start]
                       [::board-pieces/piece-occupied board-index-end]]}))))
 
+;; deletes on the server side cause corresponding event triggers. 
+;; currently we just ignore the 404 that happens for the corresponding get request afterwards.
 (re-frame/reg-event-db
   ::on-player-move-get-failure
   (fn [db [_ args]]
-    (throw (new js/Error
-                (str "Failed to request player move: " args)))))
+    (println (str "Failed to request player move: " args))))
+;; (throw (new js/Error
+;;             (str "Failed to request player move: " args)))))
 
 (re-frame/reg-event-fx
   ::move-start

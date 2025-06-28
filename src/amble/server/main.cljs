@@ -82,6 +82,20 @@
                 [on-failure]]}))
 
 (re-frame/reg-event-fx
+  ::server/player-move-delete
+  (fn [{:keys [db]} [_
+                     {:keys [game-id id]}
+                     on-success
+                     on-failure]]
+    {:db db
+     :dispatch [::martian-reframe/request
+                :move-delete-by-id
+                {:gameId game-id
+                 :id id}
+                [on-success]
+                [on-failure]]}))
+
+(re-frame/reg-event-fx
   ::server/player-move-get
   (fn [{:keys [db]} [_ id on-success, on-failure]]
     {:db db
@@ -89,5 +103,15 @@
                 :move-get-by-id
                 {:game-id (db-to-game-id db)
                  :id id}
+                [on-success]
+                [on-failure]]}))
+
+(re-frame/reg-event-fx
+  ::server/player-move-get-all
+  (fn [{:keys [db]} [_ id on-success, on-failure]]
+    {:db db
+     :dispatch [::martian-reframe/request
+                :move-get-by-game-id
+                {:game-id id}
                 [on-success]
                 [on-failure]]}))

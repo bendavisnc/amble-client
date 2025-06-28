@@ -36,3 +36,13 @@
   ::player-move-get
   (fn [& args]
     (throw (new js/Error "not implemented, player move get"))))
+
+(re-frame/reg-event-fx
+  ::player-move-get-all
+  (fn [& args]
+    (throw (new js/Error "not implemented, player move get all"))))
+
+(re-frame/reg-event-fx
+  ::player-move-delete
+  (fn [& args]
+    (throw (new js/Error "not implemented, player move delete"))))
