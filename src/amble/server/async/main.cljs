@@ -25,9 +25,11 @@
 
 (re-frame/reg-event-fx
   ::async-server/on-close
-  (fn [_ _]
-    (throw (new js/Error
-                "Unhandled WebSocket close event"))))
+  (fn [{:keys [db]} _]
+    (println "websocket connection closed. Reinitializing...")
+    {:db db
+     :dispatch [::async-server/initialize
+                 (get-in db [:game :game-id])]})) 
 
 (re-frame/reg-event-fx
   ::async-server/on-error

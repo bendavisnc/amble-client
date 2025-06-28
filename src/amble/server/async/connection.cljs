@@ -18,6 +18,7 @@
 
 (defn connect-websocket! [game-id]
   (let [url (websockets-url game-id)
+        _ (println (gstring/format "Connecting to websocket connection at `%s`." url))
         ws (js/WebSocket. url)]
     (set! (.-onmessage ws) #(re-frame/dispatch [::async-server/on-message (.-data %)]))
     (set! (.-onopen ws) #(re-frame/dispatch [::async-server/on-open]))
