@@ -3,8 +3,8 @@
 ;; 🪿🔥
 
 (defn error-rep [{:keys [error, message]}]
-  (let [http-error? (-> message
-                        (.includes "http-error"))
+  (let [http-error? (some-> message
+                            (.includes "http-error"))
         reps (cond http-error?
                    (str "🚨"
                         "📡"
@@ -19,7 +19,12 @@
              :style {:font-size "0.25px"}}
             reps]]))
 
-(defn component [error]
-  [:div#amble
-   [:div#error {:alt (error :message)}
-    [error-rep error]]])
+(defn component [{:keys [message error]}]
+  (let [caption (or (and (seq message)
+                         message)
+                    error)]
+    [:div#amble
+     [:div#error {:title caption}
+      [error-rep error]]]))
+
+(comment (seq ""))

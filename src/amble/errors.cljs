@@ -6,6 +6,7 @@
       "onerror"
       (fn [message, source, lineno, colno, error]
         (re-frame/dispatch [::error message error])))
+
 (re-frame/reg-event-db
   ::error
   (fn [db [_ message error]]

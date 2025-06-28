@@ -2,10 +2,12 @@
   (:require
    [amble.models.amble :as models]
    [amble.models.pieces.board.pieces :as board-pieces-model]
+   [amble.specs.amble :as amble-specs]
    [amble.views.error :as error]
    [amble.views.pieces.board :as board-pieces]
    [amble.views.pieces.piece :as piece]
    [amble.views.pieces.player :as player-pieces]
+   [clojure.spec.alpha :as spec]
    [goog.string :as gstring]
    [goog.string.format]
    [re-frame.core :as re-frame]))
@@ -20,6 +22,10 @@
                                    piece/e-to-event)))
 
 (defn amble-component [{:keys [board, player-selected, players, landing-piece]}]
+  (when (not (spec/valid? ::amble-specs/player player-selected))
+    (re-frame/dispatch [:amble.errors/error
+                        ""
+                        (new js/Error (gstring/format "Invalid player id from address bar, `%s`" player-selected))]))
   [:div#amble
    [:div#board-container
     [:svg#board {:class (some->> player-selected
