@@ -2,6 +2,7 @@
 (ns amble.dev
   (:require
    [amble.errors :as errors]
+   [amble.models.amble :as amble]
    [amble.models.models :refer [db-to-game-id]]
    [amble.server.server :as server]
    [goog.string :as gstring]
@@ -69,7 +70,9 @@
   ::on-move-delete-success
   (fn [_ [_ event]]
     (println (gstring/format "`move-delete` request succeeded, %s."
-                             event))))
+                             event))
+    (println "Reinitializing game state after move deletion.")
+    {:dispatch [::amble/initialize]}))
 
 (re-frame/reg-event-fx
   ::on-move-get-all-failure
@@ -83,7 +86,6 @@
     (let [game-id (db-to-game-id db)
           move-ids body
           move-id (last move-ids)]
-      (println [:wut move-id])
       {:dispatch [::server/player-move-delete {:game-id game-id
                                                :id move-id}
                                               ::on-move-delete-success
