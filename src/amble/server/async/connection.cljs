@@ -9,6 +9,8 @@
 (defonce socket-atom (atom nil))
 
 (defn websockets-url [game-id]
+  (when (= "localhost" amble-config/SERVER_HOST)
+    (println "Using `localhost` for websocket url."))
   (gstring/format "ws://%s:%d/move/async/?game-id=%s"
                   amble-config/SERVER_HOST
                   amble-config/SERVER_PORT

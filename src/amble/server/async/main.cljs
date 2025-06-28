@@ -25,7 +25,9 @@
 
 (re-frame/reg-event-fx
   ::async-server/on-close
-  (fn [_ _]))
+  (fn [_ _]
+    (throw (new js/Error
+                "Unhandled WebSocket close event"))))
 
 (re-frame/reg-event-fx
   ::async-server/on-error

@@ -1,6 +1,7 @@
 ;; filepath: /home/ben/home/programming/amble/amble-client/src/amble/models/dev.cljs
 (ns amble.dev
   (:require
+   [amble.errors :as errors]
    [amble.models.models :refer [db-to-game-id]]
    [amble.server.server :as server]
    [re-frame.core :as re-frame]))
@@ -52,3 +53,9 @@
 
 (defn deletegame [i]
   (re-frame/dispatch [::deletegame]))
+
+(defn throwerror
+  "Throws an error to test error handling."
+  []
+  (let [test-error (new js/Error "Hi, I'm a test error in this world.")]
+    (re-frame/dispatch [::errors/error "" test-error])))
