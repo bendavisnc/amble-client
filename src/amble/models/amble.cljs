@@ -183,11 +183,6 @@
     (get-in db [:game :landing-piece])))
 
 (re-frame/reg-sub
-  ::errors
-  (fn [db, _]
-    (::errors/errors db)))
-
-(re-frame/reg-sub
   ::amble
   (fn []
     [(re-frame/subscribe [::board])

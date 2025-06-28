@@ -43,11 +43,8 @@
                             :landing-piece landing-piece}]]]])
 
 (defn amble []
-  (let [model (re-frame/subscribe [::models/amble])
-        errors (re-frame/subscribe [::models/errors])]
+  (let [model (re-frame/subscribe [::models/amble])]
     (fn []
-      (if-let [error (first @errors)]
-        [error/component error]
-        [amble-component @model]))))
+      [error/boundary [amble-component @model]])))
 
 (comment (first nil))
