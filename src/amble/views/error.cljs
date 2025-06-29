@@ -25,7 +25,8 @@
                     error)]
     [:div#amble
      [:div#error {:title caption}
-      [error-rep error-message]]]))
+      [error-rep error-message]
+      [:div.error-caption [:p (str caption)]]]]))
 
 (defn boundary [fallback]
   (let [errors (re-frame/subscribe [::errors/errors])]
