@@ -26,7 +26,8 @@
     [:div#amble
      [:div#error {:title caption}
       [error-rep error-message]
-      [:div.error-caption [:p (str caption)]]]]))
+      [:div.error-caption {:style {:text-align "center"}}
+       [:p (str caption)]]]]))
 
 (defn boundary [fallback]
   (let [errors (re-frame/subscribe [::errors/errors])]
