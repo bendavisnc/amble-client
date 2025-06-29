@@ -1,43 +1,35 @@
-{
- :deps {
-   ;; Core Clojure
-   org.clojure/clojure            {:mvn/version "1.11.1"}
-   org.clojure/clojurescript      {:mvn/version "1.11.132"}
+{:deps {;; Core Clojure
+        org.clojure/clojure            {:mvn/version "1.11.1"}
+        org.clojure/clojurescript      {:mvn/version "1.11.132"}
 
-   ;; React + Reagent
-   reagent/reagent                {:mvn/version "1.3.0"}
-   cljsjs/react                   {:mvn/version "18.3.1-1"}
-   cljsjs/react-dom               {:mvn/version "18.3.1-1"}
+        ;; React + Reagent
+        reagent/reagent                {:mvn/version "1.3.0"}
+        cljsjs/react                   {:mvn/version "18.3.1-1"}
+        cljsjs/react-dom               {:mvn/version "18.3.1-1"}
 
         ;; State management with re-frame
         re-frame/re-frame              {:mvn/version "1.4.3"}
         com.github.oliyh/martian {:mvn/version "0.1.31"}
         com.github.oliyh/martian-re-frame {:mvn/version "0.1.31"}}
- 
 
- :aliases {
-   ;; To start the Figwheel dev build:
-   ;; Run: clj -M:dev -b dev -r
-   ;;
-   ;; - `-b dev` specifies the build name from your `figwheel-main.edn`
-   ;; - `-r` starts a REPL after the build starts
+ :aliases {;; To start the Figwheel dev build:
+           ;; Run: clj -M:dev -b dev -r
+           ;;
+           ;; - `-b dev` specifies the build name from your `figwheel-main.edn`
+           ;; - `-r` starts a REPL after the build starts
 
-   :dev {:extra-deps {
-           com.bhauman/figwheel-main        {:mvn/version "0.2.20"}
-           com.bhauman/rebel-readline-cljs  {:mvn/version "0.1.5"}
-           binaryage/devtools               {:mvn/version "1.0.7"}
-           devcards/devcards                {:mvn/version "0.2.7"}
-           day8.re-frame/test               {:mvn/version "0.1.5"}
-           org.clojure/test.check           {:mvn/version "1.1.1"}
-         }
-         :extra-paths ["test" "target"]
-         :main-opts ["-m" "figwheel.main"]}
+           :dev {:extra-deps {com.bhauman/figwheel-main        {:mvn/version "0.2.20"}
+                              com.bhauman/rebel-readline-cljs  {:mvn/version "0.1.5"}
+                              binaryage/devtools               {:mvn/version "1.0.7"}
+                              devcards/devcards                {:mvn/version "0.2.7"}
+                              day8.re-frame/test               {:mvn/version "0.1.5"}
+                              org.clojure/test.check           {:mvn/version "1.1.1"}}
+                 :extra-paths ["test" "target"]
+                 :main-opts ["-m" "figwheel.main"]}
 
-   ;; Figwheel shortcut (optional if using :dev)
-   :fig {:main-opts ["-m" "figwheel.main"]}
- }
+           ;; Figwheel shortcut (optional if using :dev)
+           :fig {:main-opts ["-m" "figwheel.main"]}}
 
  :paths ["src" "resources"]
 
- :clean-targets ^{:protect false} ["target"]
-}
+ :clean-targets ^{:protect false} ["target"]}
