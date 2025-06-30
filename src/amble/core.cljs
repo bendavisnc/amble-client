@@ -3,6 +3,7 @@
    [amble.dev]
    [amble.models.amble :as model]
    [amble.models.hash-params :as hash-params]
+   [amble.notifications]
    [amble.server.async.main]
    [amble.server.async.server]
    [amble.server.main]

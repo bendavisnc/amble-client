@@ -111,6 +111,4 @@
     (re-frame/dispatch [::errors/error "" test-error])))
 
 (defn launch-toast []
-  (.dir js/console Noty)
-  (println "hmmmm^")
   (.show (new Noty (clj->js {:text "I'm a toast and I am real!"}))))

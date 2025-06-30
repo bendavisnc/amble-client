@@ -154,7 +154,10 @@
     (let [game-id (db-to-game-id db)]
       {:db db
        :dispatch-n [[::async-server/initialize game-id]
-                    [::server/player-get-all-by-game-id game-id ::on-players-success ::on-players-failure]]})))
+                    [::server/player-get-all-by-game-id game-id ::on-players-success ::on-players-failure]]
+       :notifications {:text "Game is ready!"
+                       :type :success
+                       :timeout 3000}})))
 
 (re-frame/reg-sub
   ::player-selected
