@@ -6,6 +6,7 @@
    [amble.models.pieces.board.board :as board]
    [amble.models.pieces.board.pieces :as board-pieces]
    [amble.server.server :as server]
+   [goog.string :as gstring]
    [re-frame.core :as re-frame]))
 
 (defn- redraw [db, {:keys [player-id, index, x, y]}]
@@ -110,19 +111,23 @@
       (when (or (not board-index-start) (not board-index-end))
         (throw (new js/Error (str "remote move related board indexs not found: "
                                   [board-index-start, board-index-end]))))
-      (if move-from-this-client?
-        (do
-          (println "Move from this client, skipping replay.")
-          {})
-        {:db db
-         :dispatch-n [[::do-move-replay
-                       (keyword player-id)
-                       (js/parseInt player-piece-index)
-                       (concat move-seq [[x, y]])
-                       ;; todo, name
-                       24]
-                      [::board-pieces/piece-unoccupied board-index-start]
-                      [::board-pieces/piece-occupied board-index-end]]}))))
+      (merge {:db db
+              :notifications {:text (gstring/format "Move completed! `%s`"
+                                                    (name player-id))
+                              :timeout 500}}
+
+             (if move-from-this-client?
+               (do
+                 (println "Move from this client, skipping replay.")
+                 {})
+               {:dispatch-n [[::do-move-replay
+                              (keyword player-id)
+                              (js/parseInt player-piece-index)
+                              (concat move-seq [[x, y]])
+                              ;; todo, name
+                              24]
+                             [::board-pieces/piece-unoccupied board-index-start]
+                             [::board-pieces/piece-occupied board-index-end]]})))))
 
 ;; deletes on the server side cause corresponding event triggers. 
 ;; currently we just ignore the 404 that happens for the corresponding get request afterwards.
