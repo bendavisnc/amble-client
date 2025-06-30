@@ -28,6 +28,7 @@ clean: cleancss
 	@echo "Cleaning up..."
 	rm -rf resources/public/json/openapi.json
 	rm -rf target
+	rm -rf node_modules
 
 cleancss:
 	@echo "Removing compiled css..."
