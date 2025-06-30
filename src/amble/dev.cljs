@@ -1,6 +1,7 @@
 ;; filepath: /home/ben/home/programming/amble/amble-client/src/amble/models/dev.cljs
 (ns amble.dev
   (:require
+   ["noty" :as Noty]
    [amble.errors :as errors]
    [amble.models.amble :as amble]
    [amble.models.models :refer [db-to-game-id]]
@@ -108,3 +109,8 @@
   []
   (let [test-error (new js/Error "Hi, I'm a test error in this world.")]
     (re-frame/dispatch [::errors/error "" test-error])))
+
+(defn launch-toast []
+  (.dir js/console Noty)
+  (println "hmmmm^")
+  (.show (new Noty (clj->js {:text "I'm a toast and I am real!"}))))

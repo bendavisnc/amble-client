@@ -1,4 +1,4 @@
-figdev: openapi lesscompile
+figdev: openapi lesscompile webpack notycss
 	@echo "Running main dev build..."
 	clj -M:dev -b dev -r
 
@@ -16,6 +16,11 @@ resources/public/css/style.css: less/amble.less
 lesscompile: resources/public/css/style.css
 	@echo Compiling css resource from less source.
 
+resources/public/css/noty.css:
+	cp node_modules/noty/lib/noty.css resources/public/css/noty.css
+
+notycss: resources/public/css/noty.css
+
 resources/public/json/openapi.json:
 	mkdir -p resources/public/json
 	cd ../amble-openapi; make clean; make openapi	
@@ -29,6 +34,9 @@ clean: cleancss
 	rm -rf resources/public/json/openapi.json
 	rm -rf target
 	rm -rf node_modules
+	rm -f package.json 
+	rm -f package-lock.json 
+
 
 cleancss:
 	@echo "Removing compiled css..."
@@ -36,3 +44,7 @@ cleancss:
 
 gitadd:
 	git add ':!.gitignore' -u
+
+webpack:
+	npm install -D webpack-cli
+
