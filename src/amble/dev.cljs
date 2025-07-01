@@ -1,7 +1,6 @@
 ;; filepath: /home/ben/home/programming/amble/amble-client/src/amble/models/dev.cljs
 (ns amble.dev
   (:require
-   ["noty" :as Noty]
    [amble.errors :as errors]
    [amble.models.amble :as amble]
    [amble.models.models :refer [db-to-game-id]]
@@ -89,8 +88,8 @@
           move-id (last move-ids)]
       {:dispatch [::server/player-move-delete {:game-id game-id
                                                :id move-id}
-                                              ::on-move-delete-success
-                                              ::on-move-delete-failure]})))
+                  ::on-move-delete-success
+                  ::on-move-delete-failure]})))
 
 (defn delete-game []
   (re-frame/dispatch [::delete-game]))
@@ -110,5 +109,11 @@
   (let [test-error (new js/Error "Hi, I'm a test error in this world.")]
     (re-frame/dispatch [::errors/error "" test-error])))
 
+(re-frame/reg-event-fx
+  ::toast-test
+  (fn [_ [_ event]]
+    {:notifications event}))
+
 (defn launch-toast []
-  (.show (new Noty (clj->js {:text "I'm a toast and I am real!"}))))
+  (re-frame/dispatch [::toast-test {:text "Hello, this is a toast notification!"
+                                    :timeout nil}]))

@@ -6,5 +6,7 @@
 (re-frame/reg-fx
   :notifications
   (fn [message]
-    (.show (new Noty (clj->js message)))))
+    (let [defaults {:layout "topRight"
+                    :timeout 1000}]
+      (.show (new Noty (clj->js (merge defaults message)))))))
     ;; Here you would implement the actual notification logic, e.g., using a library or custom code

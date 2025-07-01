@@ -114,7 +114,7 @@
       (merge {:db db
               :notifications {:text (gstring/format "Move completed! `%s`"
                                                     (name player-id))
-                              :timeout 500}}
+                              :timeout 1000}}
 
              (if move-from-this-client?
                (do
