@@ -1,4 +1,4 @@
-figdev: openapi lesscompile webpack notycss
+figdev: openapi lesscompile webpack csslibs
 	@echo "Running main dev build..."
 	clj -M:dev -b dev -r
 
@@ -19,7 +19,14 @@ lesscompile: resources/public/css/style.css
 resources/public/css/noty.css:
 	cp node_modules/noty/lib/noty.css resources/public/css/noty.css
 
+csslibs: notycss animatecss
+
 notycss: resources/public/css/noty.css
+
+resources/public/css/animate.css:
+	cp node_modules/animate.css/animate.css resources/public/css/animate.css
+
+animatecss: resources/public/css/animate.css
 
 resources/public/json/openapi.json:
 	mkdir -p resources/public/json

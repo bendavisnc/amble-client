@@ -6,7 +6,8 @@
 (re-frame/reg-fx
   :notifications
   (fn [message]
-    (let [defaults {:layout "topRight"
-                    :timeout 1000}]
+    (let [defaults {:layout "bottomRight"
+                    :timeout 1000
+                    :animation {:open "animate__animated animate__slideInRight"
+                                :close "animate__animated animate__slideOutRight"}}]
       (.show (new Noty (clj->js (merge defaults message)))))))
-    ;; Here you would implement the actual notification logic, e.g., using a library or custom code

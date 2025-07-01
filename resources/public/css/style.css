@@ -56,6 +56,19 @@
 .player.landing {
   transition: cx 0.333s cubic-bezier(0.33, 1, 0.68, 1), cy 0.333s cubic-bezier(0.33, 1, 0.68, 1);
 }
+.noty_body {
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 20px;
+}
+.noty_layout {
+  --animate-duration: 500ms;
+}
+.noty_theme__mint.noty_bar .noty_body {
+  font-size: 20px;
+}
+#noty_layout__bottomRight {
+  width: auto;
+}
 html,
 body {
   height: 100%;
