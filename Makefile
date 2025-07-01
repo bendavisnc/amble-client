@@ -1,7 +1,7 @@
 figdev: figdevbase csslibs
 	@echo "Running main dev build..."
 
-figdevbase: openapi lesscompile webpack
+figdevbase: openapi lesscompile webpack npminstall
 	@echo "..."
 	clj -M:dev -b dev -r
 
@@ -54,6 +54,10 @@ cleancss:
 
 gitadd:
 	git add ':!.gitignore' -u
+
+npminstall:
+	npm install 
+
 
 webpack:
 	npm install -D webpack-cli
