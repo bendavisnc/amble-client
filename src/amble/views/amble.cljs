@@ -7,6 +7,7 @@
    [amble.views.pieces.board :as board-pieces]
    [amble.views.pieces.piece :as piece]
    [amble.views.pieces.player :as player-pieces]
+   [amble.views.board :as board]
    [clojure.spec.alpha :as spec]
    [goog.string :as gstring]
    [goog.string.format]
@@ -26,21 +27,15 @@
     (re-frame/dispatch [:amble.errors/error
                         ""
                         (new js/Error (gstring/format "Invalid player id from address bar, `%s`" player-selected))]))
-  [:div#amble
-   [:div#board-container
-    [:svg#board {:class (some->> player-selected
-                                 name
-                                 (gstring/format "%s-sixoclock"))
-                 :view-box "0 0 1 1"
-                 :ref (fn [target]
-                        (when target
-                          (println "Setting up board event listeners for: " target)
-                          (.addEventListener target "mousemove" userfeedback-handler)
-                          (.addEventListener target "touchmove" userfeedback-handler)))}
-     [board-pieces/pieces {:pieces-seq (board :pieces)
-                           :active-index (board :active-index)}]
-     [player-pieces/pieces {:players players
-                            :landing-piece landing-piece}]]]])
+  (let [board-pieces* [board-pieces/pieces {:pieces-seq (board :pieces)
+                                            :active-index (board :active-index)}]
+        player-pieces* [player-pieces/pieces {:players players
+                                              :landing-piece landing-piece}]]
+    [:div#amble
+     [board/component {:board-pieces board-pieces*
+                       :player-pieces player-pieces*
+                       :player-selected player-selected
+                       :userfeedback-handler userfeedback-handler}]]))
 
 (defn amble []
   (let [model (re-frame/subscribe [::models/amble])]
