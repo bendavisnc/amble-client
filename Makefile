@@ -1,5 +1,8 @@
-figdev: openapi lesscompile webpack csslibs
+figdev: figdevbase csslibs
 	@echo "Running main dev build..."
+
+figdevbase: openapi lesscompile webpack
+	@echo "..."
 	clj -M:dev -b dev -r
 
 fighelp:
