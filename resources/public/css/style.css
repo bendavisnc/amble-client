@@ -11,6 +11,7 @@
   line-height: 11.0889vw;
   border: none;
   background: none;
+  cursor: pointer;
 }
 #controls .symbol-icon {
   display: inline-block;
@@ -19,24 +20,6 @@
   width: calc(max(100vw, 100vh) * (1 / 1.618));
   height: calc(max(100vw, 100vh) * (1 / 1.618));
   transition: transform 0.333s cubic-bezier(0.33, 1, 0.68, 1), cy 0.333s cubic-bezier(0.33, 1, 0.68, 1);
-}
-#board.player-one-sixoclock {
-  transform: rotate(0deg);
-}
-#board.player-two-sixoclock {
-  transform: rotate(-60deg);
-}
-#board.player-three-sixoclock {
-  transform: rotate(-120deg);
-}
-#board.player-four-sixoclock {
-  transform: rotate(-180deg);
-}
-#board.player-five-sixoclock {
-  transform: rotate(-240deg);
-}
-#board.player-six-sixoclock {
-  transform: rotate(-300deg);
 }
 #error {
   width: calc(max(100vw, 100vh) * (1 / 1.618));

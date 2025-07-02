@@ -23,7 +23,7 @@
                                (-> e
                                    piece/e-to-event)))
 
-(defn amble-component [{:keys [board, player-selected, players, landing-piece]}]
+(defn amble-component [{:keys [board, player-selected, players, landing-piece, player-index]}]
   (let [board-pieces* [board-pieces/pieces {:pieces-seq (some-> board :pieces)
                                             :active-index (some-> board :active-index)}]
         player-pieces* [player-pieces/pieces {:players players
@@ -33,6 +33,7 @@
      [board/component {:board-pieces board-pieces*
                        :player-pieces player-pieces*
                        :player-selected player-selected
+                       :player-index player-index
                        :userfeedback-handler userfeedback-handler}]]))
 
 (defn amble []

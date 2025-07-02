@@ -1,6 +1,6 @@
 (ns amble.models.amble
   (:require
-   [amble.errors :as errors]
+   [amble.amble :refer [index-to-player]]
    [amble.models.hash-params :as hash-params]
    [amble.models.models :refer [db-to-game-id]]
    [amble.models.pieces.board.board :as board]
@@ -32,7 +32,7 @@
       {:db (-> db
                (assoc-in [:game :board :pieces]
                          board-pieces-seq)
-               (assoc-in [:game :settings :player] player-id)
+               (assoc-in [:game :settings :player-index] 0)
                (assoc-in [:game :board :occupied]
                          #{}))
        :dispatch [::server/post-game ::on-post-game-success, ::on-post-game-failure]})))
@@ -161,8 +161,10 @@
 (re-frame/reg-sub
   ::player-selected
   (fn [db, _]
-    (let [player-id
-          (get-in db [:game :settings :player])]
+    (let [player-index* (get-in db [:game :settings :player-index])
+          players-count (count (get-in db [:game :player]))
+          player-index (mod player-index* players-count)
+          player-id (index-to-player player-index)]
       (assert (or (nil? player-id)
                   (keyword? player-id))
               (str "Expected player-selected to be a keyword, got: " [(type player-id)
@@ -185,14 +187,21 @@
     (get-in db [:game :landing-piece])))
 
 (re-frame/reg-sub
+  ::player-index
+  (fn [db, _]
+    (get-in db [:game :settings :player-index])))
+
+(re-frame/reg-sub
   ::amble
   (fn []
     [(re-frame/subscribe [::board])
      (re-frame/subscribe [::player-selected])
+     (re-frame/subscribe [::player-index])
      (re-frame/subscribe [::players])
      (re-frame/subscribe [::landing-piece])])
-  (fn [[board, player-selected, players, landing-piece]]
+  (fn [[board, player-selected, player-index, players, landing-piece]]
     {:board board
      :player-selected player-selected
+     :player-index player-index
      :players players
      :landing-piece landing-piece}))
