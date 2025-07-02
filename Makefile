@@ -64,4 +64,4 @@ webpack:
 
 
 lessformat:
-	npx stylelint "**/*.less"
+	npx stylelint "**/*.less" --fix

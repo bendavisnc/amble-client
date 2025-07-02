@@ -1,6 +1,7 @@
 ;; filepath: /home/ben/home/programming/amble/amble-client/src/amble/models/dev.cljs
 (ns amble.dev
   (:require
+   [amble.amble :refer [index-to-player]]
    [amble.errors :as errors]
    [amble.models.amble :as amble]
    [amble.models.models :refer [db-to-game-id]]
@@ -18,18 +19,6 @@
   (fn [db _]
     (println (:game db))
     db))
-
-(defn index-to-player
-  "Maps an integer index to a player keyword."
-  [i]
-  (case i
-    0 :player-one
-    1 :player-two
-    2 :player-three
-    3 :player-four
-    4 :player-five
-    5 :player-six
-    nil))
 
 (defn set-player
   "Dispatches an event to set the current player in the db."

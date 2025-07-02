@@ -1,0 +1,35 @@
+@import url("amble/constants/colors.less");
+
+#controls {
+  width: 100vw;
+  height: auto;
+  position: absolute;
+  top: 0;
+  color: darkgray;
+
+  // &:hover {
+  //   // color: @color-primary-lighter;
+  //   color: white;
+  // } 
+
+  // &:active {
+  //   // color: @color-primary-lighter;
+  //   color: white;
+  // }
+
+  .control {
+    display: inline-block;
+    @control-width: 100vw * 0.333 * 0.333;
+    font-size: @control-width;
+    line-height: @control-width;
+    border: none;
+    background: none;
+    cursor: pointer;
+    // width: calc(~"min(25vw, 25vh)");
+    // height: auto;
+  }
+
+  .symbol-icon {
+    display: inline-block;
+  }
+}
