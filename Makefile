@@ -62,3 +62,6 @@ npminstall:
 webpack:
 	npm install -D webpack-cli
 
+
+lessformat:
+	npx stylelint "**/*.less"
