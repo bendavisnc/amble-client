@@ -6,7 +6,7 @@
 (re-frame/reg-fx
   :notifications
   (fn [message]
-    (let [defaults {:layout "bottomRight"
+    (let [defaults {:layout "topRight"
                     :timeout 1000
                     :animation {:open "animate__animated animate__slideInRight"
                                 :close "animate__animated animate__slideOutRight"}}]
