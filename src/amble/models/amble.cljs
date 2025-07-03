@@ -1,6 +1,6 @@
 (ns amble.models.amble
   (:require
-   [amble.amble :refer [index-to-player]]
+   [amble.amble :refer [index-to-player player-to-index]]
    [amble.models.hash-params :as hash-params]
    [amble.models.models :refer [db-to-game-id]]
    [amble.models.pieces.board.board :as board]
@@ -28,11 +28,14 @@
                                                    player-id-from-addressbar))
                           player-id-from-addressbar)
                       (do (println "No player selection found, using default `:player-one`.")
-                          :player-one))]
+                          :player-one))
+          player-index (player-to-index player-id)]
       {:db (-> db
+               (assoc-in [:game :move :history] [])
+               (assoc-in [:game :move :index] 0)
                (assoc-in [:game :board :pieces]
                          board-pieces-seq)
-               (assoc-in [:game :settings :player-index] 0)
+               (assoc-in [:game :settings :player-index] player-index)
                (assoc-in [:game :board :occupied]
                          #{}))
        :dispatch [::server/post-game ::on-post-game-success, ::on-post-game-failure]})))
@@ -157,6 +160,20 @@
                     [::server/player-get-all-by-game-id game-id ::on-players-success ::on-players-failure]]
        :notifications {:text "Game is ready!"
                        :timeout 500}})))
+
+(re-frame/reg-event-fx
+  ::move-index-dec
+  (fn [{:keys [db]} [_ _]]
+    (let [move-index (dec (get-in db [:game :move :index]))
+          history (get-in db [:game :move :history])
+          move (when (seq history)
+                 (nth history move-index))]
+      {:db (update-in db [:game :move :index] dec)
+       :dispatch [:amble.models.pieces.player/do-move-replay
+                  (:player-id move)
+                  (:player-piece-index move)
+                  (reverse (:move move))
+                  24]})))
 
 (re-frame/reg-sub
   ::player-selected

@@ -9,18 +9,13 @@
              [:game :settings :player-index]
              inc))
 
-(defn dec-move-index [db]
-  (println "Decrementing move index.")
-  (update-in db
-             [:game :move-index]
-             dec))
-
 (re-frame/reg-event-fx
- ::on-control
- (fn [{:keys [db]}, [_ control-id]]
-   (cond (= :rotate control-id)
-         {:db (set-next-player db)}
-         (= :undo control-id)
-         {:db (dec-move-index db)}
-         :else
-         (throw (new js/Error (gstring/format "Unknown control id, `%s`." control-id))))))
+  ::on-control
+  (fn [{:keys [db]}, [_ control-id]]
+    (cond (= :rotate control-id)
+          {:db (set-next-player db)}
+          (= :undo control-id)
+          {:db db
+           :dispatch [:amble.models.amble/move-index-dec]}
+          :else
+          (throw (new js/Error (gstring/format "Unknown control id, `%s`." control-id))))))

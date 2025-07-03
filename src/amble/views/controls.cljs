@@ -3,7 +3,7 @@
    [amble.models.controls :as models]
    [re-frame.core :as re-frame]))
 
-(def controls [{:id ::rotate 
+(def controls [{:id ::rotate
                 :symbol-icon "↻"
                 :on-click #(re-frame/dispatch [::models/on-control :rotate])}
                {:id ::undo

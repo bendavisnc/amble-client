@@ -2,8 +2,7 @@
   "Provides ui events that can cause a new move event to be sent to the server."
   (:require
    [amble.models.models :refer [db-to-game-id]]
-   [amble.models.pieces.board.board :refer [closest]]
-   [amble.models.pieces.board.board :as board]
+   [amble.models.pieces.board.board :as board :refer [closest]]
    [amble.models.pieces.board.pieces :as board-pieces]
    [amble.server.server :as server]
    [goog.string :as gstring]
@@ -68,7 +67,6 @@
                               :y y}))}) ;; todo, explain
           :else
           (let [move-seq (get-in db [:game :player player-id :move-replay-in-progress :move])]
-            ;; _ (println (get-in db [:game :player player-id]))] 
             {:db
              (-> db
                  (update-in [:game :player player-id :move-replay-in-progress :move]
@@ -90,9 +88,16 @@
 (re-frame/reg-event-fx
   ::on-player-move-get-success
   (fn [{:keys [db]}, [_ {:keys [body]}]]
-    (let [{:keys [player-id, player-piece-index, move, x, y, client-id]} body
-          move-seq move
-          move-from-this-client? ((get-in db [:game :player (keyword player-id) :moves-made])
+    (let [move (-> body
+                   (update :player-id keyword)
+                   (update :player-piece-index #(js/parseInt %)))
+          player-id (:player-id move)
+          client-id (:client-id move)
+          move-seq (:move move)
+          x (:x move)
+          y (:y move)
+          player-piece-index (:player-piece-index move)
+          move-from-this-client? ((get-in db [:game :player player-id :moves-made])
                                   client-id)
           [x-start, y-start] (first move-seq)
           board (get-in db [:game :board :pieces])
@@ -111,7 +116,11 @@
       (when (or (not board-index-start) (not board-index-end))
         (throw (new js/Error (str "remote move related board indexs not found: "
                                   [board-index-start, board-index-end]))))
-      (merge {:db db
+      (merge {:db (-> db
+                      (update-in [:game :move :history] conj move)
+                      ;; (update-in [:game :move :index] inc))
+                      (assoc-in [:game :move :index] (inc (count (get-in db 
+                                                                         [:game :move :history])))))
               :notifications {:text (gstring/format "Move completed! `%s`"
                                                     (name player-id))
                               :timeout 1000}}
@@ -121,8 +130,8 @@
                  (println "Move from this client, skipping replay.")
                  {})
                {:dispatch-n [[::do-move-replay
-                              (keyword player-id)
-                              (js/parseInt player-piece-index)
+                              player-id
+                              player-piece-index
                               (concat move-seq [[x, y]])
                               ;; todo, name
                               24]
