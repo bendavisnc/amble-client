@@ -3,16 +3,22 @@
    [amble.models.controls :as models]
    [re-frame.core :as re-frame]))
 
-(def controls {::rotate {:id "rotate"
-                         :symbol-icon "↻"
-                         :on-click #(re-frame/dispatch [::models/on-control :rotate])}})
+(def controls [{:id ::rotate 
+                :symbol-icon "↻"
+                :on-click #(re-frame/dispatch [::models/on-control :rotate])}
+               {:id ::undo
+                :symbol-icon "<"
+                :on-click #(re-frame/dispatch [::models/on-control :undo])}])
 
 (defn- control [{:keys [id symbol-icon on-click]}]
-  [:button.control {:id id
+  [:button.control {:id (name id)
                     :type "button"
+                    :title (name id)
                     :on-click on-click}
    [:span.symbol-icon symbol-icon]])
 
 (defn component []
   [:div#controls
-   [control (controls ::rotate)]])
+   (for [c controls]
+     ^{:key c}
+     [control c])])
