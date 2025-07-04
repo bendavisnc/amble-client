@@ -175,6 +175,20 @@
                   (reverse (:move move))
                   24]})))
 
+(re-frame/reg-event-fx
+  ::move-index-inc
+  (fn [{:keys [db]} [_ _]]
+    (let [move-index (get-in db [:game :move :index])
+          history (get-in db [:game :move :history])
+          move (when (seq history)
+                 (nth history move-index))]
+      {:db (update-in db [:game :move :index] inc)
+       :dispatch [:amble.models.pieces.player/do-move-replay
+                  (:player-id move)
+                  (:player-piece-index move)
+                  (:move move)
+                  24]})))
+
 (re-frame/reg-sub
   ::player-selected
   (fn [db, _]

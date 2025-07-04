@@ -4,21 +4,24 @@
    [re-frame.core :as re-frame]))
 
 (def controls [{:id ::rotate
-                :symbol-icon "↻"
-                :on-click #(re-frame/dispatch [::models/on-control :rotate])}
+                :icon "↻"
+                :on-click #(re-frame/dispatch [::models/on-control-rotate])}
                {:id ::undo
-                :symbol-icon "<"
-                :on-click #(re-frame/dispatch [::models/on-control :undo])}])
+                :icon "<"
+                :on-click #(re-frame/dispatch [::models/on-control-undo])}
+               {:id ::redo
+                :icon ">"
+                :on-click #(re-frame/dispatch [::models/on-control-redo])}])
 
-(defn- control [{:keys [id symbol-icon on-click]}]
+(defn- control-button [{:keys [id icon on-click]}]
   [:button.control {:id (name id)
                     :type "button"
                     :title (name id)
                     :on-click on-click}
-   [:span.symbol-icon symbol-icon]])
+   [:span.icon icon]])
 
 (defn component []
   [:div#controls
-   (for [c controls]
-     ^{:key c}
-     [control c])])
+   (for [control controls]
+     ^{:key control}
+     [control-button control])])

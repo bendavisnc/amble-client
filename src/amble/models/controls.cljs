@@ -1,5 +1,6 @@
 (ns amble.models.controls
   (:require
+   [amble.models.amble :as amble]
    [goog.string :as gstring]
    [re-frame.core :as re-frame]))
 
@@ -9,13 +10,19 @@
              [:game :settings :player-index]
              inc))
 
+(re-frame/reg-event-db
+  ::on-control-rotate
+  (fn [db, _]
+    (set-next-player db)))
+
 (re-frame/reg-event-fx
-  ::on-control
-  (fn [{:keys [db]}, [_ control-id]]
-    (cond (= :rotate control-id)
-          {:db (set-next-player db)}
-          (= :undo control-id)
-          {:db db
-           :dispatch [:amble.models.amble/move-index-dec]}
-          :else
-          (throw (new js/Error (gstring/format "Unknown control id, `%s`." control-id))))))
+  ::on-control-undo
+  (fn [{:keys [db]}, [_ _]]
+    {:db db
+     :dispatch [::amble/move-index-dec]}))
+
+(re-frame/reg-event-fx
+  ::on-control-redo
+  (fn [{:keys [db]}, [_ _]]
+    {:db db
+     :dispatch [::amble/move-index-inc]}))

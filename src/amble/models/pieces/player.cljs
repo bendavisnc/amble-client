@@ -119,7 +119,7 @@
       (merge {:db (-> db
                       (update-in [:game :move :history] conj move)
                       ;; (update-in [:game :move :index] inc))
-                      (assoc-in [:game :move :index] (inc (count (get-in db 
+                      (assoc-in [:game :move :index] (inc (count (get-in db
                                                                          [:game :move :history])))))
               :notifications {:text (gstring/format "Move completed! `%s`"
                                                     (name player-id))
