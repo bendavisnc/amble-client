@@ -201,7 +201,7 @@
                  (nth history move-index))]
       (if move
         (let [[x-start, y-start] (first (:move move))
-              [x-end, y-end] (last (:move move))
+              [x-end, y-end] ((juxt :x :y) move) 
               board (get-in db [:game :board :pieces])
               board-index-start (board/index {:board board
                                               :x x-start
@@ -213,7 +213,8 @@
            :dispatch-n [[:amble.models.pieces.player/do-move-replay
                          (:player-id move)
                          (:player-piece-index move)
-                         (:move move)
+                         (concat (:move move)
+                                 [[x-end, y-end]])
                          24]
                         [::board-pieces/piece-unoccupied board-index-start]
                         [::board-pieces/piece-occupied board-index-end]]})
