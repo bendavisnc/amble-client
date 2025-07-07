@@ -1,19 +1,24 @@
 #controls {
   width: 100vw;
   height: auto;
-  position: absolute;
-  top: 0;
+  position: fixed;
+  bottom: 0;
+  right: 0;
 }
 #controls .control {
-  display: inline-block;
-  font-size: 2rem;
+  float: right;
+  font-size: 10vh;
   color: #666;
-  line-height: 2rem;
+  width: 10vh;
+  height: 10vh;
   border: none;
   background: none;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-#controls .symbol-icon {
+#controls .icon {
   display: inline-block;
 }
 #board {

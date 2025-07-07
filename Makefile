@@ -13,11 +13,16 @@ format:
 	@echo "Formatting cljs..."
 	standard-clj fix src
 
-resources/public/css/style.css: less/amble.less
+LESS_FILES := $(shell find less -name '*.less')
+
+resources/public/css/style.css: $(LESS_FILES)
 	lessc less/amble.less resources/public/css/style.css
 
 lesscompile: resources/public/css/style.css
 	@echo Compiling css resource from less source.
+
+lesscompile-watch:
+	find less -name "*.less" | entr -c make lesscompile
 
 resources/public/css/noty.css:
 	cp node_modules/noty/lib/noty.css resources/public/css/noty.css
