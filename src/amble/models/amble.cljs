@@ -254,16 +254,25 @@
     (get-in db [:game :settings :player-index])))
 
 (re-frame/reg-sub
+  ::move-index
+  (fn [db, _]
+    (get-in db [:game :move :index])))
+
+
+
+(re-frame/reg-sub
   ::amble
   (fn []
     [(re-frame/subscribe [::board])
      (re-frame/subscribe [::player-selected])
      (re-frame/subscribe [::player-index])
      (re-frame/subscribe [::players])
-     (re-frame/subscribe [::landing-piece])])
-  (fn [[board, player-selected, player-index, players, landing-piece]]
+     (re-frame/subscribe [::landing-piece])
+     (re-frame/subscribe [::move-index])])
+  (fn [[board, player-selected, player-index, players, landing-piece, move-index]]
     {:board board
      :player-selected player-selected
      :player-index player-index
      :players players
-     :landing-piece landing-piece}))
+     :landing-piece landing-piece
+     :move-index move-index}))

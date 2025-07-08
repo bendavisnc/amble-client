@@ -6,12 +6,12 @@
 (def controls [{:id ::rotate
                 :icon "↻"
                 :on-click #(re-frame/dispatch [::models/on-control-rotate])}
-               {:id ::undo
-                :icon "<"
-                :on-click #(re-frame/dispatch [::models/on-control-undo])}
                {:id ::redo
                 :icon ">"
-                :on-click #(re-frame/dispatch [::models/on-control-redo])}])
+                :on-click #(re-frame/dispatch [::models/on-control-redo])}
+               {:id ::undo
+                :icon "<"
+                :on-click #(re-frame/dispatch [::models/on-control-undo])}])
 
 (defn- control-button [{:keys [id icon on-click]}]
   [:button.control {:id (name id)
