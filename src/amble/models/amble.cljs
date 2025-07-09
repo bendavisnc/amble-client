@@ -40,13 +40,50 @@
                          #{}))
        :dispatch [::server/post-game ::on-post-game-success, ::on-post-game-failure]})))
 
+(re-frame/reg-event-fx
+  ::on-player-move-get-by-id-success
+  (fn [{:keys [db]}, [_ {:keys [body]}]]
+    (let [move (-> body
+                   (update :player-id keyword)
+                   (update :player-piece-index #(js/parseInt %))
+                   (update :x #(js/parseFloat %))
+                   (update :y #(js/parseFloat %)))]
+      {:db (-> db
+               (update-in [:game :move :history] conj move)
+               (assoc-in [:game :move :index] (inc (count (get-in db
+                                                                  [:game :move :history])))))})))
+
+(re-frame/reg-event-fx
+  ::on-player-move-get-by-id-failure
+  (fn [_, _]
+    (throw (new js/Error "unhandled player move get by id failure response"))))
+
+(re-frame/reg-event-fx
+  ::on-player-move-get-all-success
+  (fn [{:keys [db]} [_ {:keys [body]}]]
+    (let [move-ids body
+          game-id (db-to-game-id db)]
+      {:db db
+       :dispatch-n (mapv (fn [move-id]
+                           [::server/player-move-get
+                            (str move-id)
+                            ::on-player-move-get-by-id-success
+                            ::on-player-move-get-by-id-failure])
+                         move-ids)})))
+
+(re-frame/reg-event-fx
+  ::on-player-move-get-all-failure
+  (fn [{:keys [db]} _]
+    (throw (new js/Error "unhandled player move get all failure request"))))
+
 ;; `game id retrieved` -> `game ready`
 (re-frame/reg-event-fx
   ::on-game-id-success
   (fn [{:keys [db]} [_, event]]
     (let [game-id (keyword (:body event))]
       (merge {:db (assoc-in db [:game :game-id] game-id)}
-             {:dispatch [::on-game-ready nil]}))))
+             {:dispatch-n [[::server/player-move-get-all game-id ::on-player-move-get-all-success ::on-player-move-get-all-failure]
+                           [::on-game-ready nil]]}))))
 
 (re-frame/reg-event-fx
   ::on-game-id-failure
@@ -257,8 +294,6 @@
   ::move-index
   (fn [db, _]
     (get-in db [:game :move :index])))
-
-
 
 (re-frame/reg-sub
   ::amble
