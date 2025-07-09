@@ -172,14 +172,14 @@
                  (nth history (dec move-index)))]
       (if move
         (let [[x-start, y-start] (first (:move move))
-              [x-end, y-end] (last (:move move))
+              [x-end, y-end] ((juxt :x :y) move)
               board (get-in db [:game :board :pieces])
-              board-index-start (board/closest-index {:board board
-                                                      :x x-start
-                                                      :y y-start})
-              board-index-end (board/closest-index {:board board
-                                                    :x x-end
-                                                    :y y-end})]
+              board-index-start (board/index {:board board
+                                              :x x-start
+                                              :y y-start})
+              board-index-end (board/index {:board board
+                                            :x x-end
+                                            :y y-end})]
           {:db (update-in db [:game :move :index] dec)
            :dispatch-n [[:amble.models.pieces.player/do-move-replay
                          (:player-id move)
@@ -201,7 +201,7 @@
                  (nth history move-index))]
       (if move
         (let [[x-start, y-start] (first (:move move))
-              [x-end, y-end] ((juxt :x :y) move) 
+              [x-end, y-end] ((juxt :x :y) move)
               board (get-in db [:game :board :pieces])
               board-index-start (board/index {:board board
                                               :x x-start

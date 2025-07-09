@@ -90,7 +90,9 @@
   (fn [{:keys [db]}, [_ {:keys [body]}]]
     (let [move (-> body
                    (update :player-id keyword)
-                   (update :player-piece-index #(js/parseInt %)))
+                   (update :player-piece-index #(js/parseInt %))
+                   (update :x #(js/parseFloat %))
+                   (update :y #(js/parseFloat %)))
           player-id (:player-id move)
           client-id (:client-id move)
           move-seq (:move move)

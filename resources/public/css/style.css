@@ -8,7 +8,7 @@
 #move-count .move-count-text {
   float: left;
   font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-  font-size: 10vh;
+  font-size: 2.5vh;
   font-weight: bold;
   color: #eee;
 }
@@ -21,11 +21,11 @@
 }
 #controls .control {
   float: right;
-  font-size: 10vh;
+  font-size: 5vh;
   font-weight: bold;
   color: #666;
-  width: 10vh;
-  height: 10vh;
+  width: 5vh;
+  height: 5vh;
   border: none;
   background: none;
   cursor: pointer;
@@ -54,6 +54,9 @@
 }
 .board-piece.active {
   fill: #add8e6;
+}
+.board-piece.occupied {
+  fill: red;
 }
 .player-one {
   fill: #6acac8;

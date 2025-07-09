@@ -23,7 +23,8 @@
 
 (defn amble-component [{:keys [board, player-selected, players, landing-piece, player-index, move-index]}]
   (let [board-pieces* [board-pieces/pieces {:pieces-seq (some-> board :pieces)
-                                            :active-index (some-> board :active-index)}]
+                                            :active-index (some-> board :active-index)
+                                            :occupied (some-> board :occupied)}]
         player-pieces* [player-pieces/pieces {:players players
                                               :landing-piece landing-piece}]]
     [:div#amble
