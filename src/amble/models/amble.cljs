@@ -32,6 +32,7 @@
           player-index (player-to-index player-id)]
       {:db (-> db
                (assoc-in [:game :move :history] [])
+               (assoc-in [:game :move-replays] [])
                (assoc-in [:game :move :index] 0)
                (assoc-in [:game :board :pieces]
                          board-pieces-seq)
@@ -218,13 +219,13 @@
                                             :x x-end
                                             :y y-end})]
           {:db (update-in db [:game :move :index] dec)
-           :dispatch-n [[:amble.models.pieces.player/do-move-replay
-                         (:player-id move)
-                         (:player-piece-index move)
-                         (reverse (:move move))
-                         24]
-                        [::board-pieces/piece-unoccupied board-index-end]
-                        [::board-pieces/piece-occupied board-index-start]]})
+           :dispatch [:amble.models.pieces.player/move-replay-add [[:amble.models.pieces.player/do-move-replay
+                                                                    {:player-id (:player-id move)
+                                                                     :index (:player-piece-index move)
+                                                                     :move-seq (reverse (:move move))
+                                                                     :wait-ms 24}]
+                                                                   [::board-pieces/piece-unoccupied board-index-end]
+                                                                   [::board-pieces/piece-occupied board-index-start]]]})
         {}))))
 
 (re-frame/reg-event-fx
@@ -247,14 +248,14 @@
                                             :x x-end
                                             :y y-end})]
           {:db (update-in db [:game :move :index] inc)
-           :dispatch-n [[:amble.models.pieces.player/do-move-replay
-                         (:player-id move)
-                         (:player-piece-index move)
-                         (concat (:move move)
-                                 [[x-end, y-end]])
-                         24]
-                        [::board-pieces/piece-unoccupied board-index-start]
-                        [::board-pieces/piece-occupied board-index-end]]})
+           :dispatch [:amble.models.pieces.player/move-replay-add [[:amble.models.pieces.player/do-move-replay
+                                                                    {:player-id (:player-id move)
+                                                                     :index (:player-piece-index move)
+                                                                     :move-seq (concat (:move move)
+                                                                                 [[x-end, y-end]])
+                                                                     :wait-ms 24}]
+                                                                   [::board-pieces/piece-unoccupied board-index-start]
+                                                                   [::board-pieces/piece-occupied board-index-end]]]})
         {}))))
 
 (re-frame/reg-sub

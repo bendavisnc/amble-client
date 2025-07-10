@@ -9,7 +9,6 @@
    [re-frame.core :as re-frame]))
 
 (defn- redraw [db, {:keys [player-id, index, x, y]}]
-  ;; (println [player-id, index, x, y])
   ;; (println [(type player-id), (type index), (type x), (type y)])
   (assert (= (type :k)
              (type player-id))
@@ -37,49 +36,71 @@
     (throw (new js/Error
                 (str "Failed to add player move: " args)))))
 
+(re-frame/reg-event-fx
+  ::move-replay-add
+  (fn [{:keys [db]}, [_ replay]]
+    (let [move-replay (get-in db [:game :move-replay-in-progress])]
+      (if move-replay
+        {:db (update-in db
+                        [:game :move-replays]
+                        conj replay)}
+        {:db db
+         :dispatch-n replay}))))
+
 ;; Recursive loop for drawing moves. 
 ;; Used when remote moves happen.
 (re-frame/reg-event-fx
   ::do-move-replay
-  (fn [{:keys [db]}, [_ player-id, index, move-seq, wait-ms]]
-    (cond (not (get-in db [:game :player player-id :move-replay-in-progress]))
+  (fn [{:keys [db]}, [_, {:keys [move-seq, player-id, index, wait-ms] :as e}]]
+    (let [move-replay (get-in db [:game :move-replay-in-progress])]
+      (cond
+        (nil? move-replay)
+        {:db (-> db
+                 (assoc-in [:game :move-replay-in-progress] e)
+                 (update-in [:game :move-replays]
+                            (comp vec rest)))
+         :dispatch [::do-move-replay e]}
+        ;; A move replay is over.
+        ;;   - dissoc the move from state
+        ;;   - place the piece at its final move position
+        ;;   - dispatch the next replay if there is one
+        (= []
+          (some-> move-replay :move-seq))
+        (let [[x-last, y-last] (last move-seq)
+              board (get-in db [:game :board :pieces])
+              [x, y] (closest {:x x-last
+                               :y y-last
+                               :board board})]
           {:db (-> db
-                   (assoc-in [:game :player player-id :move-replay-in-progress :move]
-                             move-seq)
-                   (assoc-in [:game :player player-id :move-replay-in-progress :index]
-                             (js/parseInt index)))
-           :dispatch [::do-move-replay player-id, index, move-seq, wait-ms]}
+                   (update-in [:game]
+                              dissoc
+                              :move-replay-in-progress)
+                   (redraw {:player-id player-id
+                            :index index
+                            :x x
+                            :y y})) ;; todo, explain
+           :dispatch-n (when-let [next-replay
+                                  (first (get-in db [:game :move-replays]))]
+                         (println (gstring/format "Dispatching next replay, `%s`" next-replay))
+                         next-replay)})
 
-          (= []
-             (get-in db [:game :player player-id :move-replay-in-progress :move]))
-          (let [[x-last, y-last] (last move-seq)
-                board (get-in db [:game :board :pieces])
-                [x, y] (closest {:x x-last
-                                 :y y-last
-                                 :board board})]
-            {:db (-> db
-                     (update-in [:game :player player-id]
-                                dissoc
-                                :move-replay-in-progress)
-                     (redraw {:player-id player-id
-                              :index index
-                              :x x
-                              :y y}))}) ;; todo, explain
-          :else
-          (let [move-seq (get-in db [:game :player player-id :move-replay-in-progress :move])]
-            {:db
-             (-> db
-                 (update-in [:game :player player-id :move-replay-in-progress :move]
+        ;; A move replay is in progress.
+        ;;   - remove the next position to use from state 
+        ;;   - take the next move position from the move sequence
+        (seq (some-> move-replay :move-seq))
+        {:db (-> db
+                 (update-in [:game :move-replay-in-progress :move-seq]
                             (comp vec rest))
                  (redraw {:player-id player-id
-                          :index (get-in db [:game :player player-id :move-replay-in-progress :index])
-                          :x (first (first move-seq))
-                          :y (second (first move-seq))}))
+                          :index index
+                          :x (get-in db [:game :move-replay-in-progress :move-seq 0 0])
+                          :y (get-in db [:game :move-replay-in-progress :move-seq 0 1])}))
 
-             :dispatch-later [{:ms wait-ms
-                               :dispatch [::do-move-replay player-id, index, move-seq wait-ms]}]}))))
+         :dispatch-later [{:ms wait-ms
+                           :dispatch [::do-move-replay e]}]}
+        :else
+        (println "`do-move-replay` at rest.")))))
 
-;; Coeffect handler that injects the current timestamp as :now
 (re-frame/reg-cofx
   :now
   (fn [coeffects _]
@@ -131,14 +152,13 @@
                (do
                  (println "Move from this client, skipping replay.")
                  {})
-               {:dispatch-n [[::do-move-replay
-                              player-id
-                              player-piece-index
-                              (concat move-seq [[x, y]])
-                              ;; todo, name
-                              24]
-                             [::board-pieces/piece-unoccupied board-index-start]
-                             [::board-pieces/piece-occupied board-index-end]]})))))
+               {:dispatch [::move-replay-add [[::do-move-replay
+                                               {:player-id player-id
+                                                :index player-piece-index
+                                                :move-seq (concat move-seq [[x, y]])
+                                                :wait-ms 24}]
+                                              [::board-pieces/piece-unoccupied board-index-start]
+                                              [::board-pieces/piece-occupied board-index-end]]]})))))
 
 ;; deletes on the server side cause corresponding event triggers. 
 ;; currently we just ignore the 404 that happens for the corresponding get request afterwards.
@@ -235,4 +255,4 @@
     (println "Received remote move with ID: " move-id)
     {:dispatch [::server/player-move-get move-id ::on-player-move-get-success, ::on-player-move-get-failure]}))
 
-(comment (conj #{3} 2))
+(comment (conj [3] 2))
