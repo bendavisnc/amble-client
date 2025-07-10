@@ -297,6 +297,19 @@
     (get-in db [:game :move :index])))
 
 (re-frame/reg-sub
+  ::undo-disabled
+  (fn [db, _]
+    (let [move-index (get-in db [:game :move :index])]
+      (zero? move-index))))
+
+(re-frame/reg-sub
+  ::redo-disabled
+  (fn [db, _]
+    (let [move-index (get-in db [:game :move :index])
+          history (get-in db [:game :move :history])]
+      (>= move-index (count history)))))
+
+(re-frame/reg-sub
   ::amble
   (fn []
     [(re-frame/subscribe [::board])
@@ -304,11 +317,15 @@
      (re-frame/subscribe [::player-index])
      (re-frame/subscribe [::players])
      (re-frame/subscribe [::landing-piece])
-     (re-frame/subscribe [::move-index])])
-  (fn [[board, player-selected, player-index, players, landing-piece, move-index]]
+     (re-frame/subscribe [::move-index])
+     (re-frame/subscribe [::undo-disabled])
+     (re-frame/subscribe [::redo-disabled])])
+  (fn [[board, player-selected, player-index, players, landing-piece, move-index, undo-disabled, redo-disabled]]
     {:board board
      :player-selected player-selected
      :player-index player-index
      :players players
      :landing-piece landing-piece
-     :move-index move-index}))
+     :move-index move-index
+     :undo-disabled undo-disabled
+     :redo-disabled redo-disabled}))

@@ -21,7 +21,7 @@
                                (-> e
                                    piece/e-to-event)))
 
-(defn amble-component [{:keys [board, player-selected, players, landing-piece, player-index, move-index]}]
+(defn amble-component [{:keys [board, player-selected, players, landing-piece, player-index, move-index, undo-disabled, redo-disabled]}]
   (let [board-pieces* [board-pieces/pieces {:pieces-seq (some-> board :pieces)
                                             :active-index (some-> board :active-index)
                                             :occupied (some-> board :occupied)}]
@@ -29,7 +29,8 @@
                                               :landing-piece landing-piece}]]
     [:div#amble
      [move-count/component {:move-index move-index}]
-     [controls/component]
+     [controls/component {:undo-disabled undo-disabled
+                          :redo-disabled redo-disabled}]
      [board/component {:board-pieces board-pieces*
                        :player-pieces player-pieces*
                        :player-selected player-selected

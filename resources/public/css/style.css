@@ -33,6 +33,9 @@
   align-items: center;
   justify-content: center;
 }
+#controls .control:disabled {
+  color: #929292;
+}
 #controls .icon {
   display: inline-block;
 }
