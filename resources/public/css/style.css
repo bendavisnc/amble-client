@@ -1,26 +1,13 @@
-#move-count {
-  width: 100vw;
-  height: auto;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-}
 #move-count .move-count-text {
-  float: left;
   font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
   font-size: 2.5vh;
   font-weight: bold;
   color: #eee;
 }
 #controls {
-  width: 100vw;
-  height: auto;
-  position: fixed;
-  bottom: 0;
-  right: 0;
+  display: flex;
 }
 #controls .control {
-  float: right;
   font-size: 5vh;
   font-weight: bold;
   color: #666;
@@ -111,4 +98,22 @@ body {
   align-items: center;
   width: 100vw;
   height: 100vh;
+}
+#board-container,
+#accessories {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+}
+#board-container {
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+#accessories {
+  justify-content: space-between;
+  align-items: flex-start;
 }

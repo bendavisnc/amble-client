@@ -34,10 +34,9 @@
                        :player-index player-index
                        :userfeedback-handler userfeedback-handler}]
      [:div#accessories
-      [:<>
-       [move-count/component {:move-index move-index}]
-       [controls/component {:undo-disabled undo-disabled
-                            :redo-disabled redo-disabled}]]]]))
+      [move-count/component {:move-index move-index}]
+      [controls/component {:undo-disabled undo-disabled
+                           :redo-disabled redo-disabled}]]]))
 
 (defn amble []
   (let [model (re-frame/subscribe [::models/amble])]

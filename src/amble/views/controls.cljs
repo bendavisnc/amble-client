@@ -15,7 +15,6 @@
                {:id ::rotate
                 :icon "↻"
                 :on-click #(re-frame/dispatch [::models/on-control-rotate])}])
-              
 
 (defn- control-button [disabled-map {:keys [id icon on-click disabled]}]
   (let [is-disabled? (some-> disabled disabled-map)]
