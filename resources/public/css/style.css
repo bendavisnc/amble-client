@@ -6,6 +6,7 @@
 }
 #controls {
   display: flex;
+  pointer-events: auto;
 }
 #controls .control {
   font-size: 5vh;
@@ -29,6 +30,7 @@
 #board {
   width: calc(max(100vw, 100vh) * (1 / 1.618));
   height: calc(max(100vw, 100vh) * (1 / 1.618));
+  background-color: lightgrey;
   transition: transform 0.333s cubic-bezier(0.33, 1, 0.68, 1), cy 0.333s cubic-bezier(0.33, 1, 0.68, 1);
 }
 #error {
@@ -90,19 +92,19 @@ body {
   max-width: 100%;
   overflow: hidden;
   max-height: 100%;
+  background-color: lightgrey;
 }
 #amble {
-  background-color: lightgrey;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
 }
 #board-container,
 #accessories {
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   position: absolute;
   top: 0;
   left: 0;
@@ -114,6 +116,8 @@ body {
   flex-direction: column;
 }
 #accessories {
+  pointer-events: none;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: flex-end;
+  padding-bottom: 300px;
 }
