@@ -4,17 +4,18 @@
    [goog.string :as gstring]
    [re-frame.core :as re-frame]))
 
-(def controls [{:id ::rotate
-                :icon "↻"
-                :on-click #(re-frame/dispatch [::models/on-control-rotate])}
+(def controls [{:id ::undo
+                :icon "<"
+                :disabled :undo-disabled
+                :on-click #(re-frame/dispatch [::models/on-control-undo])}
                {:id ::redo
                 :icon ">"
                 :disabled :redo-disabled
                 :on-click #(re-frame/dispatch [::models/on-control-redo])}
-               {:id ::undo
-                :icon "<"
-                :disabled :undo-disabled
-                :on-click #(re-frame/dispatch [::models/on-control-undo])}])
+               {:id ::rotate
+                :icon "↻"
+                :on-click #(re-frame/dispatch [::models/on-control-rotate])}])
+              
 
 (defn- control-button [disabled-map {:keys [id icon on-click disabled]}]
   (let [is-disabled? (some-> disabled disabled-map)]
@@ -24,8 +25,8 @@
                                       (gstring/format "%s (disabled)" (name id))
                                       (name id))
                              :on-click on-click}
-                            (when is-disabled?
-                              {:disabled true}))
+                       (when is-disabled?
+                         {:disabled true}))
      [:span.icon icon]]))
 
 (defn component [disabled-map]

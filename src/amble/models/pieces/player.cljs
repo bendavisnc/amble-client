@@ -79,10 +79,11 @@
                             :index index
                             :x x
                             :y y})) ;; todo, explain
-           :dispatch-n (when-let [next-replay
-                                  (first (get-in db [:game :move-replays]))]
-                         (println (gstring/format "Dispatching next replay, `%s`" next-replay))
-                         next-replay)})
+           :dispatch-n (if-let [next-replay
+                                (first (get-in db [:game :move-replays]))]
+                         (do (println (gstring/format "Dispatching next replay, `%s`" next-replay))
+                             next-replay)
+                         [])})
 
         ;; A move replay is in progress.
         ;;   - remove the next position to use from state 

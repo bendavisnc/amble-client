@@ -28,14 +28,16 @@
         player-pieces* [player-pieces/pieces {:players players
                                               :landing-piece landing-piece}]]
     [:div#amble
-     [move-count/component {:move-index move-index}]
-     [controls/component {:undo-disabled undo-disabled
-                          :redo-disabled redo-disabled}]
      [board/component {:board-pieces board-pieces*
                        :player-pieces player-pieces*
                        :player-selected player-selected
                        :player-index player-index
-                       :userfeedback-handler userfeedback-handler}]]))
+                       :userfeedback-handler userfeedback-handler}]
+     [:div#accessories
+      [:<>
+       [move-count/component {:move-index move-index}]
+       [controls/component {:undo-disabled undo-disabled
+                            :redo-disabled redo-disabled}]]]]))
 
 (defn amble []
   (let [model (re-frame/subscribe [::models/amble])]
