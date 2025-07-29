@@ -1,17 +1,12 @@
 {
-  "devDependencies": {
-    "postcss-less": "^6.0.0",
-    "stylelint": "^16.21.0",
-    "stylelint-config-standard": "^38.0.0",
-    "stylelint-less": "^3.0.1",
-    "webpack-cli": "^6.0.1"
-  },
   "dependencies": {
-    "@cljs-oss/module-deps": "^1.1.1",
     "animate.css": "^4.1.1",
-    "create-react-class": "^15.6.3",
     "noty": "^3.1.4",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "shadow-cljs": "^3.1.8",
+    "webpack-cli": "^6.0.1"
   }
 }

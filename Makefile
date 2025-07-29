@@ -1,12 +1,12 @@
-figdev: figdevbase csslibs
+shaddev: shaddevbase 
 	@echo "Running main dev build..."
 
-figdevbase: openapi lesscompile webpack npminstall
+shaddevbase: openapi lesscompile webpack npminstall csslibs
 	@echo "..."
-	clj -M:dev -b dev -r
+	npx shadow-cljs watch app
 
-fighelp:
-	@echo "Showing fig help..."
+shadhelp:
+	@echo "Showing shadowcljs help..."
 	clj -M:dev --help
 
 format:
@@ -49,7 +49,6 @@ clean: cleancss
 	rm -rf resources/public/json/openapi.json
 	rm -rf target
 	rm -rf node_modules
-	rm -f package.json 
 	rm -f package-lock.json 
 
 

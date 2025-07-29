@@ -21,13 +21,14 @@
 
 (defn- init []
   (mount-app)
+  (println "Initializing Amble...")
   (re-frame/dispatch-sync [::model/initialize])
   (.addEventListener js/window "hashchange"
                      (fn [_]
                        (re-frame/dispatch [::hash-params/update])))
   nil)
 
-(defn on-figwheel-reload []
+(defn reload []
+  (println "Reloading Amble...")
   (mount-app))
 
-(.addEventListener js/document "DOMContentLoaded" init)
