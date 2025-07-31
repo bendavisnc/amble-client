@@ -5,6 +5,13 @@ shaddevbase: openapi lesscompile webpack npminstall csslibs
 	@echo "..."
 	npx shadow-cljs watch app
 
+shadprod: shadprodbase 
+	@echo "Running main prod build..."
+
+shadprodbase: openapi lesscompile webpack npminstall csslibs
+	@echo "..."
+	npx shadow-cljs release app
+
 shadtest: openapitest npminstall
 	@echo "Compiling and running tests..."
 	npx shadow-cljs watch test

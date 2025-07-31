@@ -3,8 +3,9 @@
  :dependencies
  []
 
-;;  :dev-http {8080 "resources/public"}
- :dev-http {8080 "out/test"}
+ :dev-http {8080 "resources/public"}
+ ;; for running client tests against real server
+;;  :dev-http {8080 "out/test"}
 
  :builds
  {:app
