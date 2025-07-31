@@ -5,6 +5,10 @@ shaddevbase: openapi lesscompile webpack npminstall csslibs
 	@echo "..."
 	npx shadow-cljs watch app
 
+shadtest: openapitest npminstall
+	@echo "Compiling and running tests..."
+	npx shadow-cljs watch test
+
 shadhelp:
 	@echo "Showing shadowcljs help..."
 	clj -M:dev --help
@@ -44,10 +48,19 @@ resources/public/json/openapi.json:
 openapi: resources/public/json/openapi.json
 	@echo Provisioning openapi spec.
 
+out/test/json/openapi.json:
+	mkdir -p out/test/json
+	cd ../amble-openapi; make clean; make openapi	
+	cp ../amble-openapi/target/openapi/openapi.json out/test/json/openapi.json
+	
+openapitest: out/test/json/openapi.json
+	@echo Provisioning openapi spec.
+
 clean: cleancss
 	@echo "Cleaning up..."
 	rm -rf resources/public/json/openapi.json
 	rm -rf target
+	rm -rf out
 	rm -rf node_modules
 	rm -f package-lock.json 
 
