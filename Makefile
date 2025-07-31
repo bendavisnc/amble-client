@@ -3,7 +3,7 @@ shaddev: shaddevbase
 
 shaddevbase: openapi lesscompile webpack npminstall csslibs
 	@echo "..."
-	npx shadow-cljs watch app
+	clj -M:dev -m shadow.cljs.devtools.cli watch app
 
 shadprod: shadprodbase 
 	@echo "Running main prod build..."
@@ -66,6 +66,8 @@ openapitest: out/test/json/openapi.json
 clean: cleancss
 	@echo "Cleaning up..."
 	rm -rf resources/public/json/openapi.json
+	rm -rf resources/public/js/main.js
+	rm -rf .shadow-cljs 
 	rm -rf target
 	rm -rf out
 	rm -rf node_modules
