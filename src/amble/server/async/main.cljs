@@ -21,7 +21,8 @@
 
 (re-frame/reg-event-fx
   ::async-server/on-open
-  (fn [_ _]))
+  (fn [_ _]
+    (println "websocket connection opened successfully.")))
 
 (re-frame/reg-event-fx
   ::async-server/on-close
