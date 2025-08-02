@@ -15,10 +15,9 @@
                            (.-protocol (.-location js/window)))
                        "wss"
                        "ws")]
-    (gstring/format "%s://%s:%d/move/async/?game-id=%s"
+    (gstring/format "%s://%s/move/async/?game-id=%s"
                     ws-protocol
                     amble-config/SERVER_HOST
-                    amble-config/SERVER_PORT
                     (name game-id))))
 
 (defn connect-websocket! [game-id]
