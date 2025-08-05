@@ -21,7 +21,7 @@ See Makefile for further context and for building release artifacts.
 There's also a Dockerfile available and a docker build and run script, `dockerrunlocal.sh` for docker-based local development.
 
 ## Screenshot
-![screencast](./screencast.webm)
+![screencast](./screencast.gif)
 
 ## Thanks
 
