@@ -11,10 +11,10 @@
 (defn websockets-url [game-id]
   (when (= "localhost" amble-config/SERVER_HOST)
     (println "Using `localhost` for websocket url."))
-  (let [ws-protocol (if (= "https:" 
+  (let [ws-protocol (if (= "https:"
                            (.-protocol (.-location js/window)))
-                       "wss"
-                       "ws")]
+                      "wss"
+                      "ws")]
     (gstring/format "%s://%s/move/async/?game-id=%s"
                     ws-protocol
                     amble-config/SERVER_HOST

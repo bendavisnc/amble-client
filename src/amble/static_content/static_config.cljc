@@ -2,7 +2,6 @@
   #?(:clj
      (:require
       [environ.core :refer [env]])))
- 
 #?(:clj (defmacro defconfig [sym k]
           (let [v (env k)]
             (if (nil? v)
