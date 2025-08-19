@@ -17,10 +17,7 @@
 (re-frame/reg-event-db
   ::print-db
   (fn [db _]
-    ;; (println (:move (:game db)))
-    (println [(count (get-in db [:game :move :history]))
-              (get-in db [:game :move :index])])
-    db))
+    (println db)))
 
 (defn set-player
   "Dispatches an event to set the current player in the db."

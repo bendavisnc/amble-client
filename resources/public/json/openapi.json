@@ -28,6 +28,17 @@
       },
       "post" : {
         "operationId" : "gameAdd",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/GameId"
+              }
+            }
+          },
+          "description" : "The specified `game-id` value.",
+          "required" : false
+        },
         "responses" : {
           "201" : {
             "content" : {

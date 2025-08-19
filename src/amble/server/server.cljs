@@ -15,7 +15,12 @@
 (re-frame/reg-event-fx
   ::game-get-default-id
   (fn [& args]
-    (throw (new js/Error "not implemented, id get"))))
+    (throw (new js/Error "not implemented, game get default"))))
+
+(re-frame/reg-event-fx
+  ::game-get-by-id
+  (fn [& args]
+    (throw (new js/Error "not implemented, game get by id"))))
 
 (re-frame/reg-event-fx
   ::player-get-all-by-game-id

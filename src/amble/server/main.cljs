@@ -13,11 +13,13 @@
 
 (re-frame/reg-event-fx
   ::server/post-game
-  (fn [{:keys [db]} [_ on-success, on-failure]]
+  (fn [{:keys [db]} [_ game-id, on-success, on-failure]]
     {:db db
      :dispatch [::martian-reframe/request
                 :game-add
-                {}
+                (if game-id
+                  {:game-id game-id}
+                  {})
                 [on-success]
                 [on-failure]]}))
 
@@ -38,6 +40,16 @@
      :dispatch [::martian-reframe/request
                 :game-get-default-id
                 {}
+                [on-success]
+                [on-failure]]}))
+
+(re-frame/reg-event-fx
+  ::server/game-get-by-id
+  (fn [{:keys [db]} [_, game-id, on-success, on-failure]]
+    {:db db
+     :dispatch [::martian-reframe/request
+                :game-get-by-id
+                {:id game-id}
                 [on-success]
                 [on-failure]]}))
 

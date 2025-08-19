@@ -24,13 +24,20 @@
   (fn [{:keys [db, board, hash-params]} [_]]
     (let [board-pieces-seq board
           player-id (if-let [player-id-from-addressbar (some-> hash-params :player keyword)]
-                      (do (println (gstring/format "Using player selected from address bar, `%s`"
+                      (do (println (gstring/format "Using `player` selected from address bar, `%s`"
                                                    player-id-from-addressbar))
                           player-id-from-addressbar)
                       (do (println "No player selection found, using default `:player-one`.")
                           :player-one))
-          player-index (player-to-index player-id)]
+          player-index (player-to-index player-id)
+          game-id (if-let [game-id-from-addressbar (some-> hash-params :game-id keyword)]
+                    (do (println (gstring/format "Using `game-id` from address bar, `%s`"
+                                                 game-id-from-addressbar))
+                        game-id-from-addressbar)
+                    (do (println "No `game-id` found in address bar, passing null.")
+                        nil))]
       {:db (-> db
+               (assoc-in [:game :game-id] game-id)
                (assoc-in [:game :move :history] [])
                (assoc-in [:game :move-replays] [])
                (assoc-in [:game :move :index] 0)
@@ -39,7 +46,7 @@
                (assoc-in [:game :settings :player-index] player-index)
                (assoc-in [:game :board :occupied]
                          #{}))
-       :dispatch [::server/post-game ::on-post-game-success, ::on-post-game-failure]})))
+       :dispatch [::server/post-game game-id ::on-post-game-success, ::on-post-game-failure]})))
 
 (re-frame/reg-event-fx
   ::on-player-move-get-by-id-success
@@ -81,7 +88,8 @@
 (re-frame/reg-event-fx
   ::on-game-id-success
   (fn [{:keys [db]} [_, event]]
-    (let [game-id (keyword (:body event))]
+    (let [game-id (or (some-> event :body :game-id keyword)
+                      (some-> event :body keyword))]
       (merge {:db (assoc-in db [:game :game-id] game-id)}
              {:dispatch-n [[::server/player-move-get-all game-id ::on-player-move-get-all-success ::on-player-move-get-all-failure]
                            [::on-game-ready nil]]}))))
@@ -112,13 +120,14 @@
           (throw (new js/Error ["unexpected response result on `::on-post-game-failure`"
                                 event])))))
 
-;; When a game post fails, just ask what `game-id` to go with.
 (re-frame/reg-event-fx
   ::on-post-game-failure-conflict
   (fn [{:keys [db]} [_]]
     (merge
       {:db db}
-      {:dispatch [::server/game-get-default-id ::on-game-id-success, ::on-game-id-failure]})))
+      (if-let [game-id (get-in db [:game :game-id])]
+        {:dispatch [::server/game-get-by-id game-id ::on-game-id-success, ::on-game-id-failure]}
+        {:dispatch [::server/game-get-default-id ::on-game-id-success, ::on-game-id-failure]}))))
 
 ;; list of players -> player info applied to game
 (re-frame/reg-event-fx
@@ -192,11 +201,12 @@
 (re-frame/reg-event-fx
   ::on-game-ready
   (fn [{:keys [db]} [_ _]]
-    (let [game-id (db-to-game-id db)]
+    (let [game-id (db-to-game-id db)
+          game-ready-notification (gstring/format "Game `%s` is ready!" (name game-id))]
       {:db db
        :dispatch-n [[::async-server/initialize game-id]
                     [::server/player-get-all-by-game-id game-id ::on-players-success ::on-players-failure]]
-       :notifications {:text "Game is ready!"
+       :notifications {:text game-ready-notification
                        :timeout 500}})))
 
 (re-frame/reg-event-fx
