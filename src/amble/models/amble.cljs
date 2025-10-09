@@ -46,7 +46,10 @@
                (assoc-in [:game :settings :player-index] player-index)
                (assoc-in [:game :board :occupied]
                          #{}))
-       :dispatch [::server/post-game game-id ::on-post-game-success, ::on-post-game-failure]})))
+       :dispatch [::server/post-game game-id ::on-post-game-success, ::on-post-game-failure]
+       :notifications {:text "Loading game..."
+                       :timeout false}})))
+
 
 (re-frame/reg-event-fx
   ::on-player-move-get-by-id-success
