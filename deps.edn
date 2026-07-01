@@ -9,9 +9,4 @@
   environ/environ {:mvn/version "1.2.0"}
   day8.re-frame/test {:mvn/version "0.1.5"}}
  :paths ["src" "resources" "test"]
- :clean-targets ^{:protect false} ["target"]
- :aliases {:dev
-           {:jvm-opts ["-DCLIENT_URL=http://localhost:8080"
-                       "-DSERVER_URL=http://localhost:3000"
-                       "-DSERVER_HOST=localhost"
-                       "-DSERVER_PORT=3000"]}}}
+ :clean-targets ^{:protect false} ["target"]}

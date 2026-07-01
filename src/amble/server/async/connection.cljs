@@ -20,9 +20,7 @@
     (gstring/format "%s://%s/move/async/?game-id=%s"
                     ws-protocol
                     (str amble-config/SERVER_HOST
-                        (if localhost?
-                          (str ":" amble-config/SERVER_PORT)
-                          ""))
+                         (str ":" amble-config/SERVER_PORT))
                     (name game-id))))
 
 (defn connect-websocket! [game-id]
