@@ -111,10 +111,7 @@
   ::on-player-move-get-success
   (fn [{:keys [db]}, [_ {:keys [body]}]]
     (let [move (-> body
-                   (update :player-id keyword)
-                   (update :player-piece-index #(js/parseInt %))
-                   (update :x #(js/parseFloat %))
-                   (update :y #(js/parseFloat %)))
+                   (update :player-id keyword))
           player-id (:player-id move)
           client-id (:client-id move)
           move-seq (:move move)

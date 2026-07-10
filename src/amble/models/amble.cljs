@@ -55,10 +55,7 @@
   ::on-player-move-get-by-id-success
   (fn [{:keys [db]}, [_ {:keys [body]}]]
     (let [move (-> body
-                   (update :player-id keyword)
-                   (update :player-piece-index #(js/parseInt %))
-                   (update :x #(js/parseFloat %))
-                   (update :y #(js/parseFloat %)))]
+                   (update :player-id keyword))]
       {:db (-> db
                (update-in [:game :move :history] conj move)
                (assoc-in [:game :move :index] (inc (count (get-in db
@@ -179,11 +176,7 @@
 (re-frame/reg-event-fx
   ::on-player-success
   (fn [{:keys [db]}, [_, [_, player-id], event]]
-    (let [position* (:body event)
-          position (mapv (fn [[xstr, ystr]]
-                           [(js/parseFloat xstr)
-                            (js/parseFloat ystr)])
-                         position*)
+    (let [position (:body event)
           board (get-in db [:game :board :pieces])]
       (merge {:db (-> db
                       (assoc-in [:game :player player-id :moves-made]
