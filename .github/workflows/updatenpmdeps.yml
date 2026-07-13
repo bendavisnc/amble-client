@@ -1,0 +1,30 @@
+name: Update npm dependencies
+on: push
+
+permissions:
+  contents: write
+
+jobs:
+  update-npm-dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v6
+
+      - run: npx npm-check-updates --upgrade
+
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then
+            echo "No dependency updates."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add package.json package-lock.json 
+          git commit -m "chore: update npm dependencies"
+          git push
