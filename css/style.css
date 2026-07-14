@@ -1,0 +1,123 @@
+#move-count .move-count-text {
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 2.5vh;
+  font-weight: bold;
+  color: #eee;
+}
+#controls {
+  display: flex;
+  pointer-events: auto;
+}
+#controls .control {
+  font-size: 5vh;
+  font-weight: bold;
+  color: #666;
+  width: 5vh;
+  height: 5vh;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#controls .control:disabled {
+  color: #929292;
+}
+#controls .icon {
+  display: inline-block;
+}
+#board {
+  width: calc(max(100vw, 100vh) * (1 / 1.618));
+  height: calc(max(100vw, 100vh) * (1 / 1.618));
+  background-color: lightgrey;
+  transition: transform 0.333s cubic-bezier(0.33, 1, 0.68, 1), cy 0.333s cubic-bezier(0.33, 1, 0.68, 1);
+}
+#error {
+  width: calc(max(100vw, 100vh) * (1 / 1.618));
+  height: calc(max(100vw, 100vh) * (1 / 1.618));
+}
+#error svg {
+  width: 100%;
+  height: 100%;
+}
+.board-piece {
+  fill: white;
+}
+.board-piece.active {
+  fill: #add8e6;
+}
+.board-piece.occupied {
+  fill: red;
+}
+.player-one {
+  fill: #6acac8;
+}
+.player-two {
+  fill: #6a81ca;
+}
+.player-three {
+  fill: #ca6ab8;
+}
+.player-four {
+  fill: #9a6aca;
+}
+.player-five {
+  fill: #97adc2;
+}
+.player-six {
+  fill: #ca936a;
+}
+.player.landing {
+  transition: cx 0.333s cubic-bezier(0.33, 1, 0.68, 1), cy 0.333s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.noty_body {
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 20px;
+}
+.noty_layout {
+  --animate-duration: 500ms;
+}
+.noty_theme__mint.noty_bar .noty_body {
+  font-size: 20px;
+}
+#noty_layout__topRight {
+  width: auto;
+}
+html,
+body {
+  height: 100%;
+  margin: 0;
+  position: relative;
+  max-width: 100%;
+  overflow: hidden;
+  max-height: 100%;
+  background-color: lightgrey;
+}
+#amble {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100dvw;
+  height: 100dvh;
+}
+#board-container,
+#accessories {
+  width: 100dvw;
+  height: 100dvh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+}
+#board-container {
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+#accessories {
+  pointer-events: none;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 300px;
+}
