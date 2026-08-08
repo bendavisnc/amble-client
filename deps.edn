@@ -1,10 +1,10 @@
 {:deps
  {io.github.bendavisnc/amble-board
         {:git/sha
-         "aa0d5e050f852266515ee1b695c699f9737a70c3"}
+         "ffeaaec5d068d933ca4b1ffb6e2d9d9f3c345768"}
   org.clojure/clojure {:mvn/version "1.12.5"}
   org.clojure/clojurescript {:mvn/version "1.12.145"}
-  thheller/shadow-cljs {:mvn/version "3.4.11"}
+  thheller/shadow-cljs {:mvn/version "3.4.12"}
   reagent/reagent {:mvn/version "2.0.1"}
   re-frame/re-frame {:mvn/version "1.4.7"}
   com.github.oliyh/martian {:mvn/version "0.2.3"}
