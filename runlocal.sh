@@ -1,3 +1,5 @@
+rm -rf .shadow-cljs
+
 CLIENT_URL=http://localhost:8080 \
 SERVER_URL=http://localhost:3000 \
 SERVER_HOST=localhost \

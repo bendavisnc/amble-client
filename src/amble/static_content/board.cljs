@@ -2,4 +2,4 @@
   (:require-macros
    [amble.static-content.static-content :refer [defdata]]))
 
-(defdata board "board.edn")
+(defdata board "board.json")
