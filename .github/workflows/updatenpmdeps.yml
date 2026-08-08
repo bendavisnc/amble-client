@@ -1,5 +1,9 @@
 name: Update npm dependencies
-on: push
+
+on: 
+  push:
+    branches:
+      - develop
 
 permissions:
   contents: write
